@@ -123,7 +123,7 @@ const Navbar = ({ navBarOpened, setNavBarOpened }: NavbarProps) => {
               <Group position="center">
                 <Button
                   component="a"
-                  href="https://github.com/DuckyMomo20012/nextjs-template"
+                  href="https://github.com/DuckyMomo20012/chat-gbit"
                   leftIcon={<Icon icon="ant-design:github-filled" width={24} />}
                   target="_blank"
                   variant="light"

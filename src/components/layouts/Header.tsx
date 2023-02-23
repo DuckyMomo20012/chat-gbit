@@ -133,7 +133,7 @@ const Header = ({ setNavBarOpened }: HeaderProps) => {
               width={32}
             />
             <Text align="center" fw={700}>
-              NextJS Template
+              Chat GBiT
             </Text>
           </Anchor>
         </Group>
@@ -177,7 +177,7 @@ const Header = ({ setNavBarOpened }: HeaderProps) => {
           <Tooltip label="Source code">
             <Anchor
               data-test-id="github-link"
-              href="https://github.com/DuckyMomo20012/nextjs-template"
+              href="https://github.com/DuckyMomo20012/chat-gbit"
               target="_blank"
             >
               <ActionIcon
