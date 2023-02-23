@@ -1,0 +1,33 @@
+{
+  "name": "my-project-devcontainer",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu", // Any generic, debian-based image.
+  // 3000 port for NextJS
+  "forwardPorts": [3000],
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts"
+    }
+  },
+  "customizations": {
+    // Configure properties specific to VS Code.
+    "vscode": {
+      "settings": {},
+      // Add the IDs of extensions you want installed when the container is created.
+      "extensions": [
+        "formulahendry.auto-rename-tag",
+        "esbenp.prettier-vscode",
+        "stkb.rewrap",
+        "voorjaar.windicss-intellisense",
+        "eamodio.gitlens",
+        "dbaeumer.vscode-eslint",
+        "usernamehw.errorlens",
+        "mikestead.dotenv",
+        "naumovs.color-highlight",
+        "streetsidesoftware.code-spell-checker"
+      ]
+    }
+  }
+}
