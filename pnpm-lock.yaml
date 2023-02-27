@@ -6,6 +6,7 @@ specifiers:
   '@commitlint/config-conventional': 17.4.4
   '@emotion/react': 11.10.6
   '@emotion/server': 11.10.0
+  '@faker-js/faker': 7.6.0
   '@iconify/react': 4.1.0
   '@mantine/core': 5.10.4
   '@mantine/hooks': 5.10.4
@@ -43,6 +44,7 @@ specifiers:
   react-hook-form: 7.43.2
   react-redux: 8.0.5
   type-fest: 3.6.0
+  typed.js: 2.0.12
   typescript: 4.9.5
   windicss: 3.5.6
   windicss-webpack-plugin: 1.7.8
@@ -51,6 +53,7 @@ specifiers:
 dependencies:
   '@emotion/react': 11.10.6_pmekkgnqduwlme35zpnqhenc34
   '@emotion/server': 11.10.0
+  '@faker-js/faker': 7.6.0
   '@iconify/react': 4.1.0_react@18.2.0
   '@mantine/core': 5.10.4_xgfpbscinl7gpxk3zixgsno7yu
   '@mantine/hooks': 5.10.4_react@18.2.0
@@ -70,6 +73,7 @@ dependencies:
   react-hook-form: 7.43.2_react@18.2.0
   react-redux: 8.0.5_epqzsux5te4oifde32lbaj3ih4
   type-fest: 3.6.0
+  typed.js: 2.0.12
   zod: 3.20.6
 
 devDependencies:
@@ -585,6 +589,11 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /@faker-js/faker/7.6.0:
+    resolution: {integrity: sha512-XK6BTq1NDMo9Xqw/YkYyGjSsg44fbNwYRx7QK2CuoQgyy+f1rrTDHoExVM5PsyXCtfl2vs2vVJ0MN0yN6LppRw==}
+    engines: {node: '>=14.0.0', npm: '>=6.0.0'}
+    dev: false
 
   /@floating-ui/core/1.2.0:
     resolution: {integrity: sha512-GHUXPEhMEmTpnpIfesFA2KAoMJPb1SPQw964tToQwt+BbGXdhqTCWT1rOb0VURGylsxsYxiGMnseJ3IlclVpVA==}
@@ -4733,6 +4742,10 @@ packages:
       for-each: 0.3.3
       is-typed-array: 1.1.10
     dev: true
+
+  /typed.js/2.0.12:
+    resolution: {integrity: sha512-lyACZh1cu+vpfYY3DG/bvsGLXXbdoDDpWxmqta10IQUdMXisMXOEyl+jos+YT9uBbzK4QaKYBjT3R0kTJO0Slw==}
+    dev: false
 
   /typescript/4.9.5:
     resolution: {integrity: sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==}
