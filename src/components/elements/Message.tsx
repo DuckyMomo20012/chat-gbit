@@ -1,4 +1,5 @@
 import {
+  Box,
   Center,
   Group,
   Image,
@@ -8,11 +9,13 @@ import {
 } from '@mantine/core';
 import Avatar from 'boring-avatars';
 import clsx from 'clsx';
+import { forwardRef } from 'react';
 
 export type TChat = {
   id: string;
   type: 'prompt' | 'completion';
-  text: React.ReactNode;
+  text: string;
+  isTyping: boolean;
 };
 
 type TMessageProp = Omit<TChat, 'id'> & {
@@ -20,7 +23,10 @@ type TMessageProp = Omit<TChat, 'id'> & {
   colors?: Array<string>;
 };
 
-const Message = ({ userName, colors, type, text }: TMessageProp) => {
+const Message = forwardRef(function Message(
+  { userName, colors, type, text, isTyping }: TMessageProp,
+  ref: React.Ref<HTMLSpanElement>,
+) {
   return (
     <Center
       className={clsx('w-full p-4', {
@@ -50,10 +56,16 @@ const Message = ({ userName, colors, type, text }: TMessageProp) => {
               <Loader size="sm" />
             ))}
         </MantineAvatar>
-        <Text>{text}</Text>
+        {!isTyping && <Text>{text}</Text>}
+
+        {isTyping && (
+          <Text>
+            <Box component="span" ref={ref} />
+          </Text>
+        )}
       </Group>
     </Center>
   );
-};
+});
 
 export { Message };
