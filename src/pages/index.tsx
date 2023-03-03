@@ -88,6 +88,24 @@ const HomePage = () => {
                 Stop generating
               </Button>
             )}
+
+            {chat.length > 0 && !isTyping && (
+              <Button
+                leftIcon={
+                  <Icon
+                    height={16}
+                    icon="material-symbols:autorenew"
+                    width={16}
+                  />
+                }
+                onClick={() => {
+                  //
+                }}
+                variant="outline"
+              >
+                Regenerate response
+              </Button>
+            )}
             <TextInput
               className="w-full md:w-1/2"
               rightSection={
