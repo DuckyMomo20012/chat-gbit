@@ -19,10 +19,7 @@ const HomePage = () => {
   const dispatch = useDispatch();
 
   const typingsRef = useRef<
-    Map<
-      string,
-      { node: HTMLSpanElement; observer: MutationObserver; typed: Typed }
-    >
+    Map<string, { node: HTMLSpanElement; typed: Typed }>
   >(new Map());
 
   const { register, reset, handleSubmit, setFocus } = useForm();

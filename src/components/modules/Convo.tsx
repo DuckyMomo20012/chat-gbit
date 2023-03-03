@@ -13,10 +13,7 @@ const Convo = ({
 }: {
   chat: Array<TChat>;
   typingsRef: React.MutableRefObject<
-    Map<
-      string,
-      { node: HTMLSpanElement; observer: MutationObserver; typed: Typed }
-    >
+    Map<string, { node: HTMLSpanElement; typed: Typed }>
   >;
 }) => {
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -89,29 +86,16 @@ const Convo = ({
               ref={(node: HTMLSpanElement) => {
                 // NOTE: Component unmounting, so we need to clean up.
                 if (!node) {
-                  typingsRef.current.get(item.id).observer.disconnect();
                   typingsRef.current.get(item.id).typed.destroy();
                   typingsRef.current.delete(item.id);
                   return;
                 }
 
-                // NOTE: Urgh, too much steps just to scroll to bottom on new
-                // word typed. I'm sure there's a better way to do this.
-                const observer = new MutationObserver((mutationList) => {
-                  mutationList.forEach(() => {
-                    // NOTE: This will only scroll to bottom if the user is at
-                    // the bottom of the chat.
-                    if (intersectEntryRef.current?.isIntersecting) {
-                      bottomRef.current?.scrollIntoView({
-                        behavior: 'smooth',
-                      });
-                    }
-                  });
-                });
-
                 const typed = new Typed(node, {
-                  strings: [item.text.replace(/(\w+)/g, '`$1`')],
-                  typeSpeed: 200,
+                  // NOTE: A little hacky, we pause the typing for 1ms to
+                  // trigger the onTypingPaused event.
+                  strings: [item.text.replace(/(\w+)/g, '^1 `$1`')],
+                  typeSpeed: 100,
                   cursorChar: '█',
                   onStringTyped: () => {
                     dispatch(
@@ -121,13 +105,16 @@ const Convo = ({
                       }),
                     );
                   },
+                  onTypingPaused: () => {
+                    if (intersectEntryRef.current?.isIntersecting) {
+                      bottomRef.current?.scrollIntoView({
+                        behavior: 'smooth',
+                      });
+                    }
+                  },
                 });
 
-                observer.observe(node, {
-                  childList: true,
-                });
-
-                typingsRef.current.set(item.id, { node, observer, typed });
+                typingsRef.current.set(item.id, { node, typed });
               }}
               text={item.text}
               type={item.type}
