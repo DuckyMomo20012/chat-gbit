@@ -9,12 +9,13 @@ const AppShell = ({ children }: { children?: React.ReactNode }) => {
 
   return (
     <MantineAppShell
-      className="relative"
+      className="h-screen"
       footer={<Footer />}
       header={<Header setNavBarOpened={setNavBarOpened} />}
       navbar={
         <Navbar navBarOpened={navBarOpened} setNavBarOpened={setNavBarOpened} />
       }
+      padding={0}
     >
       {navBarOpened && <Overlay color="black" opacity={0.5} zIndex={199} />}
       {children}
