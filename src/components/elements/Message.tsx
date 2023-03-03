@@ -39,9 +39,15 @@ const Message = forwardRef(function Message(
           color="indigo"
           radius="sm"
           size="md"
+          variant="filled"
         >
           {type === 'completion' && (
-            <Image className="p-1" src="/img/chatgpt.svg" />
+            <Image
+              alt="chatgpt-avatar"
+              height={28}
+              src="/img/chatgpt.svg"
+              width={28}
+            />
           )}
 
           {type === 'prompt' &&
