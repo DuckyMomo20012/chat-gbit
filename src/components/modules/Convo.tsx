@@ -99,11 +99,13 @@ const Convo = ({
                 // word typed. I'm sure there's a better way to do this.
                 const observer = new MutationObserver((mutationList) => {
                   mutationList.forEach(() => {
-                    // NOTE: This will aggressively scroll to bottom on every
-                    // new character typed.
-                    bottomRef.current?.scrollIntoView({
-                      behavior: 'smooth',
-                    });
+                    // NOTE: This will only scroll to bottom if the user is at
+                    // the bottom of the chat.
+                    if (intersectEntryRef.current?.isIntersecting) {
+                      bottomRef.current?.scrollIntoView({
+                        behavior: 'smooth',
+                      });
+                    }
                   });
                 });
 
