@@ -29,6 +29,8 @@ const HomePage = () => {
   }, [setFocus, chat]);
 
   const onSubmit = (data: TFormData) => {
+    if (isTyping) return;
+
     reset();
     dispatch(
       addMessage({
