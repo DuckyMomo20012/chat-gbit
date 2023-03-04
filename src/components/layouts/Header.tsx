@@ -117,7 +117,7 @@ const Header = ({ setNavBarOpened }: HeaderProps) => {
           size="lg"
           variant="subtle"
         >
-          <Icon height={24} icon="ic:baseline-menu" width={24} />
+          <Icon height={24} icon="material-symbols:menu" width={24} />
         </ActionIcon>
 
         <Group className="sm:flex hidden" position="left">
@@ -167,7 +167,11 @@ const Header = ({ setNavBarOpened }: HeaderProps) => {
               variant="outline"
             >
               <Icon
-                icon={dark ? 'ic:outline-dark-mode' : 'ic:outline-light-mode'}
+                icon={
+                  dark
+                    ? 'material-symbols:dark-mode'
+                    : 'material-symbols:light-mode'
+                }
                 width={24}
               />
             </ActionIcon>

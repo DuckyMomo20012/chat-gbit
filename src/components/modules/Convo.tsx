@@ -136,7 +136,11 @@ const Convo = ({
         size="lg"
         variant="light"
       >
-        <Icon height={24} icon="ic:outline-arrow-circle-down" width={24} />
+        <Icon
+          height={24}
+          icon="material-symbols:arrow-circle-down-outline"
+          width={24}
+        />
       </ActionIcon>
     </Stack>
   );

@@ -65,7 +65,11 @@ const HomePage = () => {
             {isTyping && (
               <Button
                 leftIcon={
-                  <Icon height={16} icon="ic:outline-stop" width={16} />
+                  <Icon
+                    height={16}
+                    icon="material-symbols:stop-outline"
+                    width={16}
+                  />
                 }
                 onClick={() => {
                   typingsRef.current?.forEach((val, key) => {
@@ -92,7 +96,7 @@ const HomePage = () => {
                   type="submit"
                   variant="light"
                 >
-                  <Icon height={16} icon="ic:outline-send" />
+                  <Icon height={16} icon="material-symbols:send-outline" />
                 </ActionIcon>
               }
               size="lg"

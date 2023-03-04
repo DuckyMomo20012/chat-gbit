@@ -97,7 +97,9 @@ const Navbar = ({ navBarOpened, setNavBarOpened }: NavbarProps) => {
                   >
                     <Icon
                       icon={
-                        dark ? 'ic:outline-dark-mode' : 'ic:outline-light-mode'
+                        dark
+                          ? 'material-symbols:dark-mode'
+                          : 'material-symbols:light-mode'
                       }
                       width={24}
                     />
