@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import { PURGE } from 'redux-persist';
 
 export type TModel = {
   name: 'gpt-3.5-turbo' | 'gpt-3.5-turbo-0301';
@@ -26,6 +27,11 @@ const modelSlice = createSlice({
     setModel(state, action: PayloadAction<TModel['name']>) {
       return MODEL.find((m) => m.name === action.payload);
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(PURGE, () => {
+      return initialState;
+    });
   },
 });
 

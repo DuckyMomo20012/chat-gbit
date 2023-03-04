@@ -1,5 +1,6 @@
 import { createSlice, nanoid } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import { PURGE } from 'redux-persist';
 import type { TChat } from '@/components/elements/Message';
 
 const initialState: Array<TChat> = [];
@@ -40,6 +41,11 @@ const convoSlice = createSlice({
         Object.assign(message, { ...message, ...payload.mutation });
       }
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(PURGE, () => {
+      return initialState;
+    });
   },
 });
 
