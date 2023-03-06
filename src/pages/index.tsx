@@ -34,16 +34,17 @@ const HomePage = () => {
     reset();
     dispatch(
       addMessage({
-        type: 'prompt',
-        text: data.prompt,
+        role: 'user',
+        content: data.prompt,
         isTyping: false,
       }),
     );
 
     dispatch(
       addMessage({
-        type: 'completion',
-        text: 'Treat refs as an escape hatch. Refs are useful when you work with external systems or browser APIs. If much of your application logic and data flow relies on refs, you might want to rethink your approach.',
+        role: 'assistant',
+        content:
+          'Treat refs as an escape hatch. Refs are useful when you work with external systems or browser APIs. If much of your application logic and data flow relies on refs, you might want to rethink your approach.',
         isTyping: true,
       }),
     );
@@ -78,7 +79,10 @@ const HomePage = () => {
                     dispatch(
                       mutateMessage({
                         id: key,
-                        mutation: { isTyping: false, text: val.node.innerText },
+                        mutation: {
+                          isTyping: false,
+                          content: val.node.innerText,
+                        },
                       }),
                     );
                   });
