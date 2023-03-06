@@ -1,7 +1,8 @@
-import { Button, Code, Menu, Text } from '@mantine/core';
+import { Icon } from '@iconify/react';
+import { ActionIcon, Button, Code, Menu, Text, Tooltip } from '@mantine/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { MODEL, setModel } from '@/store/slice/modelSlice';
-import { RootState } from '@/store/store';
+import { RootState, persistor } from '@/store/store';
 
 const ChatToolbar = () => {
   const chat = useSelector((state: RootState) => state.convo);
@@ -110,6 +111,19 @@ const ChatToolbar = () => {
           ))}
         </Menu.Dropdown>
       </Menu>
+
+      <Tooltip label="Clear conversation">
+        <ActionIcon
+          aria-label="Clear conversation"
+          color="red"
+          data-test-id="remove-convo"
+          onClick={() => persistor.purge()}
+          size="lg"
+          variant="outline"
+        >
+          <Icon icon="material-symbols:delete-outline" width={24} />
+        </ActionIcon>
+      </Tooltip>
     </>
   );
 };
