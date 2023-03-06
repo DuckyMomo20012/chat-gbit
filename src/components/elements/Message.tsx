@@ -10,27 +10,21 @@ import {
 import Avatar from 'boring-avatars';
 import clsx from 'clsx';
 import { forwardRef } from 'react';
+import type { TChat } from '@/store/slice/convoSlice';
 
-export type TChat = {
-  id: string;
-  type: 'prompt' | 'completion';
-  text: string;
-  isTyping: boolean;
-};
-
-type TMessageProp = Omit<TChat, 'id'> & {
+type TMessageProp = Pick<TChat, 'role' | 'content' | 'isTyping'> & {
   userName?: string;
   colors?: Array<string>;
 };
 
 const Message = forwardRef(function Message(
-  { userName, colors, type, text, isTyping }: TMessageProp,
+  { userName, colors, role, content, isTyping }: TMessageProp,
   ref: React.Ref<HTMLSpanElement>,
 ) {
   return (
     <Center
       className={clsx('w-full p-4', {
-        'bg-gray-100 dark:bg-gray-700': type === 'completion',
+        'bg-gray-100 dark:bg-gray-700': role === 'assistant',
       })}
     >
       <Group className="w-full md:max-w-2xl lg:max-w-2xl xl:max-w-3xl" noWrap>
@@ -41,7 +35,7 @@ const Message = forwardRef(function Message(
           size="md"
           variant="filled"
         >
-          {type === 'completion' && (
+          {role === 'assistant' && (
             <Image
               alt="chatgpt-avatar"
               height={28}
@@ -50,7 +44,7 @@ const Message = forwardRef(function Message(
             />
           )}
 
-          {type === 'prompt' &&
+          {role === 'user' &&
             (userName ? (
               <Avatar
                 colors={colors}
@@ -62,7 +56,7 @@ const Message = forwardRef(function Message(
               <Loader size="sm" />
             ))}
         </MantineAvatar>
-        {!isTyping && <Text>{text}</Text>}
+        {!isTyping && <Text>{content}</Text>}
 
         {isTyping && (
           <Text>
