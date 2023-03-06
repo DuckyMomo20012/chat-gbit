@@ -1,10 +1,12 @@
 import { Button, Code, Menu, Text } from '@mantine/core';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { MODEL, setModel } from '@/store/slice/modelSlice';
 import { RootState } from '@/store/store';
 
 const ChatToolbar = () => {
   const chat = useSelector((state: RootState) => state.convo);
   const currModel = useSelector((state: RootState) => state.model);
+  const dispatch = useDispatch();
 
   const totalPromptToken = chat.reduce((acc, item) => {
     if (item.usage?.prompt_tokens) {
@@ -80,6 +82,32 @@ const ChatToolbar = () => {
               )}
             </Text>
           </Menu.Item>
+        </Menu.Dropdown>
+      </Menu>
+
+      <Menu>
+        <Menu.Target>
+          <Button variant="outline">Model</Button>
+        </Menu.Target>
+
+        <Menu.Dropdown>
+          {MODEL.map((model, idx) => (
+            <Menu.Item
+              key={idx}
+              onClick={() => dispatch(setModel(model.name))}
+              rightSection={
+                <Code className="ml-2" color="orange">
+                  {new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                    maximumFractionDigits: 4,
+                  }).format(model.price)}
+                </Code>
+              }
+            >
+              {model.name}
+            </Menu.Item>
+          ))}
         </Menu.Dropdown>
       </Menu>
     </>
