@@ -18,6 +18,7 @@ import {
   NavMenuListCompact,
 } from '@/components/elements/NavMenuList';
 import { navBarItems as defaultNavBarItems } from '@/components/layouts/navBarItems';
+import { ChatToolbar } from '@/components/modules/ChatToolbar';
 import { NavPath } from '@/types/NavPath';
 
 type HeaderProps = {
@@ -156,6 +157,8 @@ const Header = ({ setNavBarOpened }: HeaderProps) => {
         </Group>
 
         <Group noWrap>
+          <ChatToolbar />
+
           <Tooltip label={dark ? 'Light mode' : 'Dark mode'}>
             <ActionIcon
               aria-label="Toggle color scheme"
