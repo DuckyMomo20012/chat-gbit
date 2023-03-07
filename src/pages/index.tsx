@@ -18,6 +18,7 @@ import type { RootState } from '@/store/store';
 
 const HomePage = () => {
   const chat = useSelector((state: RootState) => state.convo);
+  const lastMessage = useSelector((state: RootState) => state.convo.at(-1));
   const model = useSelector((state: RootState) => state.model);
   const isTyping = chat.filter((item) => item.isTyping).length > 0;
   const dispatch = useDispatch();
@@ -55,7 +56,7 @@ const HomePage = () => {
   }, [chat, regenerate]);
 
   useEffect(() => {
-    if (completion && status.current === 'submit') {
+    if (completion && status.current !== 'stop') {
       dispatch(
         addMessage({
           ...completion,
@@ -66,23 +67,8 @@ const HomePage = () => {
       );
 
       status.current = 'stop';
-    } else if (completion && status.current === 'refetch') {
-      const lastMessage = chat.at(-1);
-      dispatch(
-        mutateMessage({
-          id: lastMessage.id,
-          mutation: {
-            ...completion,
-            role: 'assistant',
-            content: completion.choices[0].message.content,
-            isTyping: true,
-          },
-        }),
-      );
-
-      status.current = 'stop';
     }
-  }, [completion, status, chat, dispatch]);
+  }, [completion, dispatch]);
 
   const onSubmit = async (data: TFormData) => {
     if (isTyping) return;
