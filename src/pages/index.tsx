@@ -73,13 +73,29 @@ const HomePage = () => {
   const onSubmit = async (data: TFormData) => {
     if (isTyping) return;
 
-    dispatch(
-      addMessage({
-        role: 'user',
-        content: data.prompt,
-        isTyping: false,
-      }),
-    );
+    if (lastMessage?.role === 'user') {
+      // NOTE: Mutate last prompt message if there is no completion added
+      dispatch(
+        mutateMessage({
+          id: lastMessage.id,
+          mutation: {
+            role: 'user',
+            content: data.prompt,
+            isTyping: false,
+          },
+        }),
+      );
+    } else {
+      // NOTE: Add new prompt message if there is a completion added before this
+      // message
+      dispatch(
+        addMessage({
+          role: 'user',
+          content: data.prompt,
+          isTyping: false,
+        }),
+      );
+    }
 
     isSubmitted.current = true;
   };
