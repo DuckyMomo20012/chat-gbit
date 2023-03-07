@@ -23,6 +23,7 @@ const HomePage = () => {
   >(new Map());
 
   const status = useRef<'stop' | 'submit' | 'refetch'>('stop');
+  const isSubmitted = useRef(false);
   const { refetch: regenerate, data: completion } = useQuery({
     queryKey: ['completions'],
     queryFn: async (): Promise<CreateChatCompletionResponse> => {
@@ -40,6 +41,14 @@ const HomePage = () => {
     },
     enabled: false,
   });
+
+  useEffect(() => {
+    if (isSubmitted.current) {
+      regenerate();
+      status.current = 'submit';
+      isSubmitted.current = false;
+    }
+  }, [chat, regenerate]);
 
   useEffect(() => {
     if (completion && status.current === 'submit') {
@@ -82,8 +91,7 @@ const HomePage = () => {
       }),
     );
 
-    regenerate();
-    status.current = 'submit';
+    isSubmitted.current = true;
   };
 
   return (
