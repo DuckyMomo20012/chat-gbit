@@ -22,16 +22,29 @@ const HomePage = () => {
     Map<string, { node: HTMLSpanElement; typed: Typed }>
   >(new Map());
 
-  const { register, reset, handleSubmit, setFocus } = useForm();
+  const {
+    register,
+    reset,
+    handleSubmit,
+    setFocus,
+    formState: { isSubmitSuccessful },
+  } = useForm();
 
   useEffect(() => {
     setFocus('prompt');
   }, [setFocus, chat]);
 
+  useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset({
+        prompt: '',
+      });
+    }
+  }, [isSubmitSuccessful, reset]);
+
   const onSubmit = (data: TFormData) => {
     if (isTyping) return;
 
-    reset();
     dispatch(
       addMessage({
         role: 'user',
@@ -125,7 +138,7 @@ const HomePage = () => {
               }
               size="lg"
               {...register('prompt', {
-                required: true,
+                validate: (value: string) => value.trim().length > 0,
               })}
             />
             <Text align="center" color="dimmed" fz="sm">
