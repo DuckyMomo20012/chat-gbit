@@ -36,11 +36,12 @@ const convoSlice = createSlice({
     ) => {
       const { payload } = action;
 
-      const message = state.find((m) => m.id === payload.id);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { id, ...mutation } = payload.mutation;
 
-      if (message) {
-        Object.assign(message, { ...message, ...payload.mutation });
-      }
+      return state.map((message) =>
+        message.id === payload.id ? { ...message, ...mutation } : message,
+      );
     },
   },
   extraReducers: (builder) => {
