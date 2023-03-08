@@ -1,16 +1,25 @@
 import { Icon } from '@iconify/react';
 import { Button, Stack, Text } from '@mantine/core';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import Head from 'next/head';
-import { useRef } from 'react';
+import { CreateChatCompletionResponse } from 'openai';
+import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type Typed from 'typed.js';
 import { Convo } from '@/components/modules/Convo';
 import { PromptForm, TFormData } from '@/components/modules/PromptForm';
-import { addMessage, mutateMessage } from '@/store/slice/convoSlice';
+import {
+  addMessage,
+  mutateMessage,
+  removeMessage,
+} from '@/store/slice/convoSlice';
 import type { RootState } from '@/store/store';
 
 const HomePage = () => {
   const chat = useSelector((state: RootState) => state.convo);
+  const lastMessage = useSelector((state: RootState) => state.convo.at(-1));
+  const model = useSelector((state: RootState) => state.model);
   const isTyping = chat.filter((item) => item.isTyping).length > 0;
   const dispatch = useDispatch();
 
@@ -18,25 +27,77 @@ const HomePage = () => {
     Map<string, { node: HTMLSpanElement; typed: Typed }>
   >(new Map());
 
-  const onSubmit = (data: TFormData) => {
+  const status = useRef<'stop' | 'submit' | 'refetch'>('stop');
+  const isSubmitted = useRef(false);
+  const { refetch: regenerate, data: completion } = useQuery({
+    queryKey: ['completions'],
+    queryFn: async (): Promise<CreateChatCompletionResponse> => {
+      const { data } = await axios.post('/api/completions', {
+        data: {
+          model: model.name,
+          messages: chat.map((item) => ({
+            role: item.role,
+            content: item.content,
+          })),
+        },
+      });
+
+      return data;
+    },
+    enabled: false,
+  });
+
+  useEffect(() => {
+    if (isSubmitted.current) {
+      regenerate();
+      status.current = 'submit';
+      isSubmitted.current = false;
+    }
+  }, [chat, regenerate]);
+
+  useEffect(() => {
+    if (completion && status.current !== 'stop') {
+      dispatch(
+        addMessage({
+          ...completion,
+          role: 'assistant',
+          content: completion.choices[0].message.content,
+          isTyping: true,
+        }),
+      );
+
+      status.current = 'stop';
+    }
+  }, [completion, dispatch]);
+
+  const onSubmit = async (data: TFormData) => {
     if (isTyping) return;
 
-    dispatch(
-      addMessage({
-        role: 'user',
-        content: data.prompt,
-        isTyping: false,
-      }),
-    );
+    if (lastMessage?.role === 'user') {
+      // NOTE: Mutate last prompt message if there is no completion added
+      dispatch(
+        mutateMessage({
+          id: lastMessage.id,
+          mutation: {
+            role: 'user',
+            content: data.prompt,
+            isTyping: false,
+          },
+        }),
+      );
+    } else {
+      // NOTE: Add new prompt message if there is a completion added before this
+      // message
+      dispatch(
+        addMessage({
+          role: 'user',
+          content: data.prompt,
+          isTyping: false,
+        }),
+      );
+    }
 
-    dispatch(
-      addMessage({
-        role: 'assistant',
-        content:
-          'Treat refs as an escape hatch. Refs are useful when you work with external systems or browser APIs. If much of your application logic and data flow relies on refs, you might want to rethink your approach.',
-        isTyping: true,
-      }),
-    );
+    isSubmitted.current = true;
   };
 
   return (
@@ -91,7 +152,14 @@ const HomePage = () => {
                 />
               }
               onClick={() => {
-                //
+                regenerate();
+                status.current = 'refetch';
+
+                // NOTE: Remove last message if it's assistant's message before
+                // regenerating
+                if (lastMessage?.role === 'assistant') {
+                  dispatch(removeMessage({ id: lastMessage.id }));
+                }
               }}
               variant="outline"
             >
