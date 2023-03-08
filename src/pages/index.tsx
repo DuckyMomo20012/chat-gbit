@@ -148,7 +148,7 @@ const HomePage = () => {
             </Button>
           )}
 
-          {chat.length > 0 && !isTyping && (
+          {!isBusy && chat.length > 0 && (
             <Button
               leftIcon={
                 <Icon
