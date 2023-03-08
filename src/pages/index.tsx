@@ -9,7 +9,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import type Typed from 'typed.js';
 import { Convo } from '@/components/modules/Convo';
 import { PromptForm, TFormData } from '@/components/modules/PromptForm';
-import { addMessage, mutateMessage } from '@/store/slice/convoSlice';
+import {
+  addMessage,
+  mutateMessage,
+  removeMessage,
+} from '@/store/slice/convoSlice';
 import type { RootState } from '@/store/store';
 
 const HomePage = () => {
@@ -148,6 +152,12 @@ const HomePage = () => {
               onClick={() => {
                 regenerate();
                 status.current = 'refetch';
+
+                // NOTE: Remove last message if it's assistant's message before
+                // regenerating
+                if (lastMessage?.role === 'assistant') {
+                  dispatch(removeMessage({ id: lastMessage.id }));
+                }
               }}
               variant="outline"
             >
