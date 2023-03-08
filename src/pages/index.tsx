@@ -29,7 +29,11 @@ const HomePage = () => {
 
   const status = useRef<'stop' | 'submit' | 'refetch'>('stop');
   const isSubmitted = useRef(false);
-  const { refetch: regenerate, data: completion } = useQuery({
+  const {
+    refetch: regenerate,
+    isFetching,
+    data: completion,
+  } = useQuery({
     queryKey: ['completions'],
     queryFn: async (): Promise<CreateChatCompletionResponse> => {
       const { data } = await axios.post('/api/completions', {
@@ -110,7 +114,7 @@ const HomePage = () => {
         <meta content="Create new Chat GBiT" name="description"></meta>
       </Head>
 
-      <Convo chat={chat} typingsRef={typingsRef} />
+      <Convo chat={chat} isFetching={isFetching} typingsRef={typingsRef} />
 
       <Stack className="absolute bottom-0 w-full">
         <Stack align="center" className="dark:bg-black bg-white p-4">
