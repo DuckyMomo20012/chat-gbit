@@ -1,45 +1,43 @@
 <div align="center">
 
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://assets.vercel.com/image/upload/v1662130559/nextjs/Icon_dark_background.png">
-    <img src="https://assets.vercel.com/image/upload/v1662130559/nextjs/Icon_light_background.png" height="128">
-  </picture>
-  <h1>NextJS Template</h1>
+  <img src="https://user-images.githubusercontent.com/64480713/223765972-88a0a0e6-4a4c-4a8b-8996-46a706d6feee.svg" height="128">
+
+  <h1>Chat GBit</h1>
 
   <p>
-    A simple NextJS template
+    A simple Chat GPT clone
   </p>
 
 <!-- Badges -->
 <p>
-  <a href="https://github.com/DuckyMomo20012/nextjs-template/graphs/contributors">
-    <img src="https://img.shields.io/github/contributors/DuckyMomo20012/nextjs-template" alt="contributors" />
+  <a href="https://github.com/DuckyMomo20012/chat-gbit/graphs/contributors">
+    <img src="https://img.shields.io/github/contributors/DuckyMomo20012/chat-gbit" alt="contributors" />
   </a>
   <a href="">
-    <img src="https://img.shields.io/github/last-commit/DuckyMomo20012/nextjs-template" alt="last update" />
+    <img src="https://img.shields.io/github/last-commit/DuckyMomo20012/chat-gbit" alt="last update" />
   </a>
-  <a href="https://github.com/DuckyMomo20012/nextjs-template/network/members">
-    <img src="https://img.shields.io/github/forks/DuckyMomo20012/nextjs-template" alt="forks" />
+  <a href="https://github.com/DuckyMomo20012/chat-gbit/network/members">
+    <img src="https://img.shields.io/github/forks/DuckyMomo20012/chat-gbit" alt="forks" />
   </a>
-  <a href="https://github.com/DuckyMomo20012/nextjs-template/stargazers">
-    <img src="https://img.shields.io/github/stars/DuckyMomo20012/nextjs-template" alt="stars" />
+  <a href="https://github.com/DuckyMomo20012/chat-gbit/stargazers">
+    <img src="https://img.shields.io/github/stars/DuckyMomo20012/chat-gbit" alt="stars" />
   </a>
-  <a href="https://github.com/DuckyMomo20012/nextjs-template/issues/">
-    <img src="https://img.shields.io/github/issues/DuckyMomo20012/nextjs-template" alt="open issues" />
+  <a href="https://github.com/DuckyMomo20012/chat-gbit/issues/">
+    <img src="https://img.shields.io/github/issues/DuckyMomo20012/chat-gbit" alt="open issues" />
   </a>
-  <a href="https://github.com/DuckyMomo20012/nextjs-template/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/DuckyMomo20012/nextjs-template.svg" alt="license" />
+  <a href="https://github.com/DuckyMomo20012/chat-gbit/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/DuckyMomo20012/chat-gbit.svg" alt="license" />
   </a>
 </p>
 
 <h4>
-    <a href="https://github.com/DuckyMomo20012/nextjs-template/">View Demo</a>
+    <a href="https://github.com/DuckyMomo20012/chat-gbit/">View Demo</a>
   <span> · </span>
-    <a href="https://github.com/DuckyMomo20012/nextjs-template">Documentation</a>
+    <a href="https://github.com/DuckyMomo20012/chat-gbit">Documentation</a>
   <span> · </span>
-    <a href="https://github.com/DuckyMomo20012/nextjs-template/issues/">Report Bug</a>
+    <a href="https://github.com/DuckyMomo20012/chat-gbit/issues/">Report Bug</a>
   <span> · </span>
-    <a href="https://github.com/DuckyMomo20012/nextjs-template/issues/">Request Feature</a>
+    <a href="https://github.com/DuckyMomo20012/chat-gbit/issues/">Request Feature</a>
   </h4>
 </div>
 
@@ -53,13 +51,10 @@
   - [Screenshots](#camera-screenshots)
   - [Tech Stack](#space_invader-tech-stack)
   - [Features](#dart-features)
-  - [Color Reference](#art-color-reference)
   - [Environment Variables](#key-environment-variables)
 - [Getting Started](#toolbox-getting-started)
   - [Prerequisites](#bangbang-prerequisites)
   - [Run Locally](#running-run-locally)
-  - [Running Tests](#test_tube-running-tests)
-  - [Deployment](#triangular_flag_on_post-deployment)
 - [Usage](#eyes-usage)
 - [Roadmap](#compass-roadmap)
 - [Contributing](#wave-contributing)
@@ -78,10 +73,8 @@
 ### :camera: Screenshots
 
 <div align="center">
-  <p>Light mode</p>
-  <img src="https://user-images.githubusercontent.com/64480713/215514184-6bd4017d-6ef1-4c76-b8ee-6cf399b19845.png" alt="screenshot" />
-  <p>Dark mode</p>
-  <img src="https://user-images.githubusercontent.com/64480713/215514191-9be45946-0168-4cd9-9c81-88344bd5307f.png" alt="screenshot_dark_mode" />
+  <p>Demo</p>
+  <img src="https://user-images.githubusercontent.com/64480713/223768073-4b54adf6-3d08-40f4-9e17-cb7464fc15dd.png" alt="screenshot" />
 </div>
 
 <!-- TechStack -->
@@ -108,34 +101,7 @@
 <details>
   <summary>Server</summary>
   <ul>
-    <li><a href="https://www.typescriptlang.org/">Typescript</a></li>
-    <li><a href="https://expressjs.com/">Express.js</a></li>
-    <li><a href="https://go.dev/">Golang</a></li>
-    <li><a href="https://nestjs.com/">Nest.js</a></li>
-    <li><a href="https://socket.io/">SocketIO</a></li>
-    <li><a href="https://www.prisma.io/">Prisma</a></li>
-    <li><a href="https://www.apollographql.com/">Apollo</a></li>
-    <li><a href="https://graphql.org/">GraphQL</a></li>
-  </ul>
-</details>
-
-<details>
-<summary>Database</summary>
-  <ul>
-    <li><a href="https://www.mysql.com/">MySQL</a></li>
-    <li><a href="https://www.postgresql.org/">PostgreSQL</a></li>
-    <li><a href="https://redis.io/">Redis</a></li>
-    <li><a href="https://neo4j.com/">Neo4j</a></li>
-    <li><a href="https://www.mongodb.com/">MongoDB</a></li>
-  </ul>
-</details>
-
-<details>
-<summary>DevOps</summary>
-  <ul>
-    <li><a href="https://www.docker.com/">Docker</a></li>
-    <li><a href="https://www.jenkins.io/">Jenkins</a></li>
-    <li><a href="https://circleci.com/">CircleCLI</a></li>
+    <li><a href="https://nextjs.org/">NextJS</a></li>
   </ul>
 </details>
 
@@ -143,20 +109,12 @@
 
 ### :dart: Features
 
-- Feature 1.
-- Feature 2.
-- Feature 3.
-
-<!-- Color Reference -->
-
-### :art: Color Reference
-
-| Color           | Hex                                                              |
-| --------------- | ---------------------------------------------------------------- |
-| Primary Color   | ![#222831](https://placehold.jp/222831/222831/10x10.png) #222831 |
-| Secondary Color | ![#393E46](https://placehold.jp/393E46/393E46/10x10.png) #393E46 |
-| Accent Color    | ![#00ADB5](https://placehold.jp/00ADB5/00ADB5/10x10.png) #00ADB5 |
-| Text Color      | ![#EEEEEE](https://placehold.jp/EEEEEE/EEEEEE/10x10.png) #EEEEEE |
+- New chat completion.
+- Set model for chat.
+- Monitor usage.
+- Save chat history to local storage.
+- Clear chat history.
+- Regenerate chat completion.
 
 <!-- Env Variables -->
 
@@ -175,12 +133,17 @@ your `.env` file:
 
   > **Note**: Doesn't have to set `NEXTAUTH_URL` when deploying to vercel.
 
+- **App configs:**
+
+  `OPENAI_API_KEY`: OpenAI API key.
+
 E.g:
 
 ```
 # .env
 NEXTAUTH_SECRET="my-secret-key"
 NEXTAUTH_URL="http://localhost:3000/"
+OPENAI_API_KEY="sk-***"
 ```
 
 You can also check out the file `.env.example` to see all required environment
@@ -207,13 +170,13 @@ npm install --global pnpm
 Clone the project:
 
 ```bash
-git clone https://github.com/DuckyMomo20012/nextjs-template.git
+git clone https://github.com/DuckyMomo20012/chat-gbit.git
 ```
 
 Go to the project directory:
 
 ```bash
-cd nextjs-template
+cd chat-gbit
 ```
 
 Install dependencies:
@@ -228,55 +191,100 @@ Start the server:
 pnpm dev
 ```
 
-<!-- Running Tests -->
-
-### :test_tube: Running Tests
-
-To run tests, run the following command:
-
-```bash
-pnpm test
-```
-
-<!-- Deployment -->
-
-### :triangular_flag_on_post: Deployment
-
-To deploy this project run:
-
-```bash
-pnpm deploy
-```
-
 <!-- Usage -->
 
 ## :eyes: Usage
 
-Use this space to tell a little more about your project and how it can be used.
-Show additional screenshots, code samples, demos, or links to other resources.
+### New chat completion
 
-```jsx
-// foo.jsx
-import Component from 'nextjs-template';
+This app uses the new [Chat Completion
+API](https://platform.openai.com/docs/api-reference/chat) to generate the chat.
 
-function App() {
-  return <Component />;
-}
-```
+### Basic usage
+
+You can communicate with the chatbot by typing in the input box and pressing the
+`Enter` key or clicking the `Send` button.
+
+- When there is no message in the chat, you can whether submit the prompt with
+  the role `user` or with `system` by check the `Set as system instruction`
+  checkbox.
+
+- When you submit the prompt with the role `user`, the chatbot will submit the
+  request to the server. The server will call the OpenAI API to generate the
+  next completion. After that, the server will send the completion back to the
+  client.
+
+  - While the client is fetching the completion, user can't submit the next
+    prompt or stop the generation.
+
+- When the client is typing the completion, you can stop the generation by
+  clicking the `Stop generating` button.
+
+  > **Note**: The completion is **already generated** and sent to the client
+  > before typing the completion. **So you are billed for that completion**.
+
+- When there is no typing completion and not fetching completion, you can
+  regenerate the completion by clicking the `Regenerate response` button.
+
+- When something went wrong and the completion wasn't not added to the chat, you
+  can:
+
+  - Regenerate the completion.
+
+  - Submit the prompt again. The new prompt will replace the old prompt in the
+    chat.
+
+### Set model for chat
+
+You can set the model for the chat by clicking the `Set model` button.
+
+Available models:
+
+- `gpt-3.5-turbo`
+- `gpt-3.5-turbo-0301`: supported through at least June 1st.
+
+### Monitor usage
+
+You can monitor the usage by clicking the `Usage` button.
+
+The usage panel will show the usage tokens in the chat:
+
+- `Current Tokens`: The current usage tokens of the messages **displaying in the
+  chat**.
+
+  - The `Next bill` will inform you the minimum cost of the next bill.
+
+- `All-time Tokens`: The total usage user requested to the server. This will
+  include the usage tokens of the messages **not displaying in the chat**, e.g.,
+  stopped generation, regenerated, etc.
+
+### Save chat history to local storage
+
+By default the chat history will be saved to local storage. Therefore, you can
+still see the chat history after refreshing the page.
+
+### Clear chat history
+
+You can clear the chat history by clicking the `Clear chat history` button. All
+the data stored in local storage will be removed.
 
 <!-- Roadmap -->
 
 ## :compass: Roadmap
 
-- [x] Todo 1.
-- [ ] Todo 2.
+- [ ] Load training conversation from local file or from text input.
+- [ ] Hide message.
+- [ ] Display code block in completion.
+- [ ] Edit user prompt.
+- [ ] Support chat toolbar for small screen.
+- [ ] Open usage panel in new tab.
 
 <!-- Contributing -->
 
 ## :wave: Contributing
 
-<a href="https://github.com/DuckyMomo20012/nextjs-template/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=DuckyMomo20012/nextjs-template" />
+<a href="https://github.com/DuckyMomo20012/chat-gbit/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=DuckyMomo20012/chat-gbit" />
 </a>
 
 Contributions are always welcome!
@@ -285,26 +293,32 @@ Contributions are always welcome!
 
 ### :scroll: Code of Conduct
 
-Please read the [Code of Conduct](https://github.com/DuckyMomo20012/nextjs-template/blob/main/CODE_OF_CONDUCT.md).
+Please read the [Code of Conduct](https://github.com/DuckyMomo20012/chat-gbit/blob/main/CODE_OF_CONDUCT.md).
 
 <!-- FAQ -->
 
 ## :grey_question: FAQ
 
-- Question 1
+- Why there is a difference between `Current Tokens` and `All-time Tokens`?
 
-  - Answer 1.
+  - `Current Tokens`: The current usage tokens of the messages **displaying in
+    the chat**.
 
-- Question 2
+  - `All-time Tokens`: The total usage user requested to the server. This will
+    include the usage tokens of the messages **not displaying in the chat**,
+    e.g., stopped generation, regenerated, etc.
 
-  - Answer 2.
+- Do you support other models?
+
+  - No, the Chat Completion API only [supports](https://platform.openai.com/docs/api-reference/chat/create#chat/create-model) `gpt-3.5-turbo` and
+    `gpt-3.5-turbo-0301`.
 
 <!-- License -->
 
 ## :warning: License
 
 Distributed under MIT license. See
-[LICENSE](https://github.com/DuckyMomo20012/nextjs-template/blob/main/LICENSE)
+[LICENSE](https://github.com/DuckyMomo20012/chat-gbit/blob/main/LICENSE)
 for more information.
 
 <!-- Contact -->
@@ -314,7 +328,7 @@ for more information.
 Duong Vinh - [@duckymomo20012](https://twitter.com/duckymomo20012) -
 tienvinh.duong4@gmail.com
 
-Project Link: [https://github.com/DuckyMomo20012/nextjs-template](https://github.com/DuckyMomo20012/nextjs-template).
+Project Link: [https://github.com/DuckyMomo20012/chat-gbit](https://github.com/DuckyMomo20012/chat-gbit).
 
 <!-- Acknowledgments -->
 
