@@ -27,6 +27,7 @@ const Message = forwardRef(function Message(
     <Center
       className={clsx('w-full p-4', {
         'bg-gray-100 dark:bg-gray-700': role === 'assistant',
+        'bg-pink-100 dark:bg-pink-700': role === 'system',
       })}
     >
       <Group className="w-full md:max-w-2xl lg:max-w-2xl xl:max-w-3xl" noWrap>
