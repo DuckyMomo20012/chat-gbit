@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Typed from 'typed.js';
 import { Message } from '@/components/elements/Message';
-import { mutateMessage } from '@/store/slice/convoSlice';
+import { setTyping } from '@/store/slice/convoSlice';
 import type { TChat } from '@/store/slice/convoSlice';
 
 const Convo = ({
@@ -101,9 +101,9 @@ const Convo = ({
                   cursorChar: '█',
                   onStringTyped: () => {
                     dispatch(
-                      mutateMessage({
+                      setTyping({
                         id: item.id,
-                        mutation: { isTyping: false },
+                        isTyping: false,
                       }),
                     );
                   },
