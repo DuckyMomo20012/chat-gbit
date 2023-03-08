@@ -29,7 +29,11 @@ const HomePage = () => {
 
   const status = useRef<'stop' | 'submit' | 'refetch'>('stop');
   const isSubmitted = useRef(false);
-  const { refetch: regenerate, data: completion } = useQuery({
+  const {
+    refetch: regenerate,
+    isFetching,
+    data: completion,
+  } = useQuery({
     queryKey: ['completions'],
     queryFn: async (): Promise<CreateChatCompletionResponse> => {
       const { data } = await axios.post('/api/completions', {
@@ -46,6 +50,8 @@ const HomePage = () => {
     },
     enabled: false,
   });
+
+  const isBusy = isFetching || isTyping;
 
   useEffect(() => {
     if (isSubmitted.current) {
@@ -71,7 +77,7 @@ const HomePage = () => {
   }, [completion, dispatch]);
 
   const onSubmit = async (data: TFormData) => {
-    if (isTyping) return;
+    if (isBusy) return;
 
     if (lastMessage?.role === 'user') {
       // NOTE: Mutate last prompt message if there is no completion added
@@ -110,7 +116,7 @@ const HomePage = () => {
         <meta content="Create new Chat GBiT" name="description"></meta>
       </Head>
 
-      <Convo chat={chat} typingsRef={typingsRef} />
+      <Convo chat={chat} isFetching={isFetching} typingsRef={typingsRef} />
 
       <Stack className="absolute bottom-0 w-full">
         <Stack align="center" className="dark:bg-black bg-white p-4">
@@ -142,7 +148,7 @@ const HomePage = () => {
             </Button>
           )}
 
-          {chat.length > 0 && !isTyping && (
+          {!isBusy && chat.length > 0 && (
             <Button
               leftIcon={
                 <Icon
@@ -167,7 +173,7 @@ const HomePage = () => {
             </Button>
           )}
 
-          <PromptForm isTyping={isTyping} onSubmit={onSubmit} />
+          <PromptForm isBusy={isBusy} onSubmit={onSubmit} />
 
           <Text align="center" color="dimmed" fz="sm">
             This program is designed for testing ChatGPT API only.

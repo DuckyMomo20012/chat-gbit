@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/aria-role */
 import { faker } from '@faker-js/faker';
 import { Icon } from '@iconify/react';
 import { ActionIcon, Space, Stack } from '@mantine/core';
@@ -5,17 +6,20 @@ import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Typed from 'typed.js';
 import { Message } from '@/components/elements/Message';
+import { PlaceholderMessage } from '@/components/elements/PlaceholderMessage';
 import { setTyping } from '@/store/slice/convoSlice';
 import type { TChat } from '@/store/slice/convoSlice';
 
 const Convo = ({
   chat,
   typingsRef,
+  isFetching,
 }: {
   chat: Array<TChat>;
   typingsRef: React.MutableRefObject<
     Map<string, { node: HTMLSpanElement; typed: Typed }>
   >;
+  isFetching: boolean;
 }) => {
   const bottomRef = useRef<HTMLDivElement>(null);
   const scrollButtonRef = useRef<HTMLButtonElement>(null);
@@ -123,6 +127,8 @@ const Convo = ({
             />
           );
         })}
+
+        {isFetching && <PlaceholderMessage role="assistant" />}
 
         <Space className="w-full h-64 md:h-48 flex-shrink-0" ref={bottomRef} />
       </Stack>

@@ -8,10 +8,10 @@ export type TFormData = {
 };
 
 const PromptForm = ({
-  isTyping,
+  isBusy,
   onSubmit,
 }: {
-  isTyping: boolean;
+  isBusy: boolean;
   onSubmit: (data: TFormData) => unknown;
 }) => {
   const { register, reset, handleSubmit, setFocus, formState } =
@@ -35,7 +35,7 @@ const PromptForm = ({
         rightSection={
           <ActionIcon
             color="blue"
-            loading={isTyping}
+            loading={isBusy}
             size="md"
             type="submit"
             variant="light"
@@ -47,7 +47,7 @@ const PromptForm = ({
         {...register('prompt', {
           validate: {
             notEmpty: (value: string) => value.trim().length > 0,
-            notInterruptTyping: () => !isTyping,
+            notBusy: () => !isBusy,
           },
         })}
       />
