@@ -51,6 +51,8 @@ const HomePage = () => {
     enabled: false,
   });
 
+  const isBusy = isFetching || isTyping;
+
   useEffect(() => {
     if (isSubmitted.current) {
       regenerate();
@@ -75,7 +77,7 @@ const HomePage = () => {
   }, [completion, dispatch]);
 
   const onSubmit = async (data: TFormData) => {
-    if (isTyping) return;
+    if (isBusy) return;
 
     if (lastMessage?.role === 'user') {
       // NOTE: Mutate last prompt message if there is no completion added
@@ -171,7 +173,7 @@ const HomePage = () => {
             </Button>
           )}
 
-          <PromptForm isTyping={isTyping} onSubmit={onSubmit} />
+          <PromptForm isBusy={isBusy} onSubmit={onSubmit} />
 
           <Text align="center" color="dimmed" fz="sm">
             This program is designed for testing ChatGPT API only.
