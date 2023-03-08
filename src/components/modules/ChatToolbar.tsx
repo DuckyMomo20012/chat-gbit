@@ -7,21 +7,27 @@ import { RootState, persistor } from '@/store/store';
 const ChatToolbar = () => {
   const chat = useSelector((state: RootState) => state.convo);
   const currModel = useSelector((state: RootState) => state.model);
+  const allTimeToken = useSelector((state: RootState) => state.token);
   const dispatch = useDispatch();
 
-  const totalPromptToken = chat.reduce((acc, item) => {
-    if (item.usage?.prompt_tokens) {
-      return acc + item.usage.prompt_tokens;
-    }
-    return acc;
-  }, 0);
-
-  const totalCompletionToken = chat.reduce((acc, item) => {
-    if (item.usage?.completion_tokens) {
-      return acc + item.usage.completion_tokens;
-    }
-    return acc;
-  }, 0);
+  const currentToken = chat.reduce(
+    (acc, item) => {
+      if (item.usage) {
+        return {
+          prompt_tokens: acc.prompt_tokens + item.usage.prompt_tokens,
+          completion_tokens:
+            acc.completion_tokens + item.usage.completion_tokens,
+          total_tokens: acc.total_tokens + item.usage.total_tokens,
+        };
+      }
+      return acc;
+    },
+    {
+      prompt_tokens: 0,
+      completion_tokens: 0,
+      total_tokens: 0,
+    },
+  );
 
   return (
     <>
@@ -31,28 +37,6 @@ const ChatToolbar = () => {
         </Menu.Target>
 
         <Menu.Dropdown>
-          <Menu.Label>Tokens</Menu.Label>
-          <Menu.Item fz="sm">
-            Prompt:{' '}
-            <Code color="red" fw="bold">
-              {totalPromptToken}
-            </Code>{' '}
-          </Menu.Item>
-          <Menu.Item fz="sm">
-            Completion:{' '}
-            <Code color="blue" fw="bold">
-              {totalCompletionToken}
-            </Code>{' '}
-          </Menu.Item>
-          <Menu.Item fz="sm">
-            Total:{' '}
-            <Code color="green" fw="bold">
-              {totalPromptToken + totalCompletionToken}
-            </Code>{' '}
-          </Menu.Item>
-
-          <Menu.Divider />
-
           <Menu.Label>Model</Menu.Label>
           <Menu.Item fz="sm">
             Name: <Code color="green">{currModel.name}</Code>
@@ -65,22 +49,74 @@ const ChatToolbar = () => {
                 currency: 'USD',
                 minimumFractionDigits: 4,
               }).format(currModel.price)}
-            </Text>
+            </Text>{' '}
+            / 1K tokens
           </Menu.Item>
 
           <Menu.Divider />
 
-          <Menu.Label>Cost</Menu.Label>
+          <Menu.Label>Current Tokens</Menu.Label>
           <Menu.Item fz="sm">
-            Bill:{' '}
+            Prompt:{' '}
+            <Code color="red" fw="bold">
+              {currentToken.prompt_tokens}
+            </Code>{' '}
+          </Menu.Item>
+          <Menu.Item fz="sm">
+            Completion:{' '}
+            <Code color="blue" fw="bold">
+              {currentToken.completion_tokens}
+            </Code>{' '}
+          </Menu.Item>
+          <Menu.Item fz="sm">
+            Total:{' '}
+            <Code color="green" fw="bold">
+              {currentToken.total_tokens}
+            </Code>{' '}
+          </Menu.Item>
+
+          <Menu.Item fw="bold" fz="sm">
+            Next bill:{' '}
             <Text color="red" span>
               {new Intl.NumberFormat('en-US', {
                 style: 'currency',
                 currency: 'USD',
                 minimumFractionDigits: 4,
-              }).format(
-                (totalPromptToken + totalCompletionToken) * currModel.price,
-              )}
+                signDisplay: 'always',
+              }).format(currentToken.total_tokens * currModel.price)}
+            </Text>
+          </Menu.Item>
+
+          <Menu.Divider />
+
+          <Menu.Label>All-time Tokens</Menu.Label>
+          <Menu.Item fz="sm">
+            Prompt:{' '}
+            <Code color="red" fw="bold">
+              {allTimeToken.prompt_tokens}
+            </Code>{' '}
+          </Menu.Item>
+          <Menu.Item fz="sm">
+            Completion:{' '}
+            <Code color="blue" fw="bold">
+              {allTimeToken.completion_tokens}
+            </Code>{' '}
+          </Menu.Item>
+          <Menu.Item fz="sm">
+            Total:{' '}
+            <Code color="green" fw="bold">
+              {allTimeToken.total_tokens}
+            </Code>{' '}
+          </Menu.Item>
+
+          <Menu.Item fw="bold" fz="sm">
+            Total billed:{' '}
+            <Text color="red" span>
+              {new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 4,
+              }).format(allTimeToken.total_tokens * currModel.price)}
             </Text>
           </Menu.Item>
         </Menu.Dropdown>
