@@ -1,3 +1,4 @@
+import { Icon } from '@iconify/react';
 import {
   Box,
   Center,
@@ -6,6 +7,7 @@ import {
   Loader,
   Avatar as MantineAvatar,
   Text,
+  Tooltip,
 } from '@mantine/core';
 import Avatar from 'boring-avatars';
 import clsx from 'clsx';
@@ -28,34 +30,44 @@ const Message = forwardRef(function Message(
       })}
     >
       <Group className="w-full md:max-w-2xl lg:max-w-2xl xl:max-w-3xl" noWrap>
-        <MantineAvatar
-          className="self-start"
-          color="indigo"
-          radius="sm"
-          size="md"
-          variant="filled"
-        >
-          {role === 'assistant' && (
-            <Image
-              alt="chatgpt-avatar"
-              height={28}
-              src="/img/chatgpt.svg"
-              width={28}
-            />
-          )}
-
-          {role === 'user' &&
-            (userName ? (
-              <Avatar
-                colors={colors}
-                name={userName}
-                size={28}
-                variant="beam"
+        <Tooltip label={role.toUpperCase()} position="left">
+          <MantineAvatar
+            className="self-start"
+            color="indigo"
+            radius="sm"
+            size="md"
+            variant="filled"
+          >
+            {role === 'system' && (
+              <Icon
+                height={28}
+                icon="material-symbols:robot-outline"
+                width={28}
               />
-            ) : (
-              <Loader size="sm" />
-            ))}
-        </MantineAvatar>
+            )}
+
+            {role === 'assistant' && (
+              <Image
+                alt="chatgpt-avatar"
+                height={28}
+                src="/img/chatgpt.svg"
+                width={28}
+              />
+            )}
+
+            {role === 'user' &&
+              (userName ? (
+                <Avatar
+                  colors={colors}
+                  name={userName}
+                  size={28}
+                  variant="beam"
+                />
+              ) : (
+                <Loader size="sm" />
+              ))}
+          </MantineAvatar>
+        </Tooltip>
         {!isTyping && <Text>{content}</Text>}
 
         {isTyping && (

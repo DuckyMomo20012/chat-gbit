@@ -79,6 +79,17 @@ const HomePage = () => {
   const onSubmit = async (data: TFormData) => {
     if (isBusy) return;
 
+    if (data?.asSystemMessage) {
+      dispatch(
+        addMessage({
+          role: 'system',
+          content: data.prompt,
+          isTyping: false,
+        }),
+      );
+      return;
+    }
+
     if (lastMessage?.role === 'user') {
       // NOTE: Mutate last prompt message if there is no completion added
       dispatch(
@@ -173,7 +184,11 @@ const HomePage = () => {
             </Button>
           )}
 
-          <PromptForm isBusy={isBusy} onSubmit={onSubmit} />
+          <PromptForm
+            allowSystemMessage={chat.length === 0}
+            isBusy={isBusy}
+            onSubmit={onSubmit}
+          />
 
           <Text align="center" color="dimmed" fz="sm">
             This program is designed for testing ChatGPT API only.
