@@ -1,6 +1,6 @@
 <div align="center">
 
-  <img src="https://user-images.githubusercontent.com/64480713/223765972-88a0a0e6-4a4c-4a8b-8996-46a706d6feee.svg" height="128">
+  <img src="https://user-images.githubusercontent.com/64480713/223781223-95ecf2a4-8301-4264-807d-f12220e0a148.svg" height="128">
 
   <h1>Chat GBit</h1>
 
@@ -56,6 +56,12 @@
   - [Prerequisites](#bangbang-prerequisites)
   - [Run Locally](#running-run-locally)
 - [Usage](#eyes-usage)
+  - [New chat completion](#new-chat-completion)
+  - [Basic usage](#basic-usage)
+  - [Set model for chat](#set-model-for-chat)
+  - [Monitor usage](#monitor-usage)
+  - [Save chat history to local storage](#save-chat-history-to-local-storage)
+  - [Clear chat history](#clear-chat-history)
 - [Roadmap](#compass-roadmap)
 - [Contributing](#wave-contributing)
   - [Code of Conduct](#scroll-code-of-conduct)
