@@ -5,6 +5,6 @@ export const navBarItems: NavPath[] = [
     path: '/',
     label: 'Home',
     color: 'indigo',
-    icon: 'ic:outline-home',
+    icon: 'material-symbols:home',
   },
 ];

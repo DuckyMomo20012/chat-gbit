@@ -4,8 +4,9 @@ import { ActionIcon, Space, Stack } from '@mantine/core';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Typed from 'typed.js';
-import { Message, TChat } from '@/components/elements/Message';
-import { mutateMessage } from '@/store/slice/convoSlice';
+import { Message } from '@/components/elements/Message';
+import { setTyping } from '@/store/slice/convoSlice';
+import type { TChat } from '@/store/slice/convoSlice';
 
 const Convo = ({
   chat,
@@ -81,6 +82,7 @@ const Convo = ({
           return (
             <Message
               colors={config.colors}
+              content={item.content}
               isTyping={item.isTyping}
               key={item.id}
               ref={(node: HTMLSpanElement) => {
@@ -94,14 +96,14 @@ const Convo = ({
                 const typed = new Typed(node, {
                   // NOTE: A little hacky, we pause the typing for 1ms to
                   // trigger the onTypingPaused event.
-                  strings: [item.text.replace(/(\w+)/g, '^1 `$1`')],
+                  strings: [item.content.replace(/(\w+)/g, '^1 `$1`')],
                   typeSpeed: 100,
                   cursorChar: '█',
                   onStringTyped: () => {
                     dispatch(
-                      mutateMessage({
+                      setTyping({
                         id: item.id,
-                        mutation: { isTyping: false },
+                        isTyping: false,
                       }),
                     );
                   },
@@ -116,8 +118,7 @@ const Convo = ({
 
                 typingsRef.current.set(item.id, { node, typed });
               }}
-              text={item.text}
-              type={item.type}
+              role={item.role}
               userName={config.userName}
             />
           );
@@ -136,7 +137,11 @@ const Convo = ({
         size="lg"
         variant="light"
       >
-        <Icon height={24} icon="ic:outline-arrow-circle-down" width={24} />
+        <Icon
+          height={24}
+          icon="material-symbols:arrow-circle-down-outline"
+          width={24}
+        />
       </ActionIcon>
     </Stack>
   );

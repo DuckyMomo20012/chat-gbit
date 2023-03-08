@@ -1,20 +1,25 @@
 import { Icon } from '@iconify/react';
-import { ActionIcon, Button, Stack, Text, TextInput } from '@mantine/core';
+import { Button, Stack, Text } from '@mantine/core';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import Head from 'next/head';
+import { CreateChatCompletionResponse } from 'openai';
 import { useEffect, useRef } from 'react';
-import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import type Typed from 'typed.js';
 import { Convo } from '@/components/modules/Convo';
-import { addMessage, mutateMessage } from '@/store/slice/convoSlice';
+import { PromptForm, TFormData } from '@/components/modules/PromptForm';
+import {
+  addMessage,
+  mutateMessage,
+  removeMessage,
+} from '@/store/slice/convoSlice';
 import type { RootState } from '@/store/store';
-
-type TFormData = {
-  prompt: string;
-};
 
 const HomePage = () => {
   const chat = useSelector((state: RootState) => state.convo);
+  const lastMessage = useSelector((state: RootState) => state.convo.at(-1));
+  const model = useSelector((state: RootState) => state.model);
   const isTyping = chat.filter((item) => item.isTyping).length > 0;
   const dispatch = useDispatch();
 
@@ -22,29 +27,77 @@ const HomePage = () => {
     Map<string, { node: HTMLSpanElement; typed: Typed }>
   >(new Map());
 
-  const { register, reset, handleSubmit, setFocus } = useForm();
+  const status = useRef<'stop' | 'submit' | 'refetch'>('stop');
+  const isSubmitted = useRef(false);
+  const { refetch: regenerate, data: completion } = useQuery({
+    queryKey: ['completions'],
+    queryFn: async (): Promise<CreateChatCompletionResponse> => {
+      const { data } = await axios.post('/api/completions', {
+        data: {
+          model: model.name,
+          messages: chat.map((item) => ({
+            role: item.role,
+            content: item.content,
+          })),
+        },
+      });
+
+      return data;
+    },
+    enabled: false,
+  });
 
   useEffect(() => {
-    setFocus('prompt');
-  }, [setFocus, chat]);
+    if (isSubmitted.current) {
+      regenerate();
+      status.current = 'submit';
+      isSubmitted.current = false;
+    }
+  }, [chat, regenerate]);
 
-  const onSubmit = (data: TFormData) => {
-    reset();
-    dispatch(
-      addMessage({
-        type: 'prompt',
-        text: data.prompt,
-        isTyping: false,
-      }),
-    );
+  useEffect(() => {
+    if (completion && status.current !== 'stop') {
+      dispatch(
+        addMessage({
+          ...completion,
+          role: 'assistant',
+          content: completion.choices[0].message.content,
+          isTyping: true,
+        }),
+      );
 
-    dispatch(
-      addMessage({
-        type: 'completion',
-        text: 'Treat refs as an escape hatch. Refs are useful when you work with external systems or browser APIs. If much of your application logic and data flow relies on refs, you might want to rethink your approach.',
-        isTyping: true,
-      }),
-    );
+      status.current = 'stop';
+    }
+  }, [completion, dispatch]);
+
+  const onSubmit = async (data: TFormData) => {
+    if (isTyping) return;
+
+    if (lastMessage?.role === 'user') {
+      // NOTE: Mutate last prompt message if there is no completion added
+      dispatch(
+        mutateMessage({
+          id: lastMessage.id,
+          mutation: {
+            role: 'user',
+            content: data.prompt,
+            isTyping: false,
+          },
+        }),
+      );
+    } else {
+      // NOTE: Add new prompt message if there is a completion added before this
+      // message
+      dispatch(
+        addMessage({
+          role: 'user',
+          content: data.prompt,
+          isTyping: false,
+        }),
+      );
+    }
+
+    isSubmitted.current = true;
   };
 
   return (
@@ -60,51 +113,66 @@ const HomePage = () => {
       <Convo chat={chat} typingsRef={typingsRef} />
 
       <Stack className="absolute bottom-0 w-full">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Stack align="center" className="dark:bg-black bg-white p-4">
-            {isTyping && (
-              <Button
-                leftIcon={
-                  <Icon height={16} icon="ic:outline-stop" width={16} />
-                }
-                onClick={() => {
-                  typingsRef.current?.forEach((val, key) => {
-                    dispatch(
-                      mutateMessage({
-                        id: key,
-                        mutation: { isTyping: false, text: val.node.innerText },
-                      }),
-                    );
-                  });
-                }}
-                variant="outline"
-              >
-                Stop generating
-              </Button>
-            )}
-            <TextInput
-              className="w-full md:w-1/2"
-              rightSection={
-                <ActionIcon
-                  color="blue"
-                  loading={isTyping}
-                  size="md"
-                  type="submit"
-                  variant="light"
-                >
-                  <Icon height={16} icon="ic:outline-send" />
-                </ActionIcon>
+        <Stack align="center" className="dark:bg-black bg-white p-4">
+          {isTyping && (
+            <Button
+              leftIcon={
+                <Icon
+                  height={16}
+                  icon="material-symbols:stop-outline"
+                  width={16}
+                />
               }
-              size="lg"
-              {...register('prompt', {
-                required: true,
-              })}
-            />
-            <Text align="center" color="dimmed" fz="sm">
-              This program is designed for testing ChatGPT API only.
-            </Text>
-          </Stack>
-        </form>
+              onClick={() => {
+                typingsRef.current?.forEach((val, key) => {
+                  dispatch(
+                    mutateMessage({
+                      id: key,
+                      mutation: {
+                        isTyping: false,
+                        content: val.node.innerText,
+                      },
+                    }),
+                  );
+                });
+              }}
+              variant="outline"
+            >
+              Stop generating
+            </Button>
+          )}
+
+          {chat.length > 0 && !isTyping && (
+            <Button
+              leftIcon={
+                <Icon
+                  height={16}
+                  icon="material-symbols:autorenew"
+                  width={16}
+                />
+              }
+              onClick={() => {
+                regenerate();
+                status.current = 'refetch';
+
+                // NOTE: Remove last message if it's assistant's message before
+                // regenerating
+                if (lastMessage?.role === 'assistant') {
+                  dispatch(removeMessage({ id: lastMessage.id }));
+                }
+              }}
+              variant="outline"
+            >
+              Regenerate response
+            </Button>
+          )}
+
+          <PromptForm isTyping={isTyping} onSubmit={onSubmit} />
+
+          <Text align="center" color="dimmed" fz="sm">
+            This program is designed for testing ChatGPT API only.
+          </Text>
+        </Stack>
       </Stack>
     </Stack>
   );

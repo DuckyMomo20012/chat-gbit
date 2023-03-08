@@ -54,7 +54,7 @@ const NavMenuListDropdown = ({
                   rightSection={
                     <Icon
                       height={DEFAULT_ICON_HEIGHT}
-                      icon="ic:outline-chevron-right"
+                      icon="material-symbols:chevron-right"
                       inline
                     />
                   }
@@ -121,7 +121,7 @@ const NavMenuList = ({
                   path.subPath && (
                     <Icon
                       height={DEFAULT_ICON_HEIGHT}
-                      icon="ic:outline-expand-more"
+                      icon="material-symbols:expand-more"
                       width={DEFAULT_ICON_HEIGHT}
                     />
                   )
@@ -164,7 +164,7 @@ const NavMenuListCompact = ({
         <ActionIcon size={36} variant="light">
           <Icon
             height={DEFAULT_ICON_HEIGHT}
-            icon="ic:baseline-more-vert"
+            icon="material-symbols:more-vert"
             width={DEFAULT_ICON_HEIGHT}
           />
         </ActionIcon>

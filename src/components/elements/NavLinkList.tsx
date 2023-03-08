@@ -62,7 +62,7 @@ const NavLinkList = ({
                 <ActionIcon color={path.color} size={32} variant="filled">
                   <Icon
                     height={24}
-                    icon="ic:outline-chevron-right"
+                    icon="material-symbols:chevron-right"
                     width={24}
                   />
                 </ActionIcon>

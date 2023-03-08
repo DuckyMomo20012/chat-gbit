@@ -1,74 +1,52 @@
 import { createSlice, nanoid } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { TChat } from '@/components/elements/Message';
+import {
+  ChatCompletionRequestMessageRoleEnum,
+  CreateChatCompletionResponse,
+} from 'openai';
+import { PURGE } from 'redux-persist';
 
-const initialState: Array<TChat> = [
-  {
-    id: '1',
-    type: 'prompt',
-    text: 'Hello',
-    isTyping: false,
-  },
-  {
-    id: '2',
-    type: 'completion',
-    text: 'Yes, using the "clean all" command in DiskPart is a way to perform a hard format or low-level format of an SSD. This command will overwrite the entire SSD with zeroes, effectively erasing all data and restoring the drive to its original state. It\'s important to note that the "clean all" command is a powerful tool that should be used with caution. Once the command is executed, all data on the drive will be irretrievably lost. Additionally, the process can be time-consuming and may take several hours to complete depending on the size of the SSD ',
-    isTyping: false,
-  },
+export type TChat =
+  | {
+      role: ChatCompletionRequestMessageRoleEnum;
+      content: string;
+      isTyping: boolean;
+    } & Partial<CreateChatCompletionResponse>;
 
-  // {
-  //   id: '3',
-  //   type: 'prompt',
-  //   text: 'Hello',
-  // },
-  // {
-  //   id: '4',
-  //   type: 'completion',
-  //   text: 'Yes, using the "clean all" command in DiskPart is a way to perform a hard format or low-level format of an SSD. This command will overwrite the entire SSD with zeroes, effectively erasing all data and restoring the drive to its original state. It\'s important to note that the "clean all" command is a powerful tool that should be used with caution. Once the command is executed, all data on the drive will be irretrievably lost. Additionally, the process can be time-consuming and may take several hours to complete depending on the size of the SSD ',
-  // },
-  // {
-  //   id: '5',
-  //   type: 'prompt',
-  //   text: 'Hello',
-  // },
-  // {
-  //   id: '6',
-  //   type: 'completion',
-  //   text: 'Yes, using the "clean all" command in DiskPart is a way to perform a hard format or low-level format of an SSD. This command will overwrite the entire SSD with zeroes, effectively erasing all data and restoring the drive to its original state. It\'s important to note that the "clean all" command is a powerful tool that should be used with caution. Once the command is executed, all data on the drive will be irretrievably lost. Additionally, the process can be time-consuming and may take several hours to complete depending on the size of the SSD ',
-  // },
-  // {
-  //   id: '7',
-  //   type: 'prompt',
-  //   text: 'Hello',
-  // },
-  // {
-  //   id: '8',
-  //   type: 'completion',
-  //   text: 'Yes, using the "clean all" command in DiskPart is a way to perform a hard format or low-level format of an SSD. This command will overwrite the entire SSD with zeroes, effectively erasing all data and restoring the drive to its original state. It\'s important to note that the "clean all" command is a powerful tool that should be used with caution. Once the command is executed, all data on the drive will be irretrievably lost. Additionally, the process can be time-consuming and may take several hours to complete depending on the size of the SSD Yes, using the "clean all" command in DiskPart is a way to perform a hard format or low-level format of an SSD. This command will overwrite the entire SSD with zeroes, effectively erasing all data and restoring the drive to its original state. It\'s important to note that the "clean all" command is a powerful tool that should be used with caution. Once the command is executed, all data on the drive will be irretrievably lost. Additionally, the process can be time-consuming and may take several hours to complete depending on the size of the SSD Yes, using the "clean all" command in DiskPart is a way to perform a hard format or low-level format of an SSD. This command will overwrite the entire SSD with zeroes, effectively erasing all data and restoring the drive to its original state. It\'s important to note that the "clean all" command is a powerful tool that should be used with caution. Once the command is executed, all data on the drive will be irretrievably lost. Additionally, the process can be time-consuming and may take several hours to complete depending on the size of the SSD ',
-  // },
-];
+const initialState: Array<TChat> = [];
 
 const convoSlice = createSlice({
   name: 'convo',
   initialState,
   reducers: {
-    addMessage: (
-      state,
-      action: PayloadAction<{
-        type: TChat['type'];
-        text: string;
-        isTyping: boolean;
-      }>,
-    ) => {
+    addMessage: (state, action: PayloadAction<Omit<TChat, 'id'>>) => {
       const { payload } = action;
 
       state.push({
+        ...payload,
         id: nanoid(),
-        type: payload.type,
-        text: payload.text,
-        isTyping: payload.isTyping,
       });
     },
+
+    removeMessage: (state, action: PayloadAction<{ id: TChat['id'] }>) => {
+      const { payload } = action;
+
+      return state.filter((message) => message.id !== payload.id);
+    },
+
+    setTyping: (
+      state: Array<TChat>,
+      action: PayloadAction<{ id: TChat['id']; isTyping: boolean }>,
+    ) => {
+      const { payload } = action;
+
+      const { id, isTyping } = payload;
+
+      return state.map((message) =>
+        message.id === id ? { ...message, isTyping } : message,
+      );
+    },
+
     mutateMessage: (
       state,
       action: PayloadAction<{
@@ -78,15 +56,22 @@ const convoSlice = createSlice({
     ) => {
       const { payload } = action;
 
-      const message = state.find((m) => m.id === payload.id);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { id, ...mutation } = payload.mutation;
 
-      if (message) {
-        Object.assign(message, { ...message, ...payload.mutation });
-      }
+      return state.map((message) =>
+        message.id === payload.id ? { ...message, ...mutation } : message,
+      );
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(PURGE, () => {
+      return initialState;
+    });
   },
 });
 
-export const { addMessage, mutateMessage } = convoSlice.actions;
+export const { addMessage, removeMessage, setTyping, mutateMessage } =
+  convoSlice.actions;
 
 export default convoSlice.reducer;

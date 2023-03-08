@@ -54,7 +54,7 @@ const AuthGuard = ({ children }: { children?: React.ReactNode }) => {
         >
           <Group>
             <ThemeIcon color="red" radius="xl" size="xl" variant="light">
-              <Icon icon="ic:baseline-error-outline" width="24" />
+              <Icon icon="material-symbols:error" width="24" />
             </ThemeIcon>
             <Text>You are not logged in</Text>
           </Group>
