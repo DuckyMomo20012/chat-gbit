@@ -27,6 +27,26 @@ const convoSlice = createSlice({
         id: nanoid(),
       });
     },
+
+    removeMessage: (state, action: PayloadAction<{ id: TChat['id'] }>) => {
+      const { payload } = action;
+
+      return state.filter((message) => message.id !== payload.id);
+    },
+
+    setTyping: (
+      state: Array<TChat>,
+      action: PayloadAction<{ id: TChat['id']; isTyping: boolean }>,
+    ) => {
+      const { payload } = action;
+
+      const { id, isTyping } = payload;
+
+      return state.map((message) =>
+        message.id === id ? { ...message, isTyping } : message,
+      );
+    },
+
     mutateMessage: (
       state,
       action: PayloadAction<{
@@ -51,6 +71,7 @@ const convoSlice = createSlice({
   },
 });
 
-export const { addMessage, mutateMessage } = convoSlice.actions;
+export const { addMessage, removeMessage, setTyping, mutateMessage } =
+  convoSlice.actions;
 
 export default convoSlice.reducer;
