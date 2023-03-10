@@ -21,7 +21,7 @@ const NavMenuListDropdown = ({
   return (
     <>
       {paths.map((path, index) => {
-        const continueLevel = count < level && !!path.subPath;
+        const continueLevel = count < level;
         const isActive = router.pathname === path.path;
 
         const DEFAULT_PROPS = {
@@ -41,7 +41,7 @@ const NavMenuListDropdown = ({
           variant: 'light' as const,
         };
 
-        if (continueLevel) {
+        if (continueLevel && !!path.subPath) {
           return (
             <Menu
               key={`${index}-${count}`}
