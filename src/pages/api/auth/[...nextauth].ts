@@ -28,6 +28,8 @@ export default NextAuth({
         },
       },
       async authorize(credentials) {
+        if (!credentials) return null;
+
         // Inputs from login form
         const { email, password } = credentials;
         const hashPassword = await sha1(password);
