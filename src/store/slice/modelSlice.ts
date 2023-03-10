@@ -18,7 +18,7 @@ export const MODEL: Array<TModel> = [
   },
 ];
 
-const initialState = MODEL.find((m) => m.name === 'gpt-3.5-turbo');
+const initialState = MODEL[0];
 
 const modelSlice = createSlice({
   name: 'model',

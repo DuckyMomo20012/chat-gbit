@@ -8,6 +8,7 @@ import { PURGE } from 'redux-persist';
 
 export type TChat =
   | {
+      id: string;
       role: ChatCompletionRequestMessageRoleEnum;
       content: string;
       isTyping: boolean;
