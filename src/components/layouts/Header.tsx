@@ -34,7 +34,7 @@ type NavItemState = {
 type NavItemAction =
   | {
       type: 'hide';
-      payload?: number;
+      payload: number;
     }
   | {
       type: 'restore';
@@ -95,7 +95,7 @@ const Header = ({ setNavBarOpened }: HeaderProps) => {
   }, [containerWidth, childrenWidth]);
 
   useEffect(() => {
-    if (itemState.oversizeWidth.at(0) < containerWidth) {
+    if (itemState.oversizeWidth[0] < containerWidth) {
       dispatch({
         type: 'restore',
       });
