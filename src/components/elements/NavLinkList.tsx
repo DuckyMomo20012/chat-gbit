@@ -20,7 +20,7 @@ const NavLinkList = ({
   return (
     <>
       {paths.map((path, index) => {
-        const continueLevel = count < level && !!path.subPath;
+        const continueLevel = count < level;
         const isActive = window.location.pathname === path.path;
 
         const handleLinkClick = (ev: React.MouseEvent<HTMLElement>) => {
@@ -37,7 +37,7 @@ const NavLinkList = ({
           ) {
             // Don't know why Link is not working
             router.push(path.path);
-            handleClick();
+            handleClick?.();
           }
         };
 
@@ -58,7 +58,7 @@ const NavLinkList = ({
             label={path.label}
             onClick={handleLinkClick}
             rightSection={
-              continueLevel ? (
+              continueLevel && !!path.subPath ? (
                 <ActionIcon color={path.color} size={32} variant="filled">
                   <Icon
                     height={24}
@@ -69,7 +69,7 @@ const NavLinkList = ({
               ) : undefined
             }
           >
-            {continueLevel && (
+            {continueLevel && !!path.subPath && (
               <NavLinkList
                 count={count + 1}
                 handleClick={handleClick}

@@ -30,6 +30,10 @@ export default async function getCompletions(
 
     res.status(200).json(response.data);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    if (error instanceof z.ZodError) {
+      res.status(400).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: (error as Error).message });
+    }
   }
 }

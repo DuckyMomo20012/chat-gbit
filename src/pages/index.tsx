@@ -63,16 +63,18 @@ const HomePage = () => {
 
   useEffect(() => {
     if (completion && status.current !== 'stop') {
-      dispatch(
-        addMessage({
-          ...completion,
-          role: 'assistant',
-          content: completion.choices[0].message.content,
-          isTyping: true,
-        }),
-      );
+      if (completion.choices[0].message?.content) {
+        dispatch(
+          addMessage({
+            ...completion,
+            role: 'assistant',
+            content: completion.choices[0].message?.content,
+            isTyping: true,
+          }),
+        );
 
-      status.current = 'stop';
+        status.current = 'stop';
+      }
     }
   }, [completion, dispatch]);
 

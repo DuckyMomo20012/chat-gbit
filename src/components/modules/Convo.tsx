@@ -72,7 +72,9 @@ const Convo = ({
       },
     );
 
-    observer.observe(bottomRef.current);
+    if (bottomRef.current) {
+      observer.observe(bottomRef.current);
+    }
 
     return () => {
       observer.disconnect();
@@ -92,7 +94,7 @@ const Convo = ({
               ref={(node: HTMLSpanElement) => {
                 // NOTE: Component unmounting, so we need to clean up.
                 if (!node) {
-                  typingsRef.current.get(item.id).typed.destroy();
+                  typingsRef.current.get(item.id)?.typed.destroy();
                   typingsRef.current.delete(item.id);
                   return;
                 }

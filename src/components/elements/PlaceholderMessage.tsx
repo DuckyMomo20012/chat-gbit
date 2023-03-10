@@ -4,7 +4,7 @@ import { Message } from '@/components/elements/Message';
 import type { TChat } from '@/store/slice/convoSlice';
 
 const PlaceholderMessage = ({ role }: { role: TChat['role'] }) => {
-  const typingsRef = useRef<Typed>(null);
+  const typingsRef = useRef<Typed | null>(null);
 
   return (
     <Message
@@ -13,7 +13,7 @@ const PlaceholderMessage = ({ role }: { role: TChat['role'] }) => {
       ref={(node: HTMLSpanElement) => {
         // NOTE: Component unmounting, so we need to clean up.
         if (!node) {
-          typingsRef.current.destroy();
+          typingsRef.current?.destroy();
           return;
         }
 
