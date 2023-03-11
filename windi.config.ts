@@ -3,28 +3,31 @@ import type { MantineThemeColors } from '@mantine/core';
 import windiDefaultColors from 'windicss/colors';
 import type { DefaultColors } from 'windicss/types/config/colors';
 
-type ConvertedWindiColors = {
-  [k in keyof MantineThemeColors]: DefaultColors[keyof DefaultColors];
-};
-
-// Don't override WindiCSS colors
 const convertColor = (
   mantineColors: MantineThemeColors,
   windiColors: DefaultColors,
 ) => {
-  const newColorPalette = {} as ConvertedWindiColors;
-  Object.keys(mantineColors).forEach((colorName) => {
-    if (windiColors[colorName] instanceof Object === false) {
-      const newColor = {};
-      mantineColors[colorName].forEach((_colorHex, index) => {
-        newColor[`${index * 100}`] = mantineColors[colorName][index];
-      });
-      newColor['50'] = newColor['0'];
-      delete newColor['0'];
-    }
-  });
-
-  return newColorPalette;
+  return Object.fromEntries(
+    Object.entries(mantineColors)
+      .filter(([key]) => windiColors[key] === undefined) // Filter out colors that already exist in WindiCSS
+      .map(([key, value]) => {
+        return [
+          key,
+          {
+            50: value[0],
+            100: value[1],
+            200: value[2],
+            300: value[3],
+            400: value[4],
+            500: value[5],
+            600: value[6],
+            700: value[7],
+            800: value[8],
+            900: value[9],
+          },
+        ];
+      }),
+  );
 };
 
 export default {
