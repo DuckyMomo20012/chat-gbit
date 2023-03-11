@@ -3,7 +3,7 @@ import { ActionIcon, Checkbox, Stack, TextInput } from '@mantine/core';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
-export type TFormData = {
+export type TPromptForm = {
   prompt: string;
   asSystemMessage: boolean;
 };
@@ -14,11 +14,11 @@ const PromptForm = ({
   allowSystemMessage = false,
 }: {
   isBusy: boolean;
-  onSubmit: (data: TFormData) => unknown;
+  onSubmit: (data: TPromptForm) => unknown;
   allowSystemMessage?: boolean;
 }) => {
   const { register, reset, handleSubmit, setFocus, formState } =
-    useForm<TFormData>();
+    useForm<TPromptForm>();
 
   useEffect(() => {
     setFocus('prompt');

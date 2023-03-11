@@ -8,7 +8,7 @@ import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type Typed from 'typed.js';
 import { Convo } from '@/components/modules/Convo';
-import { PromptForm, TFormData } from '@/components/modules/PromptForm';
+import { PromptForm, TPromptForm } from '@/components/modules/PromptForm';
 import {
   addMessage,
   mutateMessage,
@@ -78,7 +78,7 @@ const HomePage = () => {
     }
   }, [completion, dispatch]);
 
-  const onSubmit = async (data: TFormData) => {
+  const onSubmit = async (data: TPromptForm) => {
     if (isBusy) return;
 
     if (data?.asSystemMessage) {
