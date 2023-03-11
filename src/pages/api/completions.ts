@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { z } from 'zod';
 import { openai } from '@/lib/openai';
-import type { DeepRequired } from '@/types/DeepRequired';
 
 const bodySchema = z.object({
   model: z.string(),
@@ -13,7 +12,7 @@ const bodySchema = z.object({
   ),
 });
 
-type TBody = DeepRequired<z.infer<typeof bodySchema>>;
+type TBody = z.infer<typeof bodySchema>;
 
 export default async function getCompletions(
   req: NextApiRequest,
