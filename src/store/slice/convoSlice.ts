@@ -12,6 +12,7 @@ export type TChat =
       role: ChatCompletionRequestMessageRoleEnum;
       content: string;
       isTyping: boolean;
+      hidden?: boolean;
     } & Partial<CreateChatCompletionResponse>;
 
 const initialState: Array<TChat> = [];
