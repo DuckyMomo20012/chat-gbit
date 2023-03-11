@@ -37,7 +37,8 @@
     "redux-persist": "6.0.0",
     "type-fest": "3.6.0",
     "typed.js": "2.0.12",
-    "zod": "3.20.6"
+    "zod": "3.20.6",
+    "zod-validation-error": "1.0.1"
   },
   "devDependencies": {
     "@babel/core": "7.21.0",

@@ -51,6 +51,7 @@ specifiers:
   windicss: 3.5.6
   windicss-webpack-plugin: 1.7.8
   zod: 3.20.6
+  zod-validation-error: 1.0.1
 
 dependencies:
   '@emotion/react': 11.10.6_pmekkgnqduwlme35zpnqhenc34
@@ -79,6 +80,7 @@ dependencies:
   type-fest: 3.6.0
   typed.js: 2.0.12
   zod: 3.20.6
+  zod-validation-error: 1.0.1_zod@3.20.6
 
 devDependencies:
   '@babel/core': 7.21.0
@@ -5030,6 +5032,15 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
+
+  /zod-validation-error/1.0.1_zod@3.20.6:
+    resolution: {integrity: sha512-QRk2AtHLJg8sCZAbEjXSs7E0n4/mSdX5caoh6eOUvDSdcIQz03i0xoNN1Qx6UZT+ADVHRK6+ZXRtldzW6nnltA==}
+    engines: {node: ^14.17 || >=16.0.0}
+    peerDependencies:
+      zod: ^3.18.0
+    dependencies:
+      zod: 3.20.6
+    dev: false
 
   /zod/3.20.6:
     resolution: {integrity: sha512-oyu0m54SGCtzh6EClBVqDDlAYRz4jrVtKwQ7ZnsEmMI9HnzuZFj8QFwAY1M5uniIYACdGvv0PBWPF2kO0aNofA==}

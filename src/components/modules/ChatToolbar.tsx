@@ -1,6 +1,15 @@
 import { Icon } from '@iconify/react';
-import { ActionIcon, Button, Code, Menu, Text, Tooltip } from '@mantine/core';
+import {
+  ActionIcon,
+  Button,
+  Code,
+  Menu,
+  Popover,
+  Text,
+  Tooltip,
+} from '@mantine/core';
 import { useDispatch, useSelector } from 'react-redux';
+import { UploadForm } from '@/components/modules/UploadForm';
 import { MODEL, setModel } from '@/store/slice/modelSlice';
 import { RootState, persistor } from '@/store/store';
 
@@ -164,6 +173,16 @@ const ChatToolbar = () => {
           ))}
         </Menu.Dropdown>
       </Menu>
+
+      <Popover closeOnClickOutside={false} width={400}>
+        <Popover.Target>
+          <Button variant="outline">Train</Button>
+        </Popover.Target>
+
+        <Popover.Dropdown>
+          <UploadForm />
+        </Popover.Dropdown>
+      </Popover>
 
       <Tooltip label="Clear conversation">
         <ActionIcon
