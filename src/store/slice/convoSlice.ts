@@ -13,6 +13,7 @@ export type TChat =
       content: string;
       isTyping: boolean;
       hidden?: boolean;
+      trained?: boolean;
     } & Partial<CreateChatCompletionResponse>;
 
 const initialState: Array<TChat> = [];
