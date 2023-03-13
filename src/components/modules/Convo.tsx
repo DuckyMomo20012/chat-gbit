@@ -85,6 +85,8 @@ const Convo = ({
     <Stack className="w-full h-full relative">
       <Stack className="w-full relative overflow-y-auto">
         {chat.map((item) => {
+          if (item?.hidden) return null;
+
           return (
             <Message
               colors={config.colors}

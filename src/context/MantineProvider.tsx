@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 import {
   MantineProvider as BaseMantineProvider,
   ColorSchemeProvider,
@@ -7,67 +5,72 @@ import {
   MantineTheme,
   DEFAULT_THEME as mantineDefaultTheme,
 } from '@mantine/core';
-import type { ColorScheme, MantineSizes } from '@mantine/core';
+import type { ColorScheme } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import windiDefaultColors from 'windicss/colors';
 import windiDefaultTheme from 'windicss/defaultTheme';
 import type { DefaultColors } from 'windicss/types/config/colors';
-import type { DefaultFontSize, ThemeType } from 'windicss/types/interfaces';
-import type { MantineThemeColors } from '@/types/MantineThemeColors';
+import type { DefaultFontSize, DictStr } from 'windicss/types/interfaces';
 
-const convertBreakpoint = (breakpoint: ThemeType): MantineSizes => {
-  const convertedBreakpoint = {} as MantineSizes;
-  Object.keys(breakpoint).forEach((size) => {
-    // NOTE: Have to remove 'px' from breakpoint and convert to number
-    convertedBreakpoint[size] = +breakpoint[size].replace('px', '');
-  });
-  return convertedBreakpoint;
+const convertBreakpoint = (windiBreakpoint: DictStr) => {
+  return Object.fromEntries(
+    Object.entries(windiBreakpoint).map(([key, value]) => {
+      return [
+        key,
+        // NOTE: Have to remove 'px' from breakpoint and convert to number
+        +value.replace('px', ''),
+      ];
+    }),
+  );
 };
 
 // Override Mantine colors
-const convertColor = (windiColors: DefaultColors) => {
-  const convertedColor = {} as MantineThemeColors;
-  Object.keys(windiColors).forEach((color) => {
-    if (color === 'lightBlue') {
-      color = 'sky';
-    } else if (color === 'warmGray') {
-      color = 'stone';
-    } else if (color === 'trueGray') {
-      color = 'neutral';
-    } else if (color === 'coolGray') {
-      color = 'gray';
-    } else if (color === 'blueGray') {
-      color = 'slate';
-    } else if (color === 'zink') {
-      color = 'zinc';
-    }
+const convertColor = (windiColors: Partial<DefaultColors>) => {
+  delete windiColors.lightBlue;
+  delete windiColors.warmGray;
+  delete windiColors.trueGray;
+  delete windiColors.coolGray;
+  delete windiColors.blueGray;
+  delete windiColors.zink;
 
-    if (windiColors[color] instanceof Object) {
-      convertedColor[color] = Object.values(windiColors[color]);
-    }
-  });
+  const newColors = Object.fromEntries(
+    Object.entries(windiColors)
+      .map(([key, value]) => {
+        return [key, Object.values(value)];
+      })
+      .filter((color) => {
+        return ![
+          'black',
+          'white',
+          'transparent',
+          'inherit',
+          'current',
+        ].includes(color[0] as string);
+      }),
+  );
+
   // NOTE: WindiCSS dark color is too dark
-  convertedColor.dark = mantineDefaultTheme.colors.dark;
-
-  return convertedColor;
+  newColors.dark = mantineDefaultTheme.colors.dark;
+  return newColors;
 };
 
-const convertFontSize = (fontSize: {
-  [key: string]: DefaultFontSize;
-}): MantineSizes => {
-  const convertedFontSize = {} as MantineSizes;
-  Object.keys(fontSize).forEach((size) => {
-    // NOTE: Don't have to convert 'rem' to 'px'
-    convertedFontSize[size] = fontSize[size][0];
-  });
-  return convertedFontSize;
+const convertFontSize = (windiFontSize: { [key: string]: DefaultFontSize }) => {
+  return Object.fromEntries(
+    Object.entries(windiFontSize).map(([key, value]) => {
+      return [
+        key,
+        // NOTE: Don't have to convert 'rem' to 'px'
+        value[0],
+      ];
+    }),
+  );
 };
 
 const theme: MantineTheme = {
   ...mantineDefaultTheme,
   breakpoints: {
     ...mantineDefaultTheme.breakpoints,
-    ...convertBreakpoint(windiDefaultTheme.screens), // WindiCSS
+    ...convertBreakpoint(windiDefaultTheme.screens as DictStr), // WindiCSS
   },
   colors: {
     ...mantineDefaultTheme.colors,

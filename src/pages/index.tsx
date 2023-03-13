@@ -4,11 +4,11 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Head from 'next/head';
 import { CreateChatCompletionResponse } from 'openai';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type Typed from 'typed.js';
 import { Convo } from '@/components/modules/Convo';
-import { PromptForm, TFormData } from '@/components/modules/PromptForm';
+import { PromptForm, TPromptForm } from '@/components/modules/PromptForm';
 import {
   addMessage,
   mutateMessage,
@@ -78,7 +78,15 @@ const HomePage = () => {
     }
   }, [completion, dispatch]);
 
-  const onSubmit = async (data: TFormData) => {
+  const allowRegenerate = useMemo(() => {
+    return !isBusy && lastMessage && lastMessage.role !== 'system';
+  }, [lastMessage, isBusy]);
+
+  const allowSystemMessage = useMemo(() => {
+    return !chat.find((item) => item.role === 'system');
+  }, [chat]);
+
+  const onSubmit = async (data: TPromptForm) => {
     if (isBusy) return;
 
     if (data?.asSystemMessage) {
@@ -161,7 +169,7 @@ const HomePage = () => {
             </Button>
           )}
 
-          {!isBusy && chat.length > 0 && (
+          {allowRegenerate && (
             <Button
               leftIcon={
                 <Icon
@@ -187,7 +195,7 @@ const HomePage = () => {
           )}
 
           <PromptForm
-            allowSystemMessage={chat.length === 0}
+            allowSystemMessage={allowSystemMessage}
             isBusy={isBusy}
             onSubmit={onSubmit}
           />

@@ -5,16 +5,19 @@ import { PURGE } from 'redux-persist';
 export type TModel = {
   name: 'gpt-3.5-turbo' | 'gpt-3.5-turbo-0301';
   price: number;
+  per: number;
 };
 
 export const MODEL: Array<TModel> = [
   {
     name: 'gpt-3.5-turbo',
-    price: 0.0005,
+    price: 0.0002,
+    per: 1000,
   },
   {
     name: 'gpt-3.5-turbo-0301',
-    price: 0.0005,
+    price: 0.0002,
+    per: 1000,
   },
 ];
 
