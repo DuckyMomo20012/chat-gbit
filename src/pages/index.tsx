@@ -82,6 +82,10 @@ const HomePage = () => {
     return !isBusy && lastMessage && lastMessage.role !== 'system';
   }, [lastMessage, isBusy]);
 
+  const allowSystemMessage = useMemo(() => {
+    return !chat.find((item) => item.role === 'system');
+  }, [chat]);
+
   const onSubmit = async (data: TPromptForm) => {
     if (isBusy) return;
 
@@ -191,7 +195,7 @@ const HomePage = () => {
           )}
 
           <PromptForm
-            allowSystemMessage={chat.length === 0}
+            allowSystemMessage={allowSystemMessage}
             isBusy={isBusy}
             onSubmit={onSubmit}
           />
