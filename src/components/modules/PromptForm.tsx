@@ -45,7 +45,11 @@ const PromptForm = ({
               type="submit"
               variant="light"
             >
-              <Icon height={16} icon="material-symbols:send-outline" />
+              <Icon
+                height={16}
+                icon="material-symbols:send-outline"
+                width={16}
+              />
             </ActionIcon>
           }
           size="lg"
