@@ -50,7 +50,12 @@ const ChatToolbar = () => {
                 minimumFractionDigits: 4,
               }).format(currModel.price)}
             </Text>{' '}
-            / 1K tokens
+            /{' '}
+            {new Intl.NumberFormat('en-US', {
+              notation: 'compact',
+              compactDisplay: 'short',
+            }).format(currModel.per)}{' '}
+            tokens
           </Menu.Item>
 
           <Menu.Divider />
@@ -83,7 +88,9 @@ const ChatToolbar = () => {
                 currency: 'USD',
                 minimumFractionDigits: 4,
                 signDisplay: 'always',
-              }).format(currentToken.total_tokens * currModel.price)}
+              }).format(
+                (currentToken.total_tokens * currModel.price) / currModel.per,
+              )}
             </Text>
           </Menu.Item>
 
@@ -116,7 +123,9 @@ const ChatToolbar = () => {
                 style: 'currency',
                 currency: 'USD',
                 minimumFractionDigits: 4,
-              }).format(allTimeToken.total_tokens * currModel.price)}
+              }).format(
+                (allTimeToken.total_tokens * currModel.price) / currModel.per,
+              )}
             </Text>
           </Menu.Item>
         </Menu.Dropdown>
@@ -133,13 +142,21 @@ const ChatToolbar = () => {
               key={idx}
               onClick={() => dispatch(setModel(model.name))}
               rightSection={
-                <Code className="ml-2" color="orange">
+                <Text>
+                  <Code className="ml-2" color="orange">
+                    {new Intl.NumberFormat('en-US', {
+                      style: 'currency',
+                      currency: 'USD',
+                      maximumFractionDigits: 4,
+                    }).format(model.price)}
+                  </Code>{' '}
+                  /{' '}
                   {new Intl.NumberFormat('en-US', {
-                    style: 'currency',
-                    currency: 'USD',
-                    maximumFractionDigits: 4,
-                  }).format(model.price)}
-                </Code>
+                    notation: 'compact',
+                    compactDisplay: 'short',
+                  }).format(currModel.per)}{' '}
+                  tokens
+                </Text>
               }
             >
               {model.name}
