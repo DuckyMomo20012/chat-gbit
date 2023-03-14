@@ -28,7 +28,7 @@ const RECORD_OPTIONS = {
 } satisfies MediaRecorderOptions;
 
 const VoiceInput = forwardRef(function VoiceInput(
-  { playSound }: { playSound?: boolean },
+  { playSound, timeout }: { playSound?: boolean; timeout?: number },
   ref,
 ) {
   const [state, setState] = useState<MediaRecorder['state']>('inactive');
@@ -38,6 +38,7 @@ const VoiceInput = forwardRef(function VoiceInput(
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Array<Blob>>([]);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     // NOTE: Check if the browser supports MediaRecorder API
@@ -52,6 +53,14 @@ const VoiceInput = forwardRef(function VoiceInput(
       // component rerender the data still available. This is intentional.
       chunksRef.current = [];
       setChunks([]);
+
+      if (timeout) {
+        const timer = setTimeout(() => {
+          setState('inactive');
+        }, timeout);
+
+        timerRef.current = timer;
+      }
     };
 
     const handleDataAvailable = (event: BlobEvent) => {
@@ -126,6 +135,11 @@ const VoiceInput = forwardRef(function VoiceInput(
         });
         mediaStreamRef.current = null;
       }
+
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
     };
 
     if (state === 'recording') {
@@ -139,7 +153,7 @@ const VoiceInput = forwardRef(function VoiceInput(
     } else if (state === 'inactive') {
       stopRecording();
     }
-  }, [state, playSound]);
+  }, [state, playSound, timeout]);
 
   useImperativeHandle(
     ref,
