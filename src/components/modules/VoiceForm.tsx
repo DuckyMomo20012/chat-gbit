@@ -16,6 +16,8 @@ type TVoiceForm = {
   audio: Array<Blob>;
 };
 
+const RECORD_TIMEOUT = 30000;
+
 const VOICE_MODEL = 'whisper-1';
 
 const VoiceForm = ({
@@ -114,6 +116,7 @@ const VoiceForm = ({
 
               setValue('audio', handle.chunks);
             }}
+            timeout={RECORD_TIMEOUT}
           />
           <ActionIcon
             className="self-start"
