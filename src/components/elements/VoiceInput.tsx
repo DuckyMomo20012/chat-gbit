@@ -15,6 +15,7 @@ export type TVoiceInputHandle = {
   stop: () => void;
   clear: () => void;
   state: MediaRecorder['state'];
+  errors: string | null;
   chunks: Array<Blob>;
 };
 
@@ -174,10 +175,11 @@ const VoiceInput = forwardRef(function VoiceInput(
           setState('inactive');
         },
         state,
+        errors,
         chunks,
       } satisfies TVoiceInputHandle;
     },
-    [state, chunks],
+    [state, chunks, errors],
   );
 
   return (
