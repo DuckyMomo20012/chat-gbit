@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type Typed from 'typed.js';
 import { Convo } from '@/components/modules/Convo';
 import { PromptForm, TPromptForm } from '@/components/modules/PromptForm';
+import { VoiceForm } from '@/components/modules/VoiceForm';
 import {
   addMessage,
   mutateMessage,
@@ -191,6 +192,8 @@ const HomePage = () => {
               Regenerate response
             </Button>
           )}
+
+          <VoiceForm onSubmit={onSubmit} />
 
           <PromptForm
             allowSystemMessage={allowSystemMessage}
