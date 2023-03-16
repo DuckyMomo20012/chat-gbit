@@ -198,7 +198,11 @@ const HomePage = () => {
             </Button>
           )}
 
-          <VoiceForm submitPrompt={submitPrompt} />
+          <VoiceForm
+            allowSystemMessage={allowSystemMessage}
+            isBusy={isBusy}
+            submitPrompt={submitPrompt}
+          />
 
           <PromptForm
             allowSystemMessage={allowSystemMessage}

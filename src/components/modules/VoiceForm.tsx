@@ -1,5 +1,12 @@
 import { Icon } from '@iconify/react';
-import { ActionIcon, Group, Loader, Stack, Text } from '@mantine/core';
+import {
+  ActionIcon,
+  Checkbox,
+  Group,
+  Loader,
+  Stack,
+  Text,
+} from '@mantine/core';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { CreateTranscriptionResponse } from 'openai';
@@ -14,6 +21,7 @@ import type { TPromptForm } from '@/pages/index';
 type TVoiceForm = {
   model: string;
   audio: Array<Blob>;
+  asSystemMessage: boolean;
 };
 
 const RECORD_TIMEOUT = 30000;
@@ -21,9 +29,13 @@ const RECORD_TIMEOUT = 30000;
 const VOICE_MODEL = 'whisper-1';
 
 const VoiceForm = ({
+  isBusy,
   submitPrompt,
+  allowSystemMessage = false,
 }: {
+  isBusy: boolean;
   submitPrompt: (data: TPromptForm) => unknown;
+  allowSystemMessage?: boolean;
 }) => {
   const voiceRef = useRef<TVoiceInputHandle>();
   const {
@@ -50,6 +62,7 @@ const VoiceForm = ({
       reset({
         model: VOICE_MODEL,
         audio: [],
+        asSystemMessage: false,
       } satisfies TVoiceForm);
       // NOTE: Manually clear the audio data from the voice input
       voiceRef.current?.clear();
@@ -78,7 +91,7 @@ const VoiceForm = ({
 
     submitPrompt({
       prompt: transcriptions.text,
-      asSystemMessage: false,
+      asSystemMessage: data.asSystemMessage,
     });
   };
 
@@ -108,6 +121,7 @@ const VoiceForm = ({
           <ActionIcon
             className="self-start"
             color="pink"
+            disabled={isBusy}
             size="lg"
             type="submit"
             variant="light"
@@ -115,6 +129,12 @@ const VoiceForm = ({
             <Icon height={24} icon="material-symbols:send-outline" width={24} />
           </ActionIcon>
         </Group>
+        {allowSystemMessage && (
+          <Checkbox
+            label="Set as system instruction"
+            {...register('asSystemMessage')}
+          />
+        )}
       </Stack>
     </form>
   );
