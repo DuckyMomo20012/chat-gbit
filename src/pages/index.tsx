@@ -8,7 +8,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type Typed from 'typed.js';
 import { Convo } from '@/components/modules/Convo';
-import { PromptForm, TPromptForm } from '@/components/modules/PromptForm';
+import { PromptForm } from '@/components/modules/PromptForm';
 import { VoiceForm } from '@/components/modules/VoiceForm';
 import {
   addMessage,
@@ -16,6 +16,11 @@ import {
   removeMessage,
 } from '@/store/slice/convoSlice';
 import type { RootState } from '@/store/store';
+
+export type TPromptForm = {
+  prompt: string;
+  asSystemMessage: boolean;
+};
 
 const HomePage = () => {
   const chat = useSelector((state: RootState) => state.convo);

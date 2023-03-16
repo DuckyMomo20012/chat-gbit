@@ -9,7 +9,7 @@ import {
   TVoiceInputHandle,
   VoiceInput,
 } from '@/components/elements/VoiceInput';
-import type { TPromptForm } from '@/components/modules/PromptForm';
+import type { TPromptForm } from '@/pages/index';
 
 type TVoiceForm = {
   model: string;
@@ -41,7 +41,7 @@ const VoiceForm = ({
       reset({
         model: VOICE_MODEL,
         audio: [],
-      });
+      } satisfies TVoiceForm);
       // NOTE: Manually clear the audio data from the voice input
       voiceRef.current?.clear();
     }

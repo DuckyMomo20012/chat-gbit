@@ -2,11 +2,7 @@ import { Icon } from '@iconify/react';
 import { ActionIcon, Checkbox, Stack, TextInput } from '@mantine/core';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-
-export type TPromptForm = {
-  prompt: string;
-  asSystemMessage: boolean;
-};
+import type { TPromptForm } from '@/pages/index';
 
 const PromptForm = ({
   isBusy,
@@ -29,7 +25,7 @@ const PromptForm = ({
       reset({
         prompt: '',
         asSystemMessage: false,
-      });
+      } satisfies TPromptForm);
     }
   }, [formState.isSubmitSuccessful, reset]);
 
