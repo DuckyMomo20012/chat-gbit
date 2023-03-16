@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { Alert, Button, Group, Stack } from '@mantine/core';
+import { Button, Group, Stack, Text } from '@mantine/core';
 import {
   forwardRef,
   useEffect,
@@ -148,6 +148,8 @@ const VoiceInput = forwardRef(function VoiceInput(
       } else {
         startRecording();
       }
+
+      setErrors(null);
     } else if (state === 'paused') {
       mediaRecorderRef.current?.pause();
     } else if (state === 'inactive') {
@@ -180,16 +182,6 @@ const VoiceInput = forwardRef(function VoiceInput(
 
   return (
     <Stack>
-      {errors && (
-        <Alert
-          color="red"
-          onClose={() => setErrors(null)}
-          title="Error"
-          withCloseButton
-        >
-          {errors}
-        </Alert>
-      )}
       {state === 'inactive' && (
         <Button
           color="indigo"
@@ -240,6 +232,11 @@ const VoiceInput = forwardRef(function VoiceInput(
             Stop
           </Button>
         </Group>
+      )}
+      {errors && (
+        <Text align="center" color="red">
+          {errors}
+        </Text>
       )}
     </Stack>
   );
