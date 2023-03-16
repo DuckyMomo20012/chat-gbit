@@ -90,7 +90,7 @@ const HomePage = () => {
 
   const allowSystemMessage = chat.length === 0;
 
-  const onSubmit = async (data: TPromptForm) => {
+  const submitPrompt = async (data: TPromptForm) => {
     if (isBusy) return;
 
     if (data?.asSystemMessage) {
@@ -198,12 +198,12 @@ const HomePage = () => {
             </Button>
           )}
 
-          <VoiceForm onSubmit={onSubmit} />
+          <VoiceForm submitPrompt={submitPrompt} />
 
           <PromptForm
             allowSystemMessage={allowSystemMessage}
             isBusy={isBusy}
-            onSubmit={onSubmit}
+            submitPrompt={submitPrompt}
           />
 
           <Text align="center" color="dimmed" fz="sm">

@@ -6,11 +6,11 @@ import type { TPromptForm } from '@/pages/index';
 
 const PromptForm = ({
   isBusy,
-  onSubmit,
+  submitPrompt,
   allowSystemMessage = false,
 }: {
   isBusy: boolean;
-  onSubmit: (data: TPromptForm) => unknown;
+  submitPrompt: (data: TPromptForm) => unknown;
   allowSystemMessage?: boolean;
 }) => {
   const { register, reset, handleSubmit, setFocus, formState } =
@@ -28,6 +28,10 @@ const PromptForm = ({
       } satisfies TPromptForm);
     }
   }, [formState.isSubmitSuccessful, reset]);
+
+  const onSubmit = (data: TPromptForm) => {
+    submitPrompt(data);
+  };
 
   return (
     <form className="w-full md:w-1/2" onSubmit={handleSubmit(onSubmit)}>

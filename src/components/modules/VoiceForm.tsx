@@ -21,9 +21,9 @@ const RECORD_TIMEOUT = 30000;
 const VOICE_MODEL = 'whisper-1';
 
 const VoiceForm = ({
-  onSubmit,
+  submitPrompt,
 }: {
-  onSubmit: (data: TPromptForm) => unknown;
+  submitPrompt: (data: TPromptForm) => unknown;
 }) => {
   const voiceRef = useRef<TVoiceInputHandle>();
   const isSubmitted = useRef(false);
@@ -74,16 +74,16 @@ const VoiceForm = ({
 
   useEffect(() => {
     if (transcriptions && isSubmitted.current) {
-      onSubmit({
+      submitPrompt({
         prompt: transcriptions.text,
         asSystemMessage: false,
       });
 
       isSubmitted.current = false;
     }
-  }, [transcriptions, onSubmit]);
+  }, [transcriptions, submitPrompt]);
 
-  const onVoiceFormSubmit = (data: TVoiceForm) => {
+  const onSubmit = (data: TVoiceForm) => {
     const blob = new Blob(data.audio, { type: 'audio/webm;codecs=opus' });
 
     const newForm = new FormData();
@@ -96,7 +96,7 @@ const VoiceForm = ({
   };
 
   return (
-    <form onSubmit={handleSubmit(onVoiceFormSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <Stack align="center">
         {isFetching && (
           <Group spacing="xs">
