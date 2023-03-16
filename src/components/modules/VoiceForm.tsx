@@ -1,9 +1,9 @@
 import { Icon } from '@iconify/react';
 import { ActionIcon, Group, Loader, Stack, Text } from '@mantine/core';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { CreateTranscriptionResponse } from 'openai';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   TVoiceInputHandle,
@@ -26,7 +26,6 @@ const VoiceForm = ({
   submitPrompt: (data: TPromptForm) => unknown;
 }) => {
   const voiceRef = useRef<TVoiceInputHandle>();
-  const isSubmitted = useRef(false);
   const {
     reset,
     setValue,
@@ -34,18 +33,6 @@ const VoiceForm = ({
     handleSubmit,
     formState: { isSubmitSuccessful },
   } = useForm<TVoiceForm>();
-  const [form, setForm] = useState<FormData>();
-
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset({
-        model: VOICE_MODEL,
-        audio: [],
-      } satisfies TVoiceForm);
-      // NOTE: Manually clear the audio data from the voice input
-      voiceRef.current?.clear();
-    }
-  }, [reset, isSubmitSuccessful]);
 
   register('model', {
     value: VOICE_MODEL,
@@ -57,48 +44,48 @@ const VoiceForm = ({
     },
   });
 
-  const {
-    data: transcriptions,
-    isFetching,
-    error,
-  } = useQuery({
-    queryKey: ['voice'],
-    queryFn: async (): Promise<CreateTranscriptionResponse> => {
+  useEffect(() => {
+    // NOTE: Reset the form after the form is submitted
+    if (isSubmitSuccessful) {
+      reset({
+        model: VOICE_MODEL,
+        audio: [],
+      } satisfies TVoiceForm);
+      // NOTE: Manually clear the audio data from the voice input
+      voiceRef.current?.clear();
+    }
+  }, [reset, isSubmitSuccessful]);
+
+  const { isLoading, error, mutateAsync } = useMutation({
+    mutationFn: async (
+      formData: TVoiceForm,
+    ): Promise<CreateTranscriptionResponse> => {
+      const blob = new Blob(formData.audio, { type: 'audio/webm;codecs=opus' });
+
+      const newForm = new FormData();
+      newForm.append('model', formData.model);
+      newForm.append('audio', blob);
+
       // TODO: Send voice data to server
-      const { data } = await axios.post('/api/transcriptions', form);
+      const { data } = await axios.post('/api/transcriptions', newForm);
 
       return data;
     },
-    enabled: isSubmitSuccessful,
   });
 
-  useEffect(() => {
-    if (transcriptions && isSubmitted.current) {
-      submitPrompt({
-        prompt: transcriptions.text,
-        asSystemMessage: false,
-      });
+  const onSubmit = async (data: TVoiceForm) => {
+    const transcriptions = await mutateAsync(data);
 
-      isSubmitted.current = false;
-    }
-  }, [transcriptions, submitPrompt]);
-
-  const onSubmit = (data: TVoiceForm) => {
-    const blob = new Blob(data.audio, { type: 'audio/webm;codecs=opus' });
-
-    const newForm = new FormData();
-    newForm.append('model', data.model);
-    newForm.append('audio', blob);
-
-    setForm(newForm);
-
-    isSubmitted.current = true;
+    submitPrompt({
+      prompt: transcriptions.text,
+      asSystemMessage: false,
+    });
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack align="center">
-        {isFetching && (
+        {isLoading && (
           <Group spacing="xs">
             <Loader size="xs" />
             <Text>Transcribing</Text>
