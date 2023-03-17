@@ -13,6 +13,8 @@ import { UploadForm } from '@/components/modules/UploadForm';
 import { MODEL, setModel } from '@/store/slice/modelSlice';
 import { RootState, persistor } from '@/store/store';
 
+const MINIMUM_FRACTION_DIGITS = 6;
+
 const ChatToolbar = () => {
   const chat = useSelector((state: RootState) => state.convo);
   const currModel = useSelector((state: RootState) => state.model);
@@ -95,7 +97,7 @@ const ChatToolbar = () => {
               {new Intl.NumberFormat('en-US', {
                 style: 'currency',
                 currency: 'USD',
-                minimumFractionDigits: 4,
+                minimumFractionDigits: MINIMUM_FRACTION_DIGITS,
                 signDisplay: 'always',
               }).format(
                 (currentToken.total_tokens * currModel.price) / currModel.per,
@@ -131,7 +133,7 @@ const ChatToolbar = () => {
               {new Intl.NumberFormat('en-US', {
                 style: 'currency',
                 currency: 'USD',
-                minimumFractionDigits: 4,
+                minimumFractionDigits: MINIMUM_FRACTION_DIGITS,
               }).format(
                 (allTimeToken.total_tokens * currModel.price) / currModel.per,
               )}
@@ -156,7 +158,7 @@ const ChatToolbar = () => {
                     {new Intl.NumberFormat('en-US', {
                       style: 'currency',
                       currency: 'USD',
-                      maximumFractionDigits: 4,
+                      maximumFractionDigits: MINIMUM_FRACTION_DIGITS,
                     }).format(model.price)}
                   </Code>{' '}
                   /{' '}
