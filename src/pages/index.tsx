@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { ActionIcon, Button, Group, Stack, Text, Tooltip } from '@mantine/core';
+import { Button, Stack, Text } from '@mantine/core';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import Head from 'next/head';
@@ -195,19 +195,11 @@ const HomePage = () => {
             </Button>
           )}
 
-          <Group className="w-full" position="center">
-            <Tooltip
-              label={inputMode === 'text' ? 'Voice input' : 'Text input'}
-            >
-              <ActionIcon
-                className="self-start"
-                color="lime"
-                onClick={() => {
-                  setInputMode((prev) => (prev === 'text' ? 'voice' : 'text'));
-                }}
-                size="xl"
-                variant="light"
-              >
+          <Stack align="center" className="w-full">
+            <Button
+              className="self-center"
+              color="lime"
+              leftIcon={
                 <Icon
                   height={24}
                   icon={
@@ -217,8 +209,14 @@ const HomePage = () => {
                   }
                   width={24}
                 />
-              </ActionIcon>
-            </Tooltip>
+              }
+              onClick={() => {
+                setInputMode((prev) => (prev === 'text' ? 'voice' : 'text'));
+              }}
+              variant="light"
+            >
+              {inputMode === 'text' ? 'Voice input' : 'Text input'}
+            </Button>
 
             {inputMode === 'text' && (
               <PromptForm
@@ -235,7 +233,7 @@ const HomePage = () => {
                 submitPrompt={submitPrompt}
               />
             )}
-          </Group>
+          </Stack>
 
           <Text align="center" color="dimmed" fz="sm">
             This program is designed for testing ChatGPT API only.

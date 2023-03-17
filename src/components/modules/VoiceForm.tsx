@@ -96,7 +96,7 @@ const VoiceForm = ({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form className="w-full md:w-1/2" onSubmit={handleSubmit(onSubmit)}>
       <Stack align="center">
         {isLoading && (
           <Group spacing="xs">
