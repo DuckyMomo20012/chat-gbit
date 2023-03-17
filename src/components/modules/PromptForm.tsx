@@ -2,19 +2,15 @@ import { Icon } from '@iconify/react';
 import { ActionIcon, Checkbox, Stack, TextInput } from '@mantine/core';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-
-export type TPromptForm = {
-  prompt: string;
-  asSystemMessage: boolean;
-};
+import type { TPromptForm } from '@/pages/index';
 
 const PromptForm = ({
   isBusy,
-  onSubmit,
+  submitPrompt,
   allowSystemMessage = false,
 }: {
   isBusy: boolean;
-  onSubmit: (data: TPromptForm) => unknown;
+  submitPrompt: (data: TPromptForm) => unknown;
   allowSystemMessage?: boolean;
 }) => {
   const { register, reset, handleSubmit, setFocus, formState } =
@@ -29,9 +25,13 @@ const PromptForm = ({
       reset({
         prompt: '',
         asSystemMessage: false,
-      });
+      } satisfies TPromptForm);
     }
   }, [formState.isSubmitSuccessful, reset]);
+
+  const onSubmit = (data: TPromptForm) => {
+    submitPrompt(data);
+  };
 
   return (
     <form className="w-full md:w-1/2" onSubmit={handleSubmit(onSubmit)}>

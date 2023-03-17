@@ -1,6 +1,6 @@
 import { Icon } from '@iconify/react';
 import { Button, Stack, Text } from '@mantine/core';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import Head from 'next/head';
 import { CreateChatCompletionResponse } from 'openai';
@@ -8,7 +8,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type Typed from 'typed.js';
 import { Convo } from '@/components/modules/Convo';
-import { PromptForm, TPromptForm } from '@/components/modules/PromptForm';
+import { PromptForm } from '@/components/modules/PromptForm';
 import { VoiceForm } from '@/components/modules/VoiceForm';
 import {
   addMessage,
@@ -16,6 +16,11 @@ import {
   removeMessage,
 } from '@/store/slice/convoSlice';
 import type { RootState } from '@/store/store';
+
+export type TPromptForm = {
+  prompt: string;
+  asSystemMessage: boolean;
+};
 
 const HomePage = () => {
   const chat = useSelector((state: RootState) => state.convo);
@@ -29,14 +34,12 @@ const HomePage = () => {
   >(new Map());
 
   const status = useRef<'stop' | 'submit' | 'refetch'>('stop');
-  const isSubmitted = useRef(false);
   const {
-    refetch: regenerate,
-    isFetching,
     data: completion,
-  } = useQuery({
-    queryKey: ['completions'],
-    queryFn: async (): Promise<CreateChatCompletionResponse> => {
+    isLoading,
+    mutate,
+  } = useMutation({
+    mutationFn: async (): Promise<CreateChatCompletionResponse> => {
       const { data } = await axios.post('/api/completions', {
         data: {
           model: model.name,
@@ -49,18 +52,15 @@ const HomePage = () => {
 
       return data;
     },
-    enabled: false,
   });
 
-  const isBusy = isFetching || isTyping;
+  const isBusy = isLoading || isTyping;
 
   useEffect(() => {
-    if (isSubmitted.current) {
-      regenerate();
-      status.current = 'submit';
-      isSubmitted.current = false;
+    if (status.current === 'submit') {
+      mutate();
     }
-  }, [chat, regenerate]);
+  }, [chat, mutate]);
 
   useEffect(() => {
     if (completion && status.current !== 'stop') {
@@ -85,7 +85,7 @@ const HomePage = () => {
 
   const allowSystemMessage = chat.length === 0;
 
-  const onSubmit = async (data: TPromptForm) => {
+  const submitPrompt = async (data: TPromptForm) => {
     if (isBusy) return;
 
     if (data?.asSystemMessage) {
@@ -123,7 +123,7 @@ const HomePage = () => {
       );
     }
 
-    isSubmitted.current = true;
+    status.current = 'submit';
   };
 
   return (
@@ -136,7 +136,7 @@ const HomePage = () => {
         <meta content="Create new Chat GBiT" name="description"></meta>
       </Head>
 
-      <Convo chat={chat} isFetching={isFetching} typingsRef={typingsRef} />
+      <Convo chat={chat} isFetching={isLoading} typingsRef={typingsRef} />
 
       <Stack className="absolute bottom-0 w-full">
         <Stack align="center" className="dark:bg-black bg-white p-4">
@@ -178,7 +178,7 @@ const HomePage = () => {
                 />
               }
               onClick={() => {
-                regenerate();
+                mutate();
                 status.current = 'refetch';
 
                 // NOTE: Remove last message if it's assistant's message before
@@ -193,12 +193,16 @@ const HomePage = () => {
             </Button>
           )}
 
-          <VoiceForm onSubmit={onSubmit} />
+          <VoiceForm
+            allowSystemMessage={allowSystemMessage}
+            isBusy={isBusy}
+            submitPrompt={submitPrompt}
+          />
 
           <PromptForm
             allowSystemMessage={allowSystemMessage}
             isBusy={isBusy}
-            onSubmit={onSubmit}
+            submitPrompt={submitPrompt}
           />
 
           <Text align="center" color="dimmed" fz="sm">

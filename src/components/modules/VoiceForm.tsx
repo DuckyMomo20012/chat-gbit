@@ -1,19 +1,27 @@
 import { Icon } from '@iconify/react';
-import { ActionIcon, Group, Loader, Stack, Text } from '@mantine/core';
-import { useQuery } from '@tanstack/react-query';
+import {
+  ActionIcon,
+  Checkbox,
+  Group,
+  Loader,
+  Stack,
+  Text,
+} from '@mantine/core';
+import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { CreateTranscriptionResponse } from 'openai';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   TVoiceInputHandle,
   VoiceInput,
 } from '@/components/elements/VoiceInput';
-import type { TPromptForm } from '@/components/modules/PromptForm';
+import type { TPromptForm } from '@/pages/index';
 
 type TVoiceForm = {
   model: string;
   audio: Array<Blob>;
+  asSystemMessage: boolean;
 };
 
 const RECORD_TIMEOUT = 30000;
@@ -21,12 +29,15 @@ const RECORD_TIMEOUT = 30000;
 const VOICE_MODEL = 'whisper-1';
 
 const VoiceForm = ({
-  onSubmit,
+  isBusy,
+  submitPrompt,
+  allowSystemMessage = false,
 }: {
-  onSubmit: (data: TPromptForm) => unknown;
+  isBusy: boolean;
+  submitPrompt: (data: TPromptForm) => unknown;
+  allowSystemMessage?: boolean;
 }) => {
   const voiceRef = useRef<TVoiceInputHandle>();
-  const isSubmitted = useRef(false);
   const {
     reset,
     setValue,
@@ -34,18 +45,6 @@ const VoiceForm = ({
     handleSubmit,
     formState: { isSubmitSuccessful },
   } = useForm<TVoiceForm>();
-  const [form, setForm] = useState<FormData>();
-
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset({
-        model: VOICE_MODEL,
-        audio: [],
-      });
-      // NOTE: Manually clear the audio data from the voice input
-      voiceRef.current?.clear();
-    }
-  }, [reset, isSubmitSuccessful]);
 
   register('model', {
     value: VOICE_MODEL,
@@ -57,48 +56,49 @@ const VoiceForm = ({
     },
   });
 
-  const {
-    data: transcriptions,
-    isFetching,
-    error,
-  } = useQuery({
-    queryKey: ['voice'],
-    queryFn: async (): Promise<CreateTranscriptionResponse> => {
+  useEffect(() => {
+    // NOTE: Reset the form after the form is submitted
+    if (isSubmitSuccessful) {
+      reset({
+        model: VOICE_MODEL,
+        audio: [],
+        asSystemMessage: false,
+      } satisfies TVoiceForm);
+      // NOTE: Manually clear the audio data from the voice input
+      voiceRef.current?.clear();
+    }
+  }, [reset, isSubmitSuccessful]);
+
+  const { isLoading, error, mutateAsync } = useMutation({
+    mutationFn: async (
+      formData: TVoiceForm,
+    ): Promise<CreateTranscriptionResponse> => {
+      const blob = new Blob(formData.audio, { type: 'audio/webm;codecs=opus' });
+
+      const newForm = new FormData();
+      newForm.append('model', formData.model);
+      newForm.append('audio', blob);
+
       // TODO: Send voice data to server
-      const { data } = await axios.post('/api/transcriptions', form);
+      const { data } = await axios.post('/api/transcriptions', newForm);
 
       return data;
     },
-    enabled: isSubmitSuccessful,
   });
 
-  useEffect(() => {
-    if (transcriptions && isSubmitted.current) {
-      onSubmit({
-        prompt: transcriptions.text,
-        asSystemMessage: false,
-      });
+  const onSubmit = async (data: TVoiceForm) => {
+    const transcriptions = await mutateAsync(data);
 
-      isSubmitted.current = false;
-    }
-  }, [transcriptions, onSubmit]);
-
-  const onVoiceFormSubmit = (data: TVoiceForm) => {
-    const blob = new Blob(data.audio, { type: 'audio/webm;codecs=opus' });
-
-    const newForm = new FormData();
-    newForm.append('model', data.model);
-    newForm.append('audio', blob);
-
-    setForm(newForm);
-
-    isSubmitted.current = true;
+    submitPrompt({
+      prompt: transcriptions.text,
+      asSystemMessage: data.asSystemMessage,
+    });
   };
 
   return (
-    <form onSubmit={handleSubmit(onVoiceFormSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <Stack align="center">
-        {isFetching && (
+        {isLoading && (
           <Group spacing="xs">
             <Loader size="xs" />
             <Text>Transcribing</Text>
@@ -121,6 +121,7 @@ const VoiceForm = ({
           <ActionIcon
             className="self-start"
             color="pink"
+            disabled={isBusy}
             size="lg"
             type="submit"
             variant="light"
@@ -128,6 +129,12 @@ const VoiceForm = ({
             <Icon height={24} icon="material-symbols:send-outline" width={24} />
           </ActionIcon>
         </Group>
+        {allowSystemMessage && (
+          <Checkbox
+            label="Set as system instruction"
+            {...register('asSystemMessage')}
+          />
+        )}
       </Stack>
     </form>
   );
