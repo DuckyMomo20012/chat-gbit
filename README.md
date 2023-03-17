@@ -56,11 +56,11 @@
   - [Prerequisites](#bangbang-prerequisites)
   - [Run Locally](#running-run-locally)
 - [Usage](#eyes-usage)
-  - [New chat completion](#new-chat-completion)
   - [Basic usage](#basic-usage)
   - [Set model for chat](#set-model-for-chat)
   - [Monitor usage](#monitor-usage)
   - [Save chat history to local storage](#save-chat-history-to-local-storage)
+  - [Upload training conversation](#upload-training-conversation)
   - [Clear chat history](#clear-chat-history)
 - [Roadmap](#compass-roadmap)
 - [Contributing](#wave-contributing)
@@ -80,7 +80,17 @@
 
 <div align="center">
   <p>Demo</p>
-  <img src="https://user-images.githubusercontent.com/64480713/223768073-4b54adf6-3d08-40f4-9e17-cb7464fc15dd.png" alt="screenshot" />
+  <img src="https://user-images.githubusercontent.com/64480713/225927271-af297201-586b-4c1c-881a-321ce49b316e.png" alt="screenshot" />
+</div>
+
+<div align="center">
+  <p>Monitor usage</p>
+  <img src="https://user-images.githubusercontent.com/64480713/225927331-548f874c-9701-4a6b-a9b6-445b289d9404.png" alt="usage" />
+</div>
+
+<div align="center">
+  <p>Upload training conversation</p>
+  <img src="https://user-images.githubusercontent.com/64480713/225926543-ad962c3e-899a-424a-b066-175297d78786.png" alt="upload_training" />
 </div>
 
 <!-- TechStack -->
@@ -116,10 +126,12 @@
 ### :dart: Features
 
 - New chat completion.
+- Voice input.
 - Set model for chat.
 - Monitor usage.
 - Save chat history to local storage.
 - Clear chat history.
+- Upload training conversation.
 - Regenerate chat completion.
 
 <!-- Env Variables -->
@@ -201,15 +213,43 @@ pnpm dev
 
 ## :eyes: Usage
 
-### New chat completion
+<!-- Basic usage -->
+
+### Basic usage
 
 This app uses the new [Chat Completion
 API](https://platform.openai.com/docs/api-reference/chat) to generate the chat.
 
-### Basic usage
+You can communicate with the chatbot by:
 
-You can communicate with the chatbot by typing in the input box and pressing the
-`Enter` key or clicking the `Send` button.
+- **Text input**: Typing in the input box and pressing the `Enter` key or
+  clicking the `Send` button.
+
+- **Voice input**: Click `Start Recording` button to start recording your voice
+  and click `Stop Recording` button to stop recording. The server will try to
+  transcribe your voice and send the text to the chatbot as the prompt.
+
+  - This feature requires the microphone permission. If you haven't granted the
+    permission, the browser will ask you to grant the permission.
+
+  - You can ONLY record up to **30 seconds** of audio to **reduce the cost**.
+
+  - The audio data is persisted until the user submit the prompt, reload the
+    page, or start a new recording.
+
+  - The record is saved as a `.webm` audio file and then send to the server.
+
+  - This input will use the new Whisper API to generate the transcription. You
+    can read more about the Whisper API
+    [here](https://platform.openai.com/docs/guides/speech-to-text). Currently,
+    the API only supports `whisper-1` model.
+
+  - When the user revoke the microphone permission during recording, the record
+    is stopped **immediately**, but the voice input is changed to `inactive`
+    mode about 10 seconds later (**not immediately**). The user **can still
+    submit the audio before the record is stopped**.
+
+Flow description:
 
 - When there is no message in the chat, you can whether submit the prompt with
   the role `user` or with `system` by check the `Set as system instruction`
@@ -227,9 +267,10 @@ You can communicate with the chatbot by typing in the input box and pressing the
   clicking the `Stop generating` button.
 
   > **Note**: The completion is **already generated** and sent to the client
-  > before typing the completion. **So you are billed for that completion**.
+  > before typing the completion. **So you are already billed for that
+  > completion**.
 
-- When there is no typing completion and not fetching completion, you can
+- When there is no typing completion and not fetching the completion, you can
   regenerate the completion by clicking the `Regenerate response` button.
 
 - When something went wrong and the completion wasn't not added to the chat, you
@@ -240,6 +281,8 @@ You can communicate with the chatbot by typing in the input box and pressing the
   - Submit the prompt again. The new prompt will replace the old prompt in the
     chat.
 
+<!-- Set model for chat -->
+
 ### Set model for chat
 
 You can set the model for the chat by clicking the `Set model` button.
@@ -248,6 +291,11 @@ Available models:
 
 - `gpt-3.5-turbo`
 - `gpt-3.5-turbo-0301`: supported through at least June 1st.
+
+> **Note**: You should change the model before submitting the prompt. Changing
+> after submitting the prompt will have no effect.
+
+<!-- Monitor usage -->
 
 ### Monitor usage
 
@@ -264,22 +312,47 @@ The usage panel will show the usage tokens in the chat:
   include the usage tokens of the messages **not displaying in the chat**, e.g.,
   stopped generation, regenerated, etc.
 
+> **Note**: The usage of Whisper API is not tracked.
+
+<!-- Save chat history to local storage -->
+
 ### Save chat history to local storage
 
 By default the chat history will be saved to local storage. Therefore, you can
 still see the chat history after refreshing the page.
 
+<!-- Upload training conversation -->
+
+### Upload training conversation
+
+As the Chat Completion API supports the "hard-coded" conversation, you now can
+upload training conversation to the chatbot by clicking the `Train` button.
+
+> **Warning**: Update training conversation will delete all the conversation
+> history.
+
+- The conversation MUST follow [chat
+  format](https://platform.openai.com/docs/guides/chat/introduction).
+
+- User can also hide the training conversation by clicking the `Hide training
+messages` button.
+
+- The form is validated while typing, so you can see the error message while
+  typing.
+
+<!-- Clear chat history -->
+
 ### Clear chat history
 
-You can clear the chat history by clicking the `Clear chat history` button. All
+You can clear the chat history by clicking the `Clear conversation` button. All
 the data stored in local storage will be removed.
 
 <!-- Roadmap -->
 
 ## :compass: Roadmap
 
-- [ ] Load training conversation from local file or from text input.
-- [ ] Hide message.
+- [x] Load training conversation from local file or from text input.
+- [x] Hide message.
 - [ ] Display code block in completion.
 - [ ] Edit user prompt.
 - [ ] Support chat toolbar for small screen.
@@ -314,7 +387,7 @@ Please read the [Code of Conduct](https://github.com/DuckyMomo20012/chat-gbit/bl
     include the usage tokens of the messages **not displaying in the chat**,
     e.g., stopped generation, regenerated, etc.
 
-- Do you support other models?
+- Do you support other models for chat completion?
 
   - No, the Chat Completion API only [supports](https://platform.openai.com/docs/api-reference/chat/create#chat/create-model) `gpt-3.5-turbo` and
     `gpt-3.5-turbo-0301`.

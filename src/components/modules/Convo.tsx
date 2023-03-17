@@ -134,7 +134,7 @@ const Convo = ({
 
         {isFetching && <PlaceholderMessage role="assistant" />}
 
-        <Space className="w-full h-64 md:h-48 flex-shrink-0" ref={bottomRef} />
+        <Space className="w-full h-72 md:h-48 flex-shrink-0" ref={bottomRef} />
       </Stack>
       <ActionIcon
         className="bottom-32 right-8 absolute z-1 hidden"
