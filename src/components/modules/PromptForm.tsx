@@ -52,7 +52,6 @@ const PromptForm = ({
               />
             </ActionIcon>
           }
-          size="lg"
           {...register('prompt', {
             validate: {
               notEmpty: (value: string) => value.trim().length > 0,

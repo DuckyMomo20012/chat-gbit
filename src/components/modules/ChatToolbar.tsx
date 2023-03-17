@@ -15,7 +15,7 @@ import { RootState, persistor } from '@/store/store';
 
 const MINIMUM_FRACTION_DIGITS = 6;
 
-const ChatToolbar = () => {
+const ChatToolbar = ({ compact = false }: { compact?: boolean }) => {
   const chat = useSelector((state: RootState) => state.convo);
   const currModel = useSelector((state: RootState) => state.model);
   const allTimeToken = useSelector((state: RootState) => state.token);
@@ -44,7 +44,22 @@ const ChatToolbar = () => {
     <>
       <Menu closeOnClickOutside={false} closeOnItemClick={false}>
         <Menu.Target>
-          <Button variant="outline">Usage</Button>
+          <Tooltip label="View usage">
+            {compact ? (
+              <ActionIcon
+                aria-label="Usage"
+                color="green"
+                size="lg"
+                variant="outline"
+              >
+                <Icon icon="material-symbols:data-usage" width={24} />
+              </ActionIcon>
+            ) : (
+              <Button color="green" variant="outline">
+                Usage
+              </Button>
+            )}
+          </Tooltip>
         </Menu.Target>
 
         <Menu.Dropdown>
@@ -144,7 +159,22 @@ const ChatToolbar = () => {
 
       <Menu>
         <Menu.Target>
-          <Button variant="outline">Model</Button>
+          <Tooltip label="Set model">
+            {compact ? (
+              <ActionIcon
+                aria-label="Model"
+                color="violet"
+                size="lg"
+                variant="outline"
+              >
+                <Icon icon="material-symbols:mindfulness-outline" width={24} />
+              </ActionIcon>
+            ) : (
+              <Button color="violet" variant="outline">
+                Model
+              </Button>
+            )}
+          </Tooltip>
         </Menu.Target>
 
         <Menu.Dropdown>
@@ -178,7 +208,22 @@ const ChatToolbar = () => {
 
       <Popover closeOnClickOutside={false} width={400}>
         <Popover.Target>
-          <Button variant="outline">Train</Button>
+          <Tooltip label="Upload conversation">
+            {compact ? (
+              <ActionIcon
+                aria-label="Train"
+                color="indigo"
+                size="lg"
+                variant="outline"
+              >
+                <Icon icon="material-symbols:upload" width={24} />
+              </ActionIcon>
+            ) : (
+              <Button color="indigo" variant="outline">
+                Train
+              </Button>
+            )}
+          </Tooltip>
         </Popover.Target>
 
         <Popover.Dropdown>
@@ -187,16 +232,25 @@ const ChatToolbar = () => {
       </Popover>
 
       <Tooltip label="Clear conversation">
-        <ActionIcon
-          aria-label="Clear conversation"
-          color="red"
-          data-test-id="remove-convo"
-          onClick={() => persistor.purge()}
-          size="lg"
-          variant="outline"
-        >
-          <Icon icon="material-symbols:delete-outline" width={24} />
-        </ActionIcon>
+        {compact ? (
+          <ActionIcon
+            aria-label="Clear conversation"
+            color="red"
+            onClick={() => persistor.purge()}
+            size="lg"
+            variant="outline"
+          >
+            <Icon icon="material-symbols:delete-outline" width={24} />
+          </ActionIcon>
+        ) : (
+          <Button
+            color="red"
+            onClick={() => persistor.purge()}
+            variant="outline"
+          >
+            Clear
+          </Button>
+        )}
       </Tooltip>
     </>
   );

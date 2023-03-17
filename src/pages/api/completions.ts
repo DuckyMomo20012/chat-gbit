@@ -25,7 +25,7 @@ export default async function getCompletions(
     const response = await openai.createChatCompletion({
       model,
       messages,
-    } as TBody);
+    } satisfies TBody);
 
     res.status(200).json(response.data);
   } catch (error) {

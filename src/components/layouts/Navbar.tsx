@@ -2,6 +2,7 @@ import { Icon } from '@iconify/react';
 import {
   ActionIcon,
   Anchor,
+  Avatar,
   Button,
   CloseButton,
   Divider,
@@ -77,14 +78,16 @@ const Navbar = ({ navBarOpened, setNavBarOpened }: NavbarProps) => {
                   href="/"
                   underline={false}
                 >
-                  <Image
-                    alt="logo"
-                    height={32}
-                    src="https://assets.vercel.com/image/upload/v1662130559/nextjs/Icon_dark_background.png"
-                    width={32}
-                  />
+                  <Avatar color="indigo" radius="sm" size="md" variant="filled">
+                    <Image
+                      alt="logo"
+                      height={28}
+                      src="/img/chatgpt.svg"
+                      width={28}
+                    />
+                  </Avatar>
                   <Text align="center" className="w-full truncate" fw={700}>
-                    NextJS Template
+                    Chat GBiT
                   </Text>
                 </Anchor>
                 <Tooltip label={dark ? 'Light mode' : 'Dark mode'}>
