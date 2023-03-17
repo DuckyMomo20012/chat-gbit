@@ -1,10 +1,10 @@
 import { Icon } from '@iconify/react';
-import { Button, Stack, Text } from '@mantine/core';
+import { ActionIcon, Button, Group, Stack, Text, Tooltip } from '@mantine/core';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import Head from 'next/head';
 import { CreateChatCompletionResponse } from 'openai';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type Typed from 'typed.js';
 import { Convo } from '@/components/modules/Convo';
@@ -28,6 +28,8 @@ const HomePage = () => {
   const model = useSelector((state: RootState) => state.model);
   const isTyping = chat.filter((item) => item.isTyping).length > 0;
   const dispatch = useDispatch();
+
+  const [inputMode, setInputMode] = useState<'voice' | 'text'>('text');
 
   const typingsRef = useRef<
     Map<string, { node: HTMLSpanElement; typed: Typed }>
@@ -193,17 +195,47 @@ const HomePage = () => {
             </Button>
           )}
 
-          <VoiceForm
-            allowSystemMessage={allowSystemMessage}
-            isBusy={isBusy}
-            submitPrompt={submitPrompt}
-          />
+          <Group className="w-full" position="center">
+            <Tooltip
+              label={inputMode === 'text' ? 'Voice input' : 'Text input'}
+            >
+              <ActionIcon
+                className="self-start"
+                color="lime"
+                onClick={() => {
+                  setInputMode((prev) => (prev === 'text' ? 'voice' : 'text'));
+                }}
+                size="xl"
+                variant="light"
+              >
+                <Icon
+                  height={24}
+                  icon={
+                    inputMode === 'text'
+                      ? 'material-symbols:voice-chat-outline'
+                      : 'material-symbols:keyboard-alt-outline'
+                  }
+                  width={24}
+                />
+              </ActionIcon>
+            </Tooltip>
 
-          <PromptForm
-            allowSystemMessage={allowSystemMessage}
-            isBusy={isBusy}
-            submitPrompt={submitPrompt}
-          />
+            {inputMode === 'text' && (
+              <PromptForm
+                allowSystemMessage={allowSystemMessage}
+                isBusy={isBusy}
+                submitPrompt={submitPrompt}
+              />
+            )}
+
+            {inputMode === 'voice' && (
+              <VoiceForm
+                allowSystemMessage={allowSystemMessage}
+                isBusy={isBusy}
+                submitPrompt={submitPrompt}
+              />
+            )}
+          </Group>
 
           <Text align="center" color="dimmed" fz="sm">
             This program is designed for testing ChatGPT API only.
