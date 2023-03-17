@@ -58,8 +58,7 @@ export default async function getTranscriptions(
     const response = await openai.createTranscription(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       file as any,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      formFields.model as any,
+      formFields.model as string,
     );
 
     res.status(200).json(response.data);

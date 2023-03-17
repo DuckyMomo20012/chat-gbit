@@ -37,7 +37,7 @@ const UploadForm = () => {
           ? JSON.stringify(hiddenMessage, null, 2)
           : '[]',
       hideMessages: false,
-    };
+    } satisfies TUploadForm;
   }, [hiddenMessage]);
 
   const {
