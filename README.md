@@ -79,18 +79,23 @@
 ### :camera: Screenshots
 
 <div align="center">
-  <p>Demo</p>
-  <img src="https://user-images.githubusercontent.com/64480713/225927271-af297201-586b-4c1c-881a-321ce49b316e.png" alt="screenshot" />
+  <p>Text input demo</p>
+  <img src="https://user-images.githubusercontent.com/64480713/225955214-9c07dd9f-8ebf-4d3e-a94c-31d57958fc8e.png" alt="text_input" />
+</div>
+
+<div align="center">
+  <p>Voice input demo</p>
+  <img src="https://user-images.githubusercontent.com/64480713/225954834-fea4655c-2374-472c-ad93-5954bfccef27.png" alt="voice_input" />
 </div>
 
 <div align="center">
   <p>Monitor usage</p>
-  <img src="https://user-images.githubusercontent.com/64480713/225927331-548f874c-9701-4a6b-a9b6-445b289d9404.png" alt="usage" />
+  <img src="https://user-images.githubusercontent.com/64480713/225955817-9e008443-81fd-45e1-b1be-42e81e1951c8.png" alt="usage" />
 </div>
 
 <div align="center">
   <p>Upload training conversation</p>
-  <img src="https://user-images.githubusercontent.com/64480713/225926543-ad962c3e-899a-424a-b066-175297d78786.png" alt="upload_training" />
+  <img src="https://user-images.githubusercontent.com/64480713/225956795-f125d777-6e0a-4de8-bc22-b263186f86d9.png" alt="upload_training" />
 </div>
 
 <!-- TechStack -->
@@ -340,6 +345,10 @@ messages` button.
 - The form is validated while typing, so you can see the error message while
   typing.
 
+> **Note**: There is a known issue that the `JsonInput` component will have
+> empty value when the conversation is cleared (`TextInput` is fine). This won't
+> affect the user experience, but it's still a bug.
+
 <!-- Clear chat history -->
 
 ### Clear chat history
@@ -355,7 +364,7 @@ the data stored in local storage will be removed.
 - [x] Hide message.
 - [ ] Display code block in completion.
 - [ ] Edit user prompt.
-- [ ] Support chat toolbar for small screen.
+- [x] Support chat toolbar for small screen.
 - [ ] Open usage panel in new tab.
 
 <!-- Contributing -->
