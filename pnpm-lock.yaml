@@ -13,6 +13,7 @@ specifiers:
   '@mantine/next': 5.10.4
   '@mantine/prism': 5.10.4
   '@mdx-js/loader': 2.3.0
+  '@mdx-js/mdx': 2.3.0
   '@mdx-js/react': 2.3.0
   '@next/mdx': 13.2.4
   '@reduxjs/toolkit': 1.9.3
@@ -70,6 +71,7 @@ dependencies:
   '@mantine/next': 5.10.4_pnokhhiiffeanlj7xihut5qdrq
   '@mantine/prism': 5.10.4_zvr3twhaqlaxovla5vk46k3pgm
   '@mdx-js/loader': 2.3.0_webpack@5.76.2
+  '@mdx-js/mdx': 2.3.0
   '@mdx-js/react': 2.3.0_react@18.2.0
   '@next/mdx': 13.2.4_msthxdjvrhmdkfpqqalumiidgq
   '@reduxjs/toolkit': 1.9.3_k4ae6lp43ej6mezo3ztvx6pykq
