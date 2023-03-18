@@ -9,6 +9,7 @@ import NextNProgress from 'nextjs-progressbar';
 import { AppShell } from '@/components/layouts/AppShell';
 import {
   AuthGuard,
+  MDXProvider,
   MantineProvider,
   QueryProvider,
   ReduxProvider,
@@ -35,15 +36,19 @@ function MyApp({
       <SessionProvider session={session}>
         <QueryProvider>
           <MantineProvider>
-            <NextNProgress />
-            {/* Guarding pages */}
-            <AppShell>
-              {Component.auth ? (
-                <AuthGuard>{getLayout(<Component {...pageProps} />)}</AuthGuard>
-              ) : (
-                getLayout(<Component {...pageProps} />)
-              )}
-            </AppShell>
+            <MDXProvider>
+              <NextNProgress />
+              {/* Guarding pages */}
+              <AppShell>
+                {Component.auth ? (
+                  <AuthGuard>
+                    {getLayout(<Component {...pageProps} />)}
+                  </AuthGuard>
+                ) : (
+                  getLayout(<Component {...pageProps} />)
+                )}
+              </AppShell>
+            </MDXProvider>
           </MantineProvider>
         </QueryProvider>
       </SessionProvider>

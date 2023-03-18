@@ -9,9 +9,13 @@ import {
   Text,
   Tooltip,
 } from '@mantine/core';
+import { evaluate } from '@mdx-js/mdx';
+import { useMDXComponents } from '@mdx-js/react';
 import Avatar from 'boring-avatars';
 import clsx from 'clsx';
-import { forwardRef } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
+import * as runtime from 'react/jsx-runtime';
+import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import type { TChat } from '@/store/slice/convoSlice';
 
 type TMessageProp = Pick<TChat, 'role' | 'content' | 'isTyping'> & {
@@ -23,6 +27,43 @@ const Message = forwardRef(function Message(
   { userName, colors, role, content, isTyping }: TMessageProp,
   ref: React.Ref<HTMLSpanElement>,
 ) {
+  const components = useMDXComponents();
+  const [parsed, setParsed] = useState<React.ReactNode>();
+
+  useEffect(() => {
+    const evaluateBody = async () => {
+      const { default: BodyContent } = await evaluate(content, {
+        ...runtime,
+        useMDXComponents: () => components,
+        // NOTE: Sanitize the content to prevent XSS
+        rehypePlugins: [
+          [
+            // Ref:
+            // https://github.com/rehypejs/rehype-sanitize#example-syntax-highlighting
+            rehypeSanitize,
+            {
+              ...defaultSchema,
+              attributes: {
+                ...defaultSchema.attributes,
+                code: [
+                  ...(defaultSchema.attributes?.code || []),
+                  // List of all allowed languages:
+                  // NOTE: Only allow className to support highlighting
+                  ['className'],
+                ],
+              },
+            },
+          ],
+        ],
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any);
+
+      setParsed(<BodyContent />);
+    };
+
+    evaluateBody();
+  }, [content, components]);
+
   return (
     <Center
       className={clsx('w-full p-4', {
@@ -69,13 +110,14 @@ const Message = forwardRef(function Message(
               ))}
           </MantineAvatar>
         </Tooltip>
-        {!isTyping && <Text>{content}</Text>}
 
-        {isTyping && (
-          <Text>
+        <Text className="min-w-0 flex-grow">
+          {isTyping ? (
             <Box component="span" ref={ref} />
-          </Text>
-        )}
+          ) : (
+            <Text>{parsed}</Text>
+          )}
+        </Text>
       </Group>
     </Center>
   );
