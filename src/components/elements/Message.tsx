@@ -15,6 +15,7 @@ import Avatar from 'boring-avatars';
 import clsx from 'clsx';
 import { forwardRef, useEffect, useState } from 'react';
 import * as runtime from 'react/jsx-runtime';
+import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import type { TChat } from '@/store/slice/convoSlice';
 
 type TMessageProp = Pick<TChat, 'role' | 'content' | 'isTyping'> & {
@@ -34,6 +35,26 @@ const Message = forwardRef(function Message(
       const { default: BodyContent } = await evaluate(content, {
         ...runtime,
         useMDXComponents: () => components,
+        // NOTE: Sanitize the content to prevent XSS
+        rehypePlugins: [
+          [
+            // Ref:
+            // https://github.com/rehypejs/rehype-sanitize#example-syntax-highlighting
+            rehypeSanitize,
+            {
+              ...defaultSchema,
+              attributes: {
+                ...defaultSchema.attributes,
+                code: [
+                  ...(defaultSchema.attributes?.code || []),
+                  // List of all allowed languages:
+                  // NOTE: Only allow className to support highlighting
+                  ['className'],
+                ],
+              },
+            },
+          ],
+        ],
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any);
 
