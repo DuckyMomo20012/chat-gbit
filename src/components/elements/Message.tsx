@@ -9,9 +9,12 @@ import {
   Text,
   Tooltip,
 } from '@mantine/core';
+import { evaluate } from '@mdx-js/mdx';
+import { useMDXComponents } from '@mdx-js/react';
 import Avatar from 'boring-avatars';
 import clsx from 'clsx';
-import { forwardRef } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
+import * as runtime from 'react/jsx-runtime';
 import type { TChat } from '@/store/slice/convoSlice';
 
 type TMessageProp = Pick<TChat, 'role' | 'content' | 'isTyping'> & {
@@ -23,6 +26,23 @@ const Message = forwardRef(function Message(
   { userName, colors, role, content, isTyping }: TMessageProp,
   ref: React.Ref<HTMLSpanElement>,
 ) {
+  const components = useMDXComponents();
+  const [parsed, setParsed] = useState<React.ReactNode>();
+
+  useEffect(() => {
+    const evaluateBody = async () => {
+      const { default: BodyContent } = await evaluate(content, {
+        ...runtime,
+        useMDXComponents: () => components,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any);
+
+      setParsed(<BodyContent />);
+    };
+
+    evaluateBody();
+  }, [content, components]);
+
   return (
     <Center
       className={clsx('w-full p-4', {
@@ -74,7 +94,7 @@ const Message = forwardRef(function Message(
           {isTyping ? (
             <Box component="span" ref={ref} />
           ) : (
-            <Text>{content}</Text>
+            <Text>{parsed}</Text>
           )}
         </Text>
       </Group>
