@@ -69,13 +69,14 @@ const Message = forwardRef(function Message(
               ))}
           </MantineAvatar>
         </Tooltip>
-        {!isTyping && <Text>{content}</Text>}
 
-        {isTyping && (
-          <Text>
+        <Text className="min-w-0">
+          {isTyping ? (
             <Box component="span" ref={ref} />
-          </Text>
-        )}
+          ) : (
+            <Text>{content}</Text>
+          )}
+        </Text>
       </Group>
     </Center>
   );
