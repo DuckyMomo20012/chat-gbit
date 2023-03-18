@@ -104,7 +104,15 @@ const Convo = ({
                 const typed = new Typed(node, {
                   // NOTE: A little hacky, we pause the typing for 1ms to
                   // trigger the onTypingPaused event.
-                  strings: [item.content.replace(/(\w+)/g, '^1 `$1`')],
+                  // NOTE: Replace the backticks with HTML codes to prevent the
+                  // Typed.js library from ignoring the backticks. Don't worry,
+                  // on browser, the backticks will be rendered correctly, not
+                  // the HTML codes.
+                  strings: [
+                    item.content
+                      .replace(/`/g, '&#96;')
+                      .replace(/([^\s]+)/g, '^1 `$1`'),
+                  ],
                   typeSpeed: 100,
                   cursorChar: '█',
                   onStringTyped: () => {
