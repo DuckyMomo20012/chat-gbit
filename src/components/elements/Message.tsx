@@ -111,7 +111,7 @@ const Message = forwardRef(function Message(
           </MantineAvatar>
         </Tooltip>
 
-        <Text className="min-w-0">
+        <Text className="min-w-0 flex-grow">
           {isTyping ? (
             <Box component="span" ref={ref} />
           ) : (
