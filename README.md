@@ -102,7 +102,7 @@
 
 <div align="center">
   <p>Code highlighting</p>
-  <img src="https://user-images.githubusercontent.com/64480713/226116195-076ce5a0-e85d-46c2-a466-8aa1015db17c.png" alt="code_highlighting" />
+  <img src="https://user-images.githubusercontent.com/64480713/226118482-d860fd83-afea-4981-9f7b-dbc8d5f2cf93.png" alt="code_highlighting" />
 </div>
 
 <!-- TechStack -->
