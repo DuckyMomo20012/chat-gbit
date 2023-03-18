@@ -102,15 +102,21 @@ const Convo = ({
                 }
 
                 const typed = new Typed(node, {
-                  // NOTE: A little hacky, we pause the typing for 1ms to
-                  // trigger the onTypingPaused event.
-                  // NOTE: Replace the backticks with HTML codes to prevent the
-                  // Typed.js library from ignoring the backticks. Don't worry,
-                  // on browser, the backticks will be rendered correctly, not
-                  // the HTML codes.
                   strings: [
                     item.content
+                      // Ref: https://stackoverflow.com/a/6234804/12512981
+                      .replace(/&/g, '&amp;') // NOTE: Must be done first!
+                      .replace(/</g, '&lt;')
+                      .replace(/>/g, '&gt;')
+                      .replace(/"/g, '&quot;')
+                      .replace(/'/g, '&#039;')
+                      // NOTE: Replace the backticks with HTML codes to prevent the
+                      // Typed.js library from ignoring the backticks. Don't worry,
+                      // on browser, the backticks will be rendered correctly, not
+                      // the HTML codes.
                       .replace(/`/g, '&#96;')
+                      // NOTE: A little hacky, we pause the typing for 1ms to
+                      // trigger the onTypingPaused event.
                       .replace(/([^\s]+)/g, '^1 `$1`'),
                   ],
                   typeSpeed: 100,
