@@ -16,6 +16,7 @@ import {
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import convoReducer, { addMessage, mutateMessage } from './slice/convoSlice';
+import historyReducer from './slice/historySlice';
 import modelReducer from './slice/modelSlice';
 import tokenReducer, { addTokens } from './slice/tokenSlice';
 
@@ -30,6 +31,7 @@ const persistedReducer = persistReducer(
     convo: convoReducer,
     model: modelReducer,
     token: tokenReducer,
+    history: historyReducer,
   }),
 );
 
