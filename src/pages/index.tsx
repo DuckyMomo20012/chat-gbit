@@ -140,8 +140,8 @@ const HomePage = () => {
 
       <Convo chat={chat} isFetching={isLoading} typingsRef={typingsRef} />
 
-      <Stack className="absolute bottom-0 w-full">
-        <Stack align="center" className="dark:bg-black bg-white p-4">
+      <Stack className="absolute bottom-0 w-full z-999">
+        <Stack align="center" className="backdrop-filter backdrop-blur-xl p-4">
           {isTyping && (
             <Button
               leftIcon={
