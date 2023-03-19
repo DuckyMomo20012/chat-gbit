@@ -9,8 +9,10 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { useDispatch, useSelector } from 'react-redux';
+import { PriceTable } from '@/components/elements/PriceTable';
 import { UploadForm } from '@/components/modules/UploadForm';
-import { MODEL, setModel } from '@/store/slice/modelSlice';
+import { MODEL_PRICE } from '@/constants/modelPrice';
+import { setModel } from '@/store/slice/modelSlice';
 import { RootState, persistor } from '@/store/store';
 
 const MINIMUM_FRACTION_DIGITS = 6;
@@ -64,24 +66,8 @@ const ChatToolbar = ({ compact = false }: { compact?: boolean }) => {
 
         <Menu.Dropdown>
           <Menu.Label>Model</Menu.Label>
-          <Menu.Item fz="sm">
-            Name: <Code color="green">{currModel.name}</Code>
-          </Menu.Item>
-          <Menu.Item fz="sm">
-            Price:{' '}
-            <Text color="indigo" span>
-              {new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD',
-                minimumFractionDigits: 4,
-              }).format(currModel.price)}
-            </Text>{' '}
-            /{' '}
-            {new Intl.NumberFormat('en-US', {
-              notation: 'compact',
-              compactDisplay: 'short',
-            }).format(currModel.per)}{' '}
-            tokens
+          <Menu.Item>
+            <PriceTable model={currModel} />
           </Menu.Item>
 
           <Menu.Divider />
@@ -115,7 +101,9 @@ const ChatToolbar = ({ compact = false }: { compact?: boolean }) => {
                 minimumFractionDigits: MINIMUM_FRACTION_DIGITS,
                 signDisplay: 'always',
               }).format(
-                (currentToken.total_tokens * currModel.price) / currModel.per,
+                (currentToken.prompt_tokens * currModel.price.prompt +
+                  currentToken.completion_tokens * currModel.price.completion) /
+                  currModel.per,
               )}
             </Text>
           </Menu.Item>
@@ -150,7 +138,9 @@ const ChatToolbar = ({ compact = false }: { compact?: boolean }) => {
                 currency: 'USD',
                 minimumFractionDigits: MINIMUM_FRACTION_DIGITS,
               }).format(
-                (allTimeToken.total_tokens * currModel.price) / currModel.per,
+                (allTimeToken.prompt_tokens * currModel.price.prompt +
+                  allTimeToken.completion_tokens * currModel.price.completion) /
+                  currModel.per,
               )}
             </Text>
           </Menu.Item>
@@ -178,29 +168,9 @@ const ChatToolbar = ({ compact = false }: { compact?: boolean }) => {
         </Menu.Target>
 
         <Menu.Dropdown>
-          {MODEL.map((model, idx) => (
-            <Menu.Item
-              key={idx}
-              onClick={() => dispatch(setModel(model.name))}
-              rightSection={
-                <Text>
-                  <Code className="ml-2" color="orange">
-                    {new Intl.NumberFormat('en-US', {
-                      style: 'currency',
-                      currency: 'USD',
-                      maximumFractionDigits: MINIMUM_FRACTION_DIGITS,
-                    }).format(model.price)}
-                  </Code>{' '}
-                  /{' '}
-                  {new Intl.NumberFormat('en-US', {
-                    notation: 'compact',
-                    compactDisplay: 'short',
-                  }).format(currModel.per)}{' '}
-                  tokens
-                </Text>
-              }
-            >
-              {model.name}
+          {MODEL_PRICE.map((model, idx) => (
+            <Menu.Item key={idx} onClick={() => dispatch(setModel(model.name))}>
+              <PriceTable model={model} />
             </Menu.Item>
           ))}
         </Menu.Dropdown>
