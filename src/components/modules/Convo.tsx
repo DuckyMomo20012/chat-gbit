@@ -119,7 +119,7 @@ const Convo = ({
                       // trigger the onTypingPaused event.
                       .replace(/([^\s]+)/g, '^1 `$1`'),
                   ],
-                  typeSpeed: 100,
+                  typeSpeed: 80,
                   cursorChar: '█',
                   onStringTyped: () => {
                     dispatch(
