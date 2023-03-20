@@ -1,9 +1,4 @@
-import {
-  combineReducers,
-  configureStore,
-  createListenerMiddleware,
-  isAnyOf,
-} from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import {
   FLUSH,
   PAUSE,
@@ -15,10 +10,10 @@ import {
   persistStore,
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import convoReducer, { addMessage, mutateMessage } from './slice/convoSlice';
+import convoReducer from './slice/convoSlice';
 import historyReducer from './slice/historySlice';
 import modelReducer from './slice/modelSlice';
-import tokenReducer, { addTokens } from './slice/tokenSlice';
+import { listenerMiddleware } from '@/store/listenerMiddleware';
 
 const persistConfig = {
   key: 'root',
@@ -30,23 +25,9 @@ const persistedReducer = persistReducer(
   combineReducers({
     convo: convoReducer,
     model: modelReducer,
-    token: tokenReducer,
     history: historyReducer,
   }),
 );
-
-const listenerMiddleware = createListenerMiddleware();
-
-// NOTE: Listen to addMessage and mutateMessage actions to update "real" token
-// usage
-listenerMiddleware.startListening({
-  matcher: isAnyOf(addMessage, mutateMessage),
-  effect: (action, listenerApi) => {
-    if (action.payload?.usage) {
-      listenerApi.dispatch(addTokens(action.payload.usage));
-    }
-  },
-});
 
 export const store = configureStore({
   reducer: persistedReducer,

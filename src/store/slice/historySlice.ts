@@ -1,45 +1,64 @@
-import { createSlice, nanoid } from '@reduxjs/toolkit';
+import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+
+import { CreateCompletionResponseUsage } from 'openai';
 import { PURGE } from 'redux-persist';
+import { Simplify } from 'type-fest';
+import type { RootState } from '@/store/store';
 
-export type TChatHistory = {
-  id: string;
-  messages: Array<string>;
-  model: string;
-  token: string;
-};
+export type TChatHistory = Simplify<
+  {
+    id: string;
+    title: string;
+  } & CreateCompletionResponseUsage
+>;
 
-const initialState: Array<TChatHistory> = [];
+const historyAdapter = createEntityAdapter<TChatHistory>();
 
 const historySlice = createSlice({
   name: 'history',
-  initialState,
+  initialState: historyAdapter.getInitialState(),
   reducers: {
-    addHistory: (state, action: PayloadAction<Omit<TChatHistory, 'id'>>) => {
-      const { payload } = action;
+    addHistory: historyAdapter.addOne,
 
-      state.push({
-        ...payload,
-        id: nanoid(),
-      });
-    },
-
-    removeHistory: (
+    updateToken: (
       state,
-      action: PayloadAction<{ id: TChatHistory['id'] }>,
+      action: PayloadAction<Omit<TChatHistory, 'title'>>,
     ) => {
       const { payload } = action;
 
-      return state.filter((history) => history.id !== payload.id);
+      const {
+        prompt_tokens: promptTokens,
+        completion_tokens: completionTokens,
+        total_tokens: totalTokens,
+        id,
+      } = payload;
+
+      const existing = state.entities[id];
+
+      historyAdapter.updateOne(state, {
+        id,
+        changes: {
+          prompt_tokens: (existing?.prompt_tokens || 0) + promptTokens,
+          completion_tokens:
+            (existing?.completion_tokens || 0) + completionTokens,
+          total_tokens: (existing?.total_tokens || 0) + totalTokens,
+        },
+      });
     },
+
+    removeHistory: historyAdapter.removeOne,
   },
   extraReducers: (builder) => {
-    builder.addCase(PURGE, () => {
-      return initialState;
+    builder.addCase(PURGE, (state) => {
+      return historyAdapter.removeAll(state);
     });
   },
 });
 
-export const { addHistory, removeHistory } = historySlice.actions;
+export const { addHistory, updateToken, removeHistory } = historySlice.actions;
 
 export default historySlice.reducer;
+
+export const { selectAll: selectHistories, selectById: selectHistoryById } =
+  historyAdapter.getSelectors((state: RootState) => state.history);
