@@ -16,7 +16,7 @@ import {
   TVoiceInputHandle,
   VoiceInput,
 } from '@/components/elements/VoiceInput';
-import type { TPromptForm } from '@/pages/index';
+import type { TPromptForm } from '@/pages/chat/[[...slug]]';
 
 type TVoiceForm = {
   model: string;

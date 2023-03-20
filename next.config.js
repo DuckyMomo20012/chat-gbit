@@ -16,6 +16,15 @@ const withMDX = MDXPlugin({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  redirects: async () => {
+    return [
+      {
+        source: '/',
+        destination: '/chat',
+        permanent: true,
+      },
+    ];
+  },
   webpack: (config) => {
     config.plugins.push(new WindiCSSWebpackPlugin());
     return config;
