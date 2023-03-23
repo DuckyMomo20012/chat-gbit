@@ -18,7 +18,6 @@ import {
   NavMenuListCompact,
 } from '@/components/elements/NavMenuList';
 import { navBarItems as defaultNavBarItems } from '@/components/layouts/navBarItems';
-import { ChatToolbar } from '@/components/modules/ChatToolbar';
 import { persistor } from '@/store/store';
 import { NavPath } from '@/types/NavPath';
 
