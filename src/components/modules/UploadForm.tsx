@@ -1,10 +1,11 @@
 import { Alert, Button, Checkbox, JsonInput, Stack } from '@mantine/core';
-import { useEffect, useMemo } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { z } from 'zod';
 import { fromZodError } from 'zod-validation-error';
-import { addMessage } from '@/store/slice/convoSlice';
+import { ChatContext } from '@/context';
+import { addMessage, selectAllConvoByHistory } from '@/store/slice/convoSlice';
 import { RootState, persistor } from '@/store/store';
 
 type TUploadForm = {
@@ -21,8 +22,11 @@ const convoSchema = z.array(
 
 const UploadForm = () => {
   const dispatch = useDispatch();
+
+  const { chatId } = useContext(ChatContext);
+
   const hiddenMessage = useSelector((state: RootState) =>
-    state.convo
+    selectAllConvoByHistory(state, chatId)
       .filter((item) => item.hidden || item.trained)
       .map((item) => ({
         role: item.role,
@@ -71,6 +75,7 @@ const UploadForm = () => {
           dispatch(
             addMessage({
               ...message,
+              chatId,
               isTyping: false,
               hidden: data.hideMessages,
               trained: true,
