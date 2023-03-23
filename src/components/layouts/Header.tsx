@@ -19,6 +19,7 @@ import {
 } from '@/components/elements/NavMenuList';
 import { navBarItems as defaultNavBarItems } from '@/components/layouts/navBarItems';
 import { ChatToolbar } from '@/components/modules/ChatToolbar';
+import { persistor } from '@/store/store';
 import { NavPath } from '@/types/NavPath';
 
 type HeaderProps = {
@@ -157,13 +158,17 @@ const Header = ({ setNavBarOpened }: HeaderProps) => {
         </Group>
 
         <Group noWrap>
-          <Group className="hidden md:flex">
-            <ChatToolbar />
-          </Group>
-
-          <Group className="flex md:hidden">
-            <ChatToolbar compact />
-          </Group>
+          <Tooltip label="Clear conversation">
+            <ActionIcon
+              aria-label="Clear conversation"
+              color="red"
+              onClick={() => persistor.purge()}
+              size="lg"
+              variant="outline"
+            >
+              <Icon icon="material-symbols:delete-outline" width={24} />
+            </ActionIcon>
+          </Tooltip>
 
           <Tooltip label={dark ? 'Light mode' : 'Dark mode'}>
             <ActionIcon
