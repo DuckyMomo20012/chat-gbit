@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { Button, Group, Stack, Text } from '@mantine/core';
+import { ActionIcon, Button, Group, Menu, Stack, Text } from '@mantine/core';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import Head from 'next/head';
@@ -8,6 +8,7 @@ import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type Typed from 'typed.js';
 import { ChatLayout } from '@/components/layouts/ChatLayout';
+import { ChatPicker } from '@/components/modules/ChatPicker';
 import { ChatToolbar } from '@/components/modules/ChatToolbar';
 import { Convo } from '@/components/modules/Convo';
 import { PromptForm } from '@/components/modules/PromptForm';
@@ -153,6 +154,8 @@ const HomePage = () => {
         <title>New Chat</title>
         <meta content="Create new Chat GBiT" name="description"></meta>
       </Head>
+
+      <ChatPicker />
 
       <Convo chat={convos} isFetching={isLoading} typingsRef={typingsRef} />
 
