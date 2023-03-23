@@ -141,7 +141,7 @@ const HomePage = () => {
 
       <Convo chat={chat} isFetching={isLoading} typingsRef={typingsRef} />
 
-      <Stack className="absolute bottom-0 w-full z-999">
+      <Stack className="absolute bottom-0 w-full z-100">
         <Stack align="center" className="backdrop-filter backdrop-blur-xl p-4">
           <Group>
             <ChatToolbar />
