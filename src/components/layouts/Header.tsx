@@ -157,12 +157,8 @@ const Header = ({ setNavBarOpened }: HeaderProps) => {
         </Group>
 
         <Group noWrap>
-          <Group className="hidden md:flex">
+          <Group>
             <ChatToolbar />
-          </Group>
-
-          <Group className="flex md:hidden">
-            <ChatToolbar compact />
           </Group>
 
           <Tooltip label={dark ? 'Light mode' : 'Dark mode'}>
