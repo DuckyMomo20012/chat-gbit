@@ -158,10 +158,6 @@ const Header = ({ setNavBarOpened }: HeaderProps) => {
         </Group>
 
         <Group noWrap>
-          <Group>
-            <ChatToolbar />
-          </Group>
-
           <Tooltip label="Clear conversation">
             <ActionIcon
               aria-label="Clear conversation"
