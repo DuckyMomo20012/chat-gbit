@@ -5,7 +5,7 @@ import { PriceTable } from '@/components/elements/PriceTable';
 import { UploadForm } from '@/components/modules/UploadForm';
 import { MODEL_PRICE } from '@/constants/modelPrice';
 import { setModel } from '@/store/slice/modelSlice';
-import { RootState, persistor } from '@/store/store';
+import { RootState } from '@/store/store';
 
 const MINIMUM_FRACTION_DIGITS = 6;
 
@@ -174,18 +174,6 @@ const ChatToolbar = () => {
           <UploadForm />
         </Popover.Dropdown>
       </Popover>
-
-      <Tooltip label="Clear conversation">
-        <ActionIcon
-          aria-label="Clear conversation"
-          color="red"
-          onClick={() => persistor.purge()}
-          size="lg"
-          variant="outline"
-        >
-          <Icon icon="material-symbols:delete-outline" width={24} />
-        </ActionIcon>
-      </Tooltip>
     </>
   );
 };
