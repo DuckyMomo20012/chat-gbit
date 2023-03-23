@@ -4,17 +4,21 @@ import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import Head from 'next/head';
 import { CreateChatCompletionResponse } from 'openai';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type Typed from 'typed.js';
+import { ChatLayout } from '@/components/layouts/ChatLayout';
 import { ChatToolbar } from '@/components/modules/ChatToolbar';
 import { Convo } from '@/components/modules/Convo';
 import { PromptForm } from '@/components/modules/PromptForm';
 import { VoiceForm } from '@/components/modules/VoiceForm';
+import { ChatContext } from '@/context';
 import {
   addMessage,
   mutateMessage,
   removeMessage,
+  selectAllConvoByHistory,
+  selectLastConvoByHistory,
 } from '@/store/slice/convoSlice';
 import type { RootState } from '@/store/store';
 
@@ -24,10 +28,17 @@ export type TPromptForm = {
 };
 
 const HomePage = () => {
-  const chat = useSelector((state: RootState) => state.convo);
-  const lastMessage = useSelector((state: RootState) => state.convo.at(-1));
+  const { chatId } = useContext(ChatContext);
+
+  const convos = useSelector((state: RootState) =>
+    selectAllConvoByHistory(state, chatId),
+  );
+
+  const lastMessage = useSelector((state: RootState) =>
+    selectLastConvoByHistory(state, chatId),
+  );
   const model = useSelector((state: RootState) => state.model);
-  const isTyping = chat.filter((item) => item.isTyping).length > 0;
+  const isTyping = convos.filter((item) => item.isTyping).length > 0;
   const dispatch = useDispatch();
 
   const [inputMode, setInputMode] = useState<'voice' | 'text'>('text');
@@ -36,17 +47,18 @@ const HomePage = () => {
     Map<string, { node: HTMLSpanElement; typed: Typed }>
   >(new Map());
 
-  const status = useRef<'stop' | 'submit' | 'refetch'>('stop');
+  const status = useRef<'stop' | 'submit'>('stop');
   const {
     data: completion,
     isLoading,
     mutate,
+    reset,
   } = useMutation({
     mutationFn: async (): Promise<CreateChatCompletionResponse> => {
       const { data } = await axios.post('/api/completions', {
         data: {
           model: model.name,
-          messages: chat.map((item) => ({
+          messages: convos?.map((item) => ({
             role: item.role,
             content: item.content,
           })),
@@ -62,31 +74,32 @@ const HomePage = () => {
   useEffect(() => {
     if (status.current === 'submit') {
       mutate();
+      status.current = 'stop';
     }
-  }, [chat, mutate]);
+  }, [convos, mutate]);
 
   useEffect(() => {
-    if (completion && status.current !== 'stop') {
+    if (completion && status.current === 'stop') {
       if (completion.choices[0].message?.content) {
         dispatch(
           addMessage({
             ...completion,
+            chatId,
             role: 'assistant',
             content: completion.choices[0].message?.content,
             isTyping: true,
           }),
         );
-
-        status.current = 'stop';
+        reset();
       }
     }
-  }, [completion, dispatch]);
+  }, [completion, dispatch, chatId, reset]);
 
   const allowRegenerate = useMemo(() => {
     return !isBusy && lastMessage && lastMessage.role !== 'system';
   }, [lastMessage, isBusy]);
 
-  const allowSystemMessage = chat.length === 0;
+  const allowSystemMessage = convos.length === 0;
 
   const submitPrompt = async (data: TPromptForm) => {
     if (isBusy) return;
@@ -94,6 +107,7 @@ const HomePage = () => {
     if (data?.asSystemMessage) {
       dispatch(
         addMessage({
+          chatId,
           role: 'system',
           content: data.prompt,
           isTyping: false,
@@ -119,6 +133,7 @@ const HomePage = () => {
       // message
       dispatch(
         addMessage({
+          chatId,
           role: 'user',
           content: data.prompt,
           isTyping: false,
@@ -139,7 +154,7 @@ const HomePage = () => {
         <meta content="Create new Chat GBiT" name="description"></meta>
       </Head>
 
-      <Convo chat={chat} isFetching={isLoading} typingsRef={typingsRef} />
+      <Convo chat={convos} isFetching={isLoading} typingsRef={typingsRef} />
 
       <Stack className="absolute bottom-0 w-full z-100">
         <Stack align="center" className="backdrop-filter backdrop-blur-xl p-4">
@@ -186,12 +201,12 @@ const HomePage = () => {
               }
               onClick={() => {
                 mutate();
-                status.current = 'refetch';
+                status.current = 'stop';
 
                 // NOTE: Remove last message if it's assistant's message before
                 // regenerating
                 if (lastMessage?.role === 'assistant') {
-                  dispatch(removeMessage({ id: lastMessage.id }));
+                  dispatch(removeMessage(lastMessage.id));
                 }
               }}
               variant="outline"
@@ -247,6 +262,10 @@ const HomePage = () => {
       </Stack>
     </Stack>
   );
+};
+
+HomePage.getLayout = function getLayout(page: React.ReactNode) {
+  return <ChatLayout>{page}</ChatLayout>;
 };
 
 export default HomePage;
