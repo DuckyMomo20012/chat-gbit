@@ -1,23 +1,15 @@
 import { Icon } from '@iconify/react';
-import {
-  ActionIcon,
-  Button,
-  Code,
-  Menu,
-  Popover,
-  Text,
-  Tooltip,
-} from '@mantine/core';
+import { ActionIcon, Code, Menu, Popover, Text, Tooltip } from '@mantine/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { PriceTable } from '@/components/elements/PriceTable';
 import { UploadForm } from '@/components/modules/UploadForm';
 import { MODEL_PRICE } from '@/constants/modelPrice';
 import { setModel } from '@/store/slice/modelSlice';
-import { RootState, persistor } from '@/store/store';
+import { RootState } from '@/store/store';
 
 const MINIMUM_FRACTION_DIGITS = 6;
 
-const ChatToolbar = ({ compact = false }: { compact?: boolean }) => {
+const ChatToolbar = () => {
   const chat = useSelector((state: RootState) => state.convo);
   const currModel = useSelector((state: RootState) => state.model);
   const allTimeToken = useSelector((state: RootState) => state.token);
@@ -47,20 +39,14 @@ const ChatToolbar = ({ compact = false }: { compact?: boolean }) => {
       <Menu closeOnClickOutside={false} closeOnItemClick={false}>
         <Menu.Target>
           <Tooltip label="View usage">
-            {compact ? (
-              <ActionIcon
-                aria-label="Usage"
-                color="green"
-                size="lg"
-                variant="outline"
-              >
-                <Icon icon="material-symbols:data-usage" width={24} />
-              </ActionIcon>
-            ) : (
-              <Button color="green" variant="outline">
-                Usage
-              </Button>
-            )}
+            <ActionIcon
+              aria-label="Usage"
+              color="green"
+              size="lg"
+              variant="outline"
+            >
+              <Icon icon="material-symbols:data-usage" width={24} />
+            </ActionIcon>
           </Tooltip>
         </Menu.Target>
 
@@ -150,20 +136,14 @@ const ChatToolbar = ({ compact = false }: { compact?: boolean }) => {
       <Menu>
         <Menu.Target>
           <Tooltip label="Set model">
-            {compact ? (
-              <ActionIcon
-                aria-label="Model"
-                color="violet"
-                size="lg"
-                variant="outline"
-              >
-                <Icon icon="material-symbols:mindfulness-outline" width={24} />
-              </ActionIcon>
-            ) : (
-              <Button color="violet" variant="outline">
-                Model
-              </Button>
-            )}
+            <ActionIcon
+              aria-label="Model"
+              color="violet"
+              size="lg"
+              variant="outline"
+            >
+              <Icon icon="material-symbols:mindfulness-outline" width={24} />
+            </ActionIcon>
           </Tooltip>
         </Menu.Target>
 
@@ -179,20 +159,14 @@ const ChatToolbar = ({ compact = false }: { compact?: boolean }) => {
       <Popover closeOnClickOutside={false} width={400}>
         <Popover.Target>
           <Tooltip label="Upload conversation">
-            {compact ? (
-              <ActionIcon
-                aria-label="Train"
-                color="indigo"
-                size="lg"
-                variant="outline"
-              >
-                <Icon icon="material-symbols:upload" width={24} />
-              </ActionIcon>
-            ) : (
-              <Button color="indigo" variant="outline">
-                Train
-              </Button>
-            )}
+            <ActionIcon
+              aria-label="Train"
+              color="indigo"
+              size="lg"
+              variant="outline"
+            >
+              <Icon icon="material-symbols:upload" width={24} />
+            </ActionIcon>
           </Tooltip>
         </Popover.Target>
 
@@ -200,28 +174,6 @@ const ChatToolbar = ({ compact = false }: { compact?: boolean }) => {
           <UploadForm />
         </Popover.Dropdown>
       </Popover>
-
-      <Tooltip label="Clear conversation">
-        {compact ? (
-          <ActionIcon
-            aria-label="Clear conversation"
-            color="red"
-            onClick={() => persistor.purge()}
-            size="lg"
-            variant="outline"
-          >
-            <Icon icon="material-symbols:delete-outline" width={24} />
-          </ActionIcon>
-        ) : (
-          <Button
-            color="red"
-            onClick={() => persistor.purge()}
-            variant="outline"
-          >
-            Clear
-          </Button>
-        )}
-      </Tooltip>
     </>
   );
 };
