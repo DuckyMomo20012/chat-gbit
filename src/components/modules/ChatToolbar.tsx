@@ -1,18 +1,28 @@
 import { Icon } from '@iconify/react';
 import { ActionIcon, Code, Menu, Popover, Text, Tooltip } from '@mantine/core';
+import { useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { PriceTable } from '@/components/elements/PriceTable';
 import { UploadForm } from '@/components/modules/UploadForm';
 import { MODEL_PRICE } from '@/constants/modelPrice';
+import { ChatContext } from '@/context';
+import { selectAllConvoByHistory } from '@/store/slice/convoSlice';
+import { selectHistoryById } from '@/store/slice/historySlice';
 import { setModel } from '@/store/slice/modelSlice';
 import { RootState } from '@/store/store';
 
 const MINIMUM_FRACTION_DIGITS = 6;
 
 const ChatToolbar = () => {
-  const chat = useSelector((state: RootState) => state.convo);
+  const { chatId } = useContext(ChatContext);
+
+  const chat =
+    useSelector((state: RootState) => selectAllConvoByHistory(state, chatId)) ||
+    [];
   const currModel = useSelector((state: RootState) => state.model);
-  const allTimeToken = useSelector((state: RootState) => state.token);
+  const allTimeToken = useSelector((state: RootState) =>
+    selectHistoryById(state, chatId),
+  );
   const dispatch = useDispatch();
 
   const currentToken = chat.reduce(
@@ -36,7 +46,7 @@ const ChatToolbar = () => {
 
   return (
     <>
-      <Menu closeOnClickOutside={false} closeOnItemClick={false}>
+      <Menu closeOnClickOutside={true} closeOnItemClick={false}>
         <Menu.Target>
           <Tooltip label="View usage">
             <ActionIcon
@@ -94,42 +104,47 @@ const ChatToolbar = () => {
             </Text>
           </Menu.Item>
 
-          <Menu.Divider />
+          {allTimeToken && (
+            <>
+              <Menu.Divider />
 
-          <Menu.Label>All-time Tokens</Menu.Label>
-          <Menu.Item fz="sm">
-            Prompt:{' '}
-            <Code color="red" fw="bold">
-              {allTimeToken.prompt_tokens}
-            </Code>{' '}
-          </Menu.Item>
-          <Menu.Item fz="sm">
-            Completion:{' '}
-            <Code color="blue" fw="bold">
-              {allTimeToken.completion_tokens}
-            </Code>{' '}
-          </Menu.Item>
-          <Menu.Item fz="sm">
-            Total:{' '}
-            <Code color="green" fw="bold">
-              {allTimeToken.total_tokens}
-            </Code>{' '}
-          </Menu.Item>
+              <Menu.Label>All-time Tokens</Menu.Label>
+              <Menu.Item fz="sm">
+                Prompt:{' '}
+                <Code color="red" fw="bold">
+                  {allTimeToken.prompt_tokens}
+                </Code>{' '}
+              </Menu.Item>
+              <Menu.Item fz="sm">
+                Completion:{' '}
+                <Code color="blue" fw="bold">
+                  {allTimeToken.completion_tokens}
+                </Code>{' '}
+              </Menu.Item>
+              <Menu.Item fz="sm">
+                Total:{' '}
+                <Code color="green" fw="bold">
+                  {allTimeToken.total_tokens}
+                </Code>{' '}
+              </Menu.Item>
 
-          <Menu.Item fw="bold" fz="sm">
-            Total billed:{' '}
-            <Text color="red" span>
-              {new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD',
-                minimumFractionDigits: MINIMUM_FRACTION_DIGITS,
-              }).format(
-                (allTimeToken.prompt_tokens * currModel.price.prompt +
-                  allTimeToken.completion_tokens * currModel.price.completion) /
-                  currModel.per,
-              )}
-            </Text>
-          </Menu.Item>
+              <Menu.Item fw="bold" fz="sm">
+                Total billed:{' '}
+                <Text color="red" span>
+                  {new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                    minimumFractionDigits: MINIMUM_FRACTION_DIGITS,
+                  }).format(
+                    (allTimeToken.prompt_tokens * currModel.price.prompt +
+                      allTimeToken.completion_tokens *
+                        currModel.price.completion) /
+                      currModel.per,
+                  )}
+                </Text>
+              </Menu.Item>
+            </>
+          )}
         </Menu.Dropdown>
       </Menu>
 
