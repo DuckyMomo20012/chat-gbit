@@ -1,21 +1,15 @@
 import { Icon } from '@iconify/react';
-import {
-  ActionIcon,
-  Button,
-  Code,
-  Menu,
-  Popover,
-  Text,
-  Tooltip,
-} from '@mantine/core';
+import { ActionIcon, Code, Menu, Popover, Text, Tooltip } from '@mantine/core';
 import { useDispatch, useSelector } from 'react-redux';
+import { PriceTable } from '@/components/elements/PriceTable';
 import { UploadForm } from '@/components/modules/UploadForm';
-import { MODEL, setModel } from '@/store/slice/modelSlice';
-import { RootState, persistor } from '@/store/store';
+import { MODEL_PRICE } from '@/constants/modelPrice';
+import { setModel } from '@/store/slice/modelSlice';
+import { RootState } from '@/store/store';
 
 const MINIMUM_FRACTION_DIGITS = 6;
 
-const ChatToolbar = ({ compact = false }: { compact?: boolean }) => {
+const ChatToolbar = () => {
   const chat = useSelector((state: RootState) => state.convo);
   const currModel = useSelector((state: RootState) => state.model);
   const allTimeToken = useSelector((state: RootState) => state.token);
@@ -42,46 +36,24 @@ const ChatToolbar = ({ compact = false }: { compact?: boolean }) => {
 
   return (
     <>
-      <Menu closeOnClickOutside={false} closeOnItemClick={false}>
+      <Menu closeOnItemClick={false}>
         <Menu.Target>
-          <Tooltip label="View usage">
-            {compact ? (
-              <ActionIcon
-                aria-label="Usage"
-                color="green"
-                size="lg"
-                variant="outline"
-              >
-                <Icon icon="material-symbols:data-usage" width={24} />
-              </ActionIcon>
-            ) : (
-              <Button color="green" variant="outline">
-                Usage
-              </Button>
-            )}
+          <Tooltip label="View usage" position="bottom">
+            <ActionIcon
+              aria-label="Usage"
+              color="green"
+              size="lg"
+              variant="outline"
+            >
+              <Icon icon="material-symbols:data-usage" width={24} />
+            </ActionIcon>
           </Tooltip>
         </Menu.Target>
 
         <Menu.Dropdown>
           <Menu.Label>Model</Menu.Label>
-          <Menu.Item fz="sm">
-            Name: <Code color="green">{currModel.name}</Code>
-          </Menu.Item>
-          <Menu.Item fz="sm">
-            Price:{' '}
-            <Text color="indigo" span>
-              {new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD',
-                minimumFractionDigits: 4,
-              }).format(currModel.price)}
-            </Text>{' '}
-            /{' '}
-            {new Intl.NumberFormat('en-US', {
-              notation: 'compact',
-              compactDisplay: 'short',
-            }).format(currModel.per)}{' '}
-            tokens
+          <Menu.Item>
+            <PriceTable model={currModel} />
           </Menu.Item>
 
           <Menu.Divider />
@@ -115,7 +87,9 @@ const ChatToolbar = ({ compact = false }: { compact?: boolean }) => {
                 minimumFractionDigits: MINIMUM_FRACTION_DIGITS,
                 signDisplay: 'always',
               }).format(
-                (currentToken.total_tokens * currModel.price) / currModel.per,
+                (currentToken.prompt_tokens * currModel.price.prompt +
+                  currentToken.completion_tokens * currModel.price.completion) /
+                  currModel.per,
               )}
             </Text>
           </Menu.Item>
@@ -150,7 +124,9 @@ const ChatToolbar = ({ compact = false }: { compact?: boolean }) => {
                 currency: 'USD',
                 minimumFractionDigits: MINIMUM_FRACTION_DIGITS,
               }).format(
-                (allTimeToken.total_tokens * currModel.price) / currModel.per,
+                (allTimeToken.prompt_tokens * currModel.price.prompt +
+                  allTimeToken.completion_tokens * currModel.price.completion) /
+                  currModel.per,
               )}
             </Text>
           </Menu.Item>
@@ -159,70 +135,38 @@ const ChatToolbar = ({ compact = false }: { compact?: boolean }) => {
 
       <Menu>
         <Menu.Target>
-          <Tooltip label="Set model">
-            {compact ? (
-              <ActionIcon
-                aria-label="Model"
-                color="violet"
-                size="lg"
-                variant="outline"
-              >
-                <Icon icon="material-symbols:mindfulness-outline" width={24} />
-              </ActionIcon>
-            ) : (
-              <Button color="violet" variant="outline">
-                Model
-              </Button>
-            )}
+          <Tooltip label="Set model" position="bottom">
+            <ActionIcon
+              aria-label="Model"
+              color="violet"
+              size="lg"
+              variant="outline"
+            >
+              <Icon icon="material-symbols:mindfulness-outline" width={24} />
+            </ActionIcon>
           </Tooltip>
         </Menu.Target>
 
         <Menu.Dropdown>
-          {MODEL.map((model, idx) => (
-            <Menu.Item
-              key={idx}
-              onClick={() => dispatch(setModel(model.name))}
-              rightSection={
-                <Text>
-                  <Code className="ml-2" color="orange">
-                    {new Intl.NumberFormat('en-US', {
-                      style: 'currency',
-                      currency: 'USD',
-                      maximumFractionDigits: MINIMUM_FRACTION_DIGITS,
-                    }).format(model.price)}
-                  </Code>{' '}
-                  /{' '}
-                  {new Intl.NumberFormat('en-US', {
-                    notation: 'compact',
-                    compactDisplay: 'short',
-                  }).format(currModel.per)}{' '}
-                  tokens
-                </Text>
-              }
-            >
-              {model.name}
+          {MODEL_PRICE.map((model, idx) => (
+            <Menu.Item key={idx} onClick={() => dispatch(setModel(model.name))}>
+              <PriceTable model={model} />
             </Menu.Item>
           ))}
         </Menu.Dropdown>
       </Menu>
 
-      <Popover closeOnClickOutside={false} width={400}>
+      <Popover width={400}>
         <Popover.Target>
-          <Tooltip label="Upload conversation">
-            {compact ? (
-              <ActionIcon
-                aria-label="Train"
-                color="indigo"
-                size="lg"
-                variant="outline"
-              >
-                <Icon icon="material-symbols:upload" width={24} />
-              </ActionIcon>
-            ) : (
-              <Button color="indigo" variant="outline">
-                Train
-              </Button>
-            )}
+          <Tooltip label="Upload conversation" position="bottom">
+            <ActionIcon
+              aria-label="Train"
+              color="indigo"
+              size="lg"
+              variant="outline"
+            >
+              <Icon icon="material-symbols:upload" width={24} />
+            </ActionIcon>
           </Tooltip>
         </Popover.Target>
 
@@ -230,28 +174,6 @@ const ChatToolbar = ({ compact = false }: { compact?: boolean }) => {
           <UploadForm />
         </Popover.Dropdown>
       </Popover>
-
-      <Tooltip label="Clear conversation">
-        {compact ? (
-          <ActionIcon
-            aria-label="Clear conversation"
-            color="red"
-            onClick={() => persistor.purge()}
-            size="lg"
-            variant="outline"
-          >
-            <Icon icon="material-symbols:delete-outline" width={24} />
-          </ActionIcon>
-        ) : (
-          <Button
-            color="red"
-            onClick={() => persistor.purge()}
-            variant="outline"
-          >
-            Clear
-          </Button>
-        )}
-      </Tooltip>
     </>
   );
 };

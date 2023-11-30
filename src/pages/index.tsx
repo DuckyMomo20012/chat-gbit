@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { Button, Stack, Text } from '@mantine/core';
+import { Button, Group, Stack, Text } from '@mantine/core';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import Head from 'next/head';
@@ -7,6 +7,7 @@ import { CreateChatCompletionResponse } from 'openai';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type Typed from 'typed.js';
+import { ChatToolbar } from '@/components/modules/ChatToolbar';
 import { Convo } from '@/components/modules/Convo';
 import { PromptForm } from '@/components/modules/PromptForm';
 import { VoiceForm } from '@/components/modules/VoiceForm';
@@ -140,8 +141,12 @@ const HomePage = () => {
 
       <Convo chat={chat} isFetching={isLoading} typingsRef={typingsRef} />
 
-      <Stack className="absolute bottom-0 w-full">
-        <Stack align="center" className="dark:bg-black bg-white p-4">
+      <Stack className="absolute bottom-0 w-full z-100">
+        <Stack align="center" className="backdrop-filter backdrop-blur-xl p-4">
+          <Group>
+            <ChatToolbar />
+          </Group>
+
           {isTyping && (
             <Button
               leftIcon={
