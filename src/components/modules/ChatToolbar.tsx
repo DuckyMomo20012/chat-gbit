@@ -36,9 +36,9 @@ const ChatToolbar = () => {
 
   return (
     <>
-      <Menu closeOnClickOutside={false} closeOnItemClick={false}>
+      <Menu closeOnItemClick={false}>
         <Menu.Target>
-          <Tooltip label="View usage">
+          <Tooltip label="View usage" position="bottom">
             <ActionIcon
               aria-label="Usage"
               color="green"
@@ -135,7 +135,7 @@ const ChatToolbar = () => {
 
       <Menu>
         <Menu.Target>
-          <Tooltip label="Set model">
+          <Tooltip label="Set model" position="bottom">
             <ActionIcon
               aria-label="Model"
               color="violet"
@@ -156,9 +156,9 @@ const ChatToolbar = () => {
         </Menu.Dropdown>
       </Menu>
 
-      <Popover closeOnClickOutside={false} width={400}>
+      <Popover width={400}>
         <Popover.Target>
-          <Tooltip label="Upload conversation">
+          <Tooltip label="Upload conversation" position="bottom">
             <ActionIcon
               aria-label="Train"
               color="indigo"
