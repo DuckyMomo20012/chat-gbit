@@ -3,23 +3,56 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { PURGE } from 'redux-persist';
 import { MODEL_PRICE } from '@/constants/modelPrice';
 
-export type TModel = {
-  name: 'gpt-3.5-turbo' | 'gpt-3.5-turbo-0301';
+export type TModelType = 'chat' | 'audio';
+
+export type TModel<T> = {
+  type: T;
+  name: string;
   price: {
-    prompt: number;
-    completion: number;
+    in: {
+      value: number;
+      per: string;
+    };
+    out: {
+      value: number;
+      per: string;
+    };
   };
-  per: number;
+
+  provider: 'OpenAI' | 'Self-hosted';
 };
 
-const initialState = MODEL_PRICE[0];
+export type TModelSlice = {
+  [k in TModelType]: TModel<k>;
+};
+
+const initialState = {
+  chat: MODEL_PRICE[0],
+  audio: MODEL_PRICE[3],
+} satisfies TModelSlice;
 
 const modelSlice = createSlice({
   name: 'model',
   initialState,
   reducers: {
-    setModel(state, action: PayloadAction<TModel['name']>) {
-      return MODEL_PRICE.find((m) => m.name === action.payload);
+    setModel(
+      state,
+      action: PayloadAction<{ type: TModelType; name: string }[]>,
+    ) {
+      return action.payload.reduce((acc, { type, name }) => {
+        const foundModel = MODEL_PRICE.find(
+          (model) => model.type === type && model.name === name,
+        );
+
+        if (!foundModel) {
+          return acc;
+        }
+
+        return {
+          ...acc,
+          [type]: foundModel,
+        };
+      }, state);
     },
   },
   extraReducers: (builder) => {
