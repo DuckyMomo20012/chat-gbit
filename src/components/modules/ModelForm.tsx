@@ -20,6 +20,7 @@ const MINIMUM_FRACTION_DIGITS = 6;
 
 type TModelForm = {
   chatModel: TModel<'chat'>['name'];
+  audioModel: TModel<'audio'>['name'];
 };
 
 const modelSchema = z.object({
@@ -30,6 +31,18 @@ const modelSchema = z.object({
       (val) =>
         MODEL_PRICE.find(
           (model) => model.type === 'chat' && model.name === val,
+        ),
+      {
+        message: 'Invalid model',
+      },
+    ),
+  audioModel: z
+    .string()
+    .nullable()
+    .refine(
+      (val) =>
+        MODEL_PRICE.find(
+          (model) => model.type === 'audio' && model.name === val,
         ),
       {
         message: 'Invalid model',
@@ -51,19 +64,25 @@ const ModelForm = () => {
     resolver: zodResolver(modelSchema),
     defaultValues: {
       chatModel: models.chat.name,
+      audioModel: models.audio.name,
     },
   });
 
   const watchChatModel = watch('chatModel');
+  const watchAudioModel = watch('audioModel');
 
   const selectingChatModel = MODEL_PRICE.find(
     (model) => model.name === watchChatModel,
+  );
+  const selectingAudioModel = MODEL_PRICE.find(
+    (model) => model.name === watchAudioModel,
   );
 
   useEffect(() => {
     if (isSubmitSuccessful) {
       reset({
         chatModel: models.chat.name,
+        audioModel: models.audio.name,
       });
     }
   }, [isSubmitSuccessful, models, reset]);
@@ -74,6 +93,10 @@ const ModelForm = () => {
         {
           type: 'chat',
           name: data.chatModel,
+        },
+        {
+          type: 'audio',
+          name: data.audioModel,
         },
       ]),
     );
@@ -105,6 +128,29 @@ const ModelForm = () => {
           />
         </Group>
 
+        <Group>
+          <Text className="flex-1">Audio model</Text>
+          <Controller
+            control={control}
+            name="audioModel"
+            render={({ field }) => (
+              <Select
+                data={MODEL_PRICE.filter((model) => model.type === 'audio').map(
+                  (model) => {
+                    return {
+                      label: model.name,
+                      value: model.name,
+                      group: model.provider,
+                    };
+                  },
+                )}
+                error={errors.audioModel?.message}
+                {...field}
+              />
+            )}
+          />
+        </Group>
+
         <Card withBorder>
           <Stack spacing="sm">
             <Text fw={700}>Pricing</Text>
@@ -130,6 +176,30 @@ const ModelForm = () => {
                   minimumFractionDigits: MINIMUM_FRACTION_DIGITS,
                 }).format(selectingChatModel?.price.out.value || 0)}
                 /{selectingChatModel?.price.out.per}
+              </Text>
+            </SimpleGrid>
+
+            <SimpleGrid cols={3}>
+              <Text className="flex-1" fz="sm">
+                Audio
+              </Text>
+              <Text fz="sm">
+                <b>In</b>:{' '}
+                {new Intl.NumberFormat('en-US', {
+                  style: 'currency',
+                  currency: 'USD',
+                  minimumFractionDigits: MINIMUM_FRACTION_DIGITS,
+                }).format(selectingAudioModel?.price.in.value || 0)}
+                /{selectingAudioModel?.price.in.per}
+              </Text>
+              <Text fz="sm">
+                <b>Out</b>:{' '}
+                {new Intl.NumberFormat('en-US', {
+                  style: 'currency',
+                  currency: 'USD',
+                  minimumFractionDigits: MINIMUM_FRACTION_DIGITS,
+                }).format(selectingAudioModel?.price.out.value || 0)}
+                /{selectingAudioModel?.price.out.per}
               </Text>
             </SimpleGrid>
           </Stack>
