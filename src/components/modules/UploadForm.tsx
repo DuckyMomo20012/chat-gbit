@@ -11,7 +11,7 @@ import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { z } from 'zod';
 import { fromZodError } from 'zod-validation-error';
-import { addMessage } from '@/store/slice/convoSlice';
+import { addMessage, selectAllConvo } from '@/store/slice/convoSlice';
 import { RootState, persistor } from '@/store/store';
 
 type TUploadForm = {
@@ -29,7 +29,7 @@ const convoSchema = z.array(
 const UploadForm = () => {
   const dispatch = useDispatch();
   const hiddenMessage = useSelector((state: RootState) =>
-    state.convo
+    selectAllConvo(state)
       .filter((item) => item.hidden || item.trained)
       .map((item) => ({
         role: item.role,
