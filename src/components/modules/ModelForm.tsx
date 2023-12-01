@@ -13,7 +13,11 @@ import { Controller, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { z } from 'zod';
 import { MODEL_PRICE } from '@/constants/modelPrice';
-import { type TModel, setModel } from '@/store/slice/modelSlice';
+import {
+  type TModel,
+  type TModelType,
+  setModel,
+} from '@/store/slice/modelSlice';
 import { RootState } from '@/store/store';
 
 const MINIMUM_FRACTION_DIGITS = 6;
@@ -49,6 +53,42 @@ const modelSchema = z.object({
       },
     ),
 });
+
+const ModelPrice = ({
+  label,
+  model,
+}: {
+  label: string;
+  model?: TModel<TModelType>;
+}) => {
+  const currencyFormatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: MINIMUM_FRACTION_DIGITS,
+  });
+
+  return (
+    <SimpleGrid cols={3}>
+      <Text className="flex-1" fz="sm">
+        {label}
+      </Text>
+      <Text fz="sm">
+        <b>In</b>:{' '}
+        {model?.price.in.value !== undefined
+          ? currencyFormatter.format(model.price.in.value)
+          : 'Unknown'}
+        /{model?.price.in.per || 'Unknown'}
+      </Text>
+      <Text fz="sm">
+        <b>Out</b>:{' '}
+        {model?.price.out.value !== undefined
+          ? currencyFormatter.format(model.price.out.value)
+          : 'Unknown'}
+        /{model?.price.out.per || 'Unknown'}
+      </Text>
+    </SimpleGrid>
+  );
+};
 
 const ModelForm = () => {
   const models = useSelector((state: RootState) => state.model);
@@ -155,53 +195,9 @@ const ModelForm = () => {
           <Stack spacing="sm">
             <Text fw={700}>Pricing</Text>
 
-            <SimpleGrid cols={3}>
-              <Text className="flex-1" fz="sm">
-                Chat
-              </Text>
-              <Text fz="sm">
-                <b>In</b>:{' '}
-                {new Intl.NumberFormat('en-US', {
-                  style: 'currency',
-                  currency: 'USD',
-                  minimumFractionDigits: MINIMUM_FRACTION_DIGITS,
-                }).format(selectingChatModel?.price.in.value || 0)}
-                /{selectingChatModel?.price.in.per}
-              </Text>
-              <Text fz="sm">
-                <b>Out</b>:{' '}
-                {new Intl.NumberFormat('en-US', {
-                  style: 'currency',
-                  currency: 'USD',
-                  minimumFractionDigits: MINIMUM_FRACTION_DIGITS,
-                }).format(selectingChatModel?.price.out.value || 0)}
-                /{selectingChatModel?.price.out.per}
-              </Text>
-            </SimpleGrid>
+            <ModelPrice label="Chat" model={selectingChatModel} />
 
-            <SimpleGrid cols={3}>
-              <Text className="flex-1" fz="sm">
-                Audio
-              </Text>
-              <Text fz="sm">
-                <b>In</b>:{' '}
-                {new Intl.NumberFormat('en-US', {
-                  style: 'currency',
-                  currency: 'USD',
-                  minimumFractionDigits: MINIMUM_FRACTION_DIGITS,
-                }).format(selectingAudioModel?.price.in.value || 0)}
-                /{selectingAudioModel?.price.in.per}
-              </Text>
-              <Text fz="sm">
-                <b>Out</b>:{' '}
-                {new Intl.NumberFormat('en-US', {
-                  style: 'currency',
-                  currency: 'USD',
-                  minimumFractionDigits: MINIMUM_FRACTION_DIGITS,
-                }).format(selectingAudioModel?.price.out.value || 0)}
-                /{selectingAudioModel?.price.out.per}
-              </Text>
-            </SimpleGrid>
+            <ModelPrice label="Audio" model={selectingAudioModel} />
           </Stack>
         </Card>
 
