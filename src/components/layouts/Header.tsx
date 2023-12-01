@@ -13,13 +13,14 @@ import {
 import { useElementSize } from '@mantine/hooks';
 import Link from 'next/link';
 import { useEffect, useReducer, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import {
   NavMenuList,
   NavMenuListCompact,
 } from '@/components/elements/NavMenuList';
 import { navBarItems as defaultNavBarItems } from '@/components/layouts/navBarItems';
 import { ChatToolbar } from '@/components/modules/ChatToolbar';
-import { persistor } from '@/store/store';
+import { removeAllMessage } from '@/store/slice/convoSlice';
 import { NavPath } from '@/types/NavPath';
 
 type HeaderProps = {
@@ -67,10 +68,12 @@ function reducer(state: NavItemState, action: NavItemAction) {
 }
 
 const Header = ({ setNavBarOpened }: HeaderProps) => {
+  const dispatch = useDispatch();
+
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const dark = colorScheme === 'dark';
 
-  const [itemState, dispatch] = useReducer(reducer, {
+  const [itemState, itemDispatch] = useReducer(reducer, {
     items: defaultNavBarItems,
     hiddenItems: [],
     oversizeWidth: [],
@@ -88,7 +91,7 @@ const Header = ({ setNavBarOpened }: HeaderProps) => {
 
   useEffect(() => {
     if (childrenWidth > containerWidth) {
-      dispatch({
+      itemDispatch({
         type: 'hide',
         payload: childrenWidth,
       });
@@ -97,7 +100,7 @@ const Header = ({ setNavBarOpened }: HeaderProps) => {
 
   useEffect(() => {
     if (itemState.oversizeWidth[0] < containerWidth) {
-      dispatch({
+      itemDispatch({
         type: 'restore',
       });
     }
@@ -162,7 +165,7 @@ const Header = ({ setNavBarOpened }: HeaderProps) => {
             <ActionIcon
               aria-label="Clear conversation"
               color="red"
-              onClick={() => persistor.purge()}
+              onClick={() => dispatch(removeAllMessage())}
               size="lg"
               variant="outline"
             >
