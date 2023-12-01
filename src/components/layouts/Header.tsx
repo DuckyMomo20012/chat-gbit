@@ -18,6 +18,7 @@ import {
   NavMenuListCompact,
 } from '@/components/elements/NavMenuList';
 import { navBarItems as defaultNavBarItems } from '@/components/layouts/navBarItems';
+import { ChatToolbar } from '@/components/modules/ChatToolbar';
 import { persistor } from '@/store/store';
 import { NavPath } from '@/types/NavPath';
 
@@ -168,6 +169,8 @@ const Header = ({ setNavBarOpened }: HeaderProps) => {
               <Icon icon="material-symbols:delete-outline" width={24} />
             </ActionIcon>
           </Tooltip>
+
+          <ChatToolbar />
 
           <Tooltip label={dark ? 'Light mode' : 'Dark mode'}>
             <ActionIcon

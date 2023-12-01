@@ -1,4 +1,11 @@
-import { Alert, Button, Checkbox, JsonInput, Stack } from '@mantine/core';
+import {
+  Alert,
+  Button,
+  Checkbox,
+  Group,
+  JsonInput,
+  Stack,
+} from '@mantine/core';
 import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
@@ -33,9 +40,7 @@ const UploadForm = () => {
   const defaultValues = useMemo(() => {
     return {
       convo:
-        hiddenMessage.length > 0
-          ? JSON.stringify(hiddenMessage, null, 2)
-          : '[]',
+        hiddenMessage.length > 0 ? JSON.stringify(hiddenMessage, null, 2) : '',
       hideMessages: false,
     } satisfies TUploadForm;
   }, [hiddenMessage]);
@@ -43,14 +48,17 @@ const UploadForm = () => {
   const {
     setValue,
     register,
+    watch,
     setError,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitSuccessful },
+    formState: { errors, isSubmitSuccessful, isDirty },
   } = useForm<TUploadForm>({
     mode: 'onChange',
     defaultValues,
   });
+
+  const watchConvo = watch('convo');
 
   useEffect(() => {
     if (isSubmitSuccessful) {
@@ -60,6 +68,11 @@ const UploadForm = () => {
 
   const onSubmit = (data: TUploadForm) => {
     try {
+      if (data.convo === '') {
+        persistor.purge();
+        return;
+      }
+
       const parsed = JSON.parse(data.convo);
       const convo = convoSchema.parse(parsed);
 
@@ -100,17 +113,28 @@ const UploadForm = () => {
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack>
         <Alert color="yellow" title="Warning">
-          Update training conversation will delete all the conversation history.
+          Update training conversation will delete{' '}
+          <b>all the conversation history</b>.
         </Alert>
 
         <JsonInput
-          autosize={true}
           label="Training conversation"
           maxRows={10}
+          minRows={10}
+          placeholder={JSON.stringify(
+            JSON.parse(
+              '[{"role": "user", "content": "Hello world!"},{"role": "assistant", "content": "Hi there!"}]',
+            ),
+            null,
+            '  ',
+          )}
           {...register('convo', {
-            required: 'Required',
             validate: (value) => {
               try {
+                if (value === '') {
+                  return true;
+                }
+
                 convoSchema.parse(JSON.parse(value));
                 return true;
               } catch (error) {
@@ -125,14 +149,26 @@ const UploadForm = () => {
           })}
           error={errors.convo?.message}
           onChange={(value) => {
-            setValue('convo', value, { shouldValidate: true });
+            setValue('convo', value, {
+              shouldValidate: true,
+              shouldDirty: true,
+            });
           }}
         />
         <Checkbox
+          disabled={watchConvo === ''}
           label="Hide training messages"
+          radius="sm"
           {...register('hideMessages')}
         />
-        <Button type="submit">Update</Button>
+        <Group position="center">
+          <Button disabled={!isDirty} onClick={() => reset()} variant="outline">
+            Discard
+          </Button>
+          <Button disabled={!isDirty} type="submit">
+            Update
+          </Button>
+        </Group>
       </Stack>
     </form>
   );
