@@ -44,7 +44,7 @@ const HomePage = () => {
     mutationFn: async (): Promise<CreateChatCompletionResponse> => {
       const { data } = await axios.post('/api/completions', {
         data: {
-          model: model.name,
+          model: model.chat.name,
           messages: chat.map((item) => ({
             role: item.role,
             content: item.content,
