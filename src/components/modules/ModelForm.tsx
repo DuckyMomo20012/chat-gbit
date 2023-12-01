@@ -1,28 +1,44 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, Card, Group, Select, Stack, Text } from '@mantine/core';
+import {
+  Button,
+  Card,
+  Group,
+  Select,
+  SimpleGrid,
+  Stack,
+  Text,
+} from '@mantine/core';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { z } from 'zod';
 import { MODEL_PRICE } from '@/constants/modelPrice';
-import { setModel } from '@/store/slice/modelSlice';
+import { type TModel, setModel } from '@/store/slice/modelSlice';
 import { RootState } from '@/store/store';
 
 const MINIMUM_FRACTION_DIGITS = 6;
 
 type TModelForm = {
-  chatModel: string;
+  chatModel: TModel<'chat'>['name'];
 };
 
 const modelSchema = z.object({
   chatModel: z
     .string()
     .nullable()
-    .refine((val) => MODEL_PRICE.find((model) => model.name === val)),
+    .refine(
+      (val) =>
+        MODEL_PRICE.find(
+          (model) => model.type === 'chat' && model.name === val,
+        ),
+      {
+        message: 'Invalid model',
+      },
+    ),
 });
 
 const ModelForm = () => {
-  const currModel = useSelector((state: RootState) => state.model);
+  const models = useSelector((state: RootState) => state.model);
   const dispatch = useDispatch();
 
   const {
@@ -30,35 +46,36 @@ const ModelForm = () => {
     watch,
     handleSubmit,
     reset,
-    formState: { isSubmitSuccessful, isDirty },
+    formState: { errors, isSubmitSuccessful, isDirty },
   } = useForm<TModelForm>({
     resolver: zodResolver(modelSchema),
-    mode: 'onChange',
     defaultValues: {
-      chatModel: currModel.name,
+      chatModel: models.chat.name,
     },
   });
 
   const watchChatModel = watch('chatModel');
 
-  const selectingModel = MODEL_PRICE.find(
+  const selectingChatModel = MODEL_PRICE.find(
     (model) => model.name === watchChatModel,
   );
 
   useEffect(() => {
     if (isSubmitSuccessful) {
       reset({
-        chatModel: currModel.name,
+        chatModel: models.chat.name,
       });
     }
-  }, [isSubmitSuccessful, currModel, reset]);
+  }, [isSubmitSuccessful, models, reset]);
 
   const onSubmit = (data: TModelForm) => {
     dispatch(
-      setModel(
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        MODEL_PRICE.find((model) => model.name === data.chatModel)!.name,
-      ),
+      setModel([
+        {
+          type: 'chat',
+          name: data.chatModel,
+        },
+      ]),
     );
   };
 
@@ -72,7 +89,16 @@ const ModelForm = () => {
             name="chatModel"
             render={({ field }) => (
               <Select
-                data={MODEL_PRICE.map((model) => model.name)}
+                data={MODEL_PRICE.filter((model) => model.type === 'chat').map(
+                  (model) => {
+                    return {
+                      label: model.name,
+                      value: model.name,
+                      group: model.provider,
+                    };
+                  },
+                )}
+                error={errors.chatModel?.message}
                 {...field}
               />
             )}
@@ -83,43 +109,29 @@ const ModelForm = () => {
           <Stack spacing="sm">
             <Text fw={700}>Pricing</Text>
 
-            <Group>
+            <SimpleGrid cols={3}>
               <Text className="flex-1" fz="sm">
-                Prompt
+                Chat
               </Text>
               <Text fz="sm">
+                <b>In</b>:{' '}
                 {new Intl.NumberFormat('en-US', {
                   style: 'currency',
                   currency: 'USD',
                   minimumFractionDigits: MINIMUM_FRACTION_DIGITS,
-                }).format(selectingModel?.price.prompt || 0)}
-                /
-                {new Intl.NumberFormat('en-US', {
-                  notation: 'compact',
-                  compactDisplay: 'short',
-                }).format(selectingModel?.per || 0)}{' '}
-                tokens
-              </Text>
-            </Group>
-
-            <Group>
-              <Text className="flex-1" fz="sm">
-                Completion
+                }).format(selectingChatModel?.price.in.value || 0)}
+                /{selectingChatModel?.price.in.per}
               </Text>
               <Text fz="sm">
+                <b>Out</b>:{' '}
                 {new Intl.NumberFormat('en-US', {
                   style: 'currency',
                   currency: 'USD',
                   minimumFractionDigits: MINIMUM_FRACTION_DIGITS,
-                }).format(selectingModel?.price.completion || 0)}
-                /
-                {new Intl.NumberFormat('en-US', {
-                  notation: 'compact',
-                  compactDisplay: 'short',
-                }).format(selectingModel?.per || 0)}{' '}
-                tokens
+                }).format(selectingChatModel?.price.out.value || 0)}
+                /{selectingChatModel?.price.out.per}
               </Text>
-            </Group>
+            </SimpleGrid>
           </Stack>
         </Card>
 
