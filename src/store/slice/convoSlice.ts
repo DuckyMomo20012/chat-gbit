@@ -1,7 +1,8 @@
-import { createSlice, nanoid } from '@reduxjs/toolkit';
+import { createEntityAdapter, createSlice, nanoid } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { type OpenAI } from 'openai';
 import { PURGE } from 'redux-persist';
+import type { RootState } from '@/store/store';
 
 export type TChat =
   | {
@@ -13,40 +14,41 @@ export type TChat =
       trained?: boolean;
     } & Partial<OpenAI.Chat.ChatCompletion>;
 
-const initialState: Array<TChat> = [];
+const convoAdapter = createEntityAdapter<TChat>();
 
 const convoSlice = createSlice({
   name: 'convo',
-  initialState,
+  initialState: convoAdapter.getInitialState(),
   reducers: {
     addMessage: (state, action: PayloadAction<Omit<TChat, 'id'>>) => {
       const { payload } = action;
 
-      state.push({
+      convoAdapter.addOne(state, {
         ...payload,
         id: nanoid(),
       });
     },
 
-    removeMessage: (state, action: PayloadAction<{ id: TChat['id'] }>) => {
-      const { payload } = action;
+    removeMessage: convoAdapter.removeOne,
 
-      return state.filter((message) => message.id !== payload.id);
-    },
-
+    // FIXME: This is a temporary implementation for backward compatibility.
     setTyping: (
-      state: Array<TChat>,
+      state,
       action: PayloadAction<{ id: TChat['id']; isTyping: boolean }>,
     ) => {
       const { payload } = action;
 
       const { id, isTyping } = payload;
 
-      return state.map((message) =>
-        message.id === id ? { ...message, isTyping } : message,
-      );
+      convoAdapter.updateOne(state, {
+        id,
+        changes: {
+          isTyping,
+        },
+      });
     },
 
+    // FIXME: This is a temporary implementation for backward compatibility.
     mutateMessage: (
       state,
       action: PayloadAction<{
@@ -59,14 +61,15 @@ const convoSlice = createSlice({
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { id, ...mutation } = payload.mutation;
 
-      return state.map((message) =>
-        message.id === payload.id ? { ...message, ...mutation } : message,
-      );
+      convoAdapter.updateOne(state, {
+        id: payload.id,
+        changes: mutation,
+      });
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(PURGE, () => {
-      return initialState;
+    builder.addCase(PURGE, (state) => {
+      return convoAdapter.removeAll(state);
     });
   },
 });
@@ -75,3 +78,6 @@ export const { addMessage, removeMessage, setTyping, mutateMessage } =
   convoSlice.actions;
 
 export default convoSlice.reducer;
+
+export const { selectAll: selectAllConvo, selectById: selectConvoById } =
+  convoAdapter.getSelectors((state: RootState) => state.convo);

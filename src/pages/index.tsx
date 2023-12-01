@@ -14,6 +14,7 @@ import {
   addMessage,
   mutateMessage,
   removeMessage,
+  selectAllConvo,
 } from '@/store/slice/convoSlice';
 import type { RootState } from '@/store/store';
 
@@ -23,8 +24,10 @@ export type TPromptForm = {
 };
 
 const HomePage = () => {
-  const chat = useSelector((state: RootState) => state.convo);
-  const lastMessage = useSelector((state: RootState) => state.convo.at(-1));
+  const chat = useSelector(selectAllConvo);
+  const lastMessage = useSelector((state: RootState) =>
+    selectAllConvo(state).at(-1),
+  );
   const model = useSelector((state: RootState) => state.model);
   const isTyping = chat.filter((item) => item.isTyping).length > 0;
   const dispatch = useDispatch();
@@ -186,7 +189,7 @@ const HomePage = () => {
                 // NOTE: Remove last message if it's assistant's message before
                 // regenerating
                 if (lastMessage?.role === 'assistant') {
-                  dispatch(removeMessage({ id: lastMessage.id }));
+                  dispatch(removeMessage(lastMessage.id));
                 }
               }}
               variant="outline"
