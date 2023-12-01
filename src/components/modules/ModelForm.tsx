@@ -66,7 +66,7 @@ const ModelForm = () => {
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack>
         <Group>
-          <Text className="flex-1">Model</Text>
+          <Text className="flex-1">Chat model</Text>
           <Controller
             control={control}
             name="chatModel"
