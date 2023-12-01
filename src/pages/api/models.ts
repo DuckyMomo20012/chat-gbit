@@ -5,7 +5,7 @@ export default async function getCompletions(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const response = await openai.listModels();
+  const response = await openai.models.list();
 
   res.status(200).json(response.data);
 }

@@ -3,7 +3,7 @@ import { Button, Stack, Text } from '@mantine/core';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import Head from 'next/head';
-import { CreateChatCompletionResponse } from 'openai';
+import { type OpenAI } from 'openai';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type Typed from 'typed.js';
@@ -41,7 +41,7 @@ const HomePage = () => {
     isLoading,
     mutate,
   } = useMutation({
-    mutationFn: async (): Promise<CreateChatCompletionResponse> => {
+    mutationFn: async (): Promise<OpenAI.Chat.ChatCompletion> => {
       const { data } = await axios.post('/api/completions', {
         data: {
           model: model.chat.name,

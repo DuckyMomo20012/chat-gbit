@@ -1,20 +1,17 @@
 import { createSlice, nanoid } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import {
-  ChatCompletionRequestMessageRoleEnum,
-  CreateChatCompletionResponse,
-} from 'openai';
+import { type OpenAI } from 'openai';
 import { PURGE } from 'redux-persist';
 
 export type TChat =
   | {
       id: string;
-      role: ChatCompletionRequestMessageRoleEnum;
+      role: OpenAI.Chat.ChatCompletionRole;
       content: string;
       isTyping: boolean;
       hidden?: boolean;
       trained?: boolean;
-    } & Partial<CreateChatCompletionResponse>;
+    } & Partial<OpenAI.Chat.ChatCompletion>;
 
 const initialState: Array<TChat> = [];
 

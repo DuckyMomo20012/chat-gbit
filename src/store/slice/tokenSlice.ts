@@ -1,9 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { CreateCompletionResponseUsage } from 'openai';
+import { type OpenAI } from 'openai';
 import { PURGE } from 'redux-persist';
 
-const initialState: CreateCompletionResponseUsage = {
+const initialState: OpenAI.CompletionUsage = {
   prompt_tokens: 0,
   completion_tokens: 0,
   total_tokens: 0,
@@ -13,10 +13,7 @@ const tokenSlice = createSlice({
   name: 'token',
   initialState,
   reducers: {
-    addTokens: (
-      state,
-      action: PayloadAction<CreateCompletionResponseUsage>,
-    ) => {
+    addTokens: (state, action: PayloadAction<OpenAI.CompletionUsage>) => {
       const { payload } = action;
 
       const {

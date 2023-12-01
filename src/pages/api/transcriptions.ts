@@ -55,13 +55,13 @@ export default async function getTranscriptions(
     });
     const file = fs.createReadStream(newFilepath);
 
-    const response = await openai.createTranscription(
+    const response = await openai.audio.transcriptions.create({
+      model: formFields.model as string,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      file as any,
-      formFields.model as string,
-    );
+      file: file as any,
+    });
 
-    res.status(200).json(response.data);
+    res.status(200).json(response);
 
     fs.rm(newFilepath, (rmErr) => {
       if (rmErr) throw rmErr;

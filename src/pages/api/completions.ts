@@ -22,12 +22,12 @@ export default async function getCompletions(
   try {
     const { model, messages } = bodySchema.parse(body.data);
 
-    const response = await openai.createChatCompletion({
+    const response = await openai.chat.completions.create({
       model,
       messages,
     } satisfies TBody);
 
-    res.status(200).json(response.data);
+    res.status(200).json(response);
   } catch (error) {
     if (error instanceof z.ZodError) {
       res.status(400).json({ error: error.message });
