@@ -9,7 +9,7 @@ import {
 } from '@mantine/core';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
-import { CreateTranscriptionResponse } from 'openai';
+import { type OpenAI } from 'openai';
 import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import {
@@ -72,7 +72,7 @@ const VoiceForm = ({
   const { isLoading, error, mutateAsync } = useMutation({
     mutationFn: async (
       formData: TVoiceForm,
-    ): Promise<CreateTranscriptionResponse> => {
+    ): Promise<OpenAI.Audio.Transcription> => {
       const blob = new Blob(formData.audio, { type: 'audio/webm;codecs=opus' });
 
       const newForm = new FormData();
