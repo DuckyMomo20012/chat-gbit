@@ -118,6 +118,7 @@ const UploadForm = () => {
         </Alert>
 
         <JsonInput
+          autosize
           label="Training conversation"
           maxRows={10}
           minRows={10}
