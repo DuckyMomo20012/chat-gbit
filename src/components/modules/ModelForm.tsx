@@ -5,7 +5,11 @@ import { Controller, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { z } from 'zod';
 import { MODEL_LIST } from '@/constants/modelList';
-import { type TModel, setModel } from '@/store/slice/modelSlice';
+import {
+  type TModel,
+  type TModelType,
+  setModel,
+} from '@/store/slice/modelSlice';
 import { RootState } from '@/store/store';
 
 type TModelForm = {
@@ -37,6 +41,28 @@ const modelSchema = z.object({
       },
     ),
 });
+
+const mapModelToSelect = (
+  type: TModelType,
+  model: readonly TModel<TModelType>[],
+) => {
+  const groupByProvider = model
+    .filter((m) => m.type === type)
+    .reduce((acc, m) => {
+      const provider = m.provider.name;
+
+      acc[provider] = acc[provider] || [];
+      acc[provider] = [...acc[provider], { label: m.name, value: m.name }];
+      return acc;
+    }, {} as Record<string, { label: string; value: string }[]>);
+
+  return Object.entries(groupByProvider).map(([provider, models]) => {
+    return {
+      group: provider,
+      items: models,
+    };
+  });
+};
 
 const ModelForm = () => {
   const models = useSelector((state: RootState) => state.model);
@@ -89,16 +115,8 @@ const ModelForm = () => {
             name="chatModel"
             render={({ field }) => (
               <Select
-                data={MODEL_LIST.filter((model) => model.type === 'chat').map(
-                  (model) => {
-                    return {
-                      label: model.name,
-                      value: model.name,
-                      group: model.provider.name,
-                    };
-                  },
-                )}
-                error={errors.chatModel?.message}
+                data={mapModelToSelect('chat', MODEL_LIST)}
+                error={errors.audioModel?.message}
                 {...field}
               />
             )}
@@ -112,15 +130,7 @@ const ModelForm = () => {
             name="audioModel"
             render={({ field }) => (
               <Select
-                data={MODEL_LIST.filter((model) => model.type === 'audio').map(
-                  (model) => {
-                    return {
-                      label: model.name,
-                      value: model.name,
-                      group: model.provider.name,
-                    };
-                  },
-                )}
+                data={mapModelToSelect('audio', MODEL_LIST)}
                 error={errors.audioModel?.message}
                 {...field}
               />
