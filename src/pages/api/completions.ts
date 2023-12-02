@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { z } from 'zod';
+import { MODEL_LIST } from '@/constants/modelList';
 import { openai } from '@/lib/openai';
 
 const bodySchema = z.object({
@@ -22,10 +23,19 @@ export default async function getCompletions(
   try {
     const { model, messages } = bodySchema.parse(body.data);
 
-    const response = await openai.chat.completions.create({
-      model,
-      messages,
-    } satisfies TBody);
+    const foundModel = MODEL_LIST.find((m) => m.name === model);
+
+    const response = await openai.chat.completions.create(
+      {
+        model,
+        messages,
+      } satisfies TBody,
+      {
+        ...(foundModel?.provider.baseUrl && {
+          path: `${foundModel.provider?.baseUrl}/v1/chat/completions`,
+        }),
+      },
+    );
 
     res.status(200).json(response);
   } catch (error) {

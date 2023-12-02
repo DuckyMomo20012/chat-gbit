@@ -1,25 +1,17 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { PURGE } from 'redux-persist';
-import { MODEL_PRICE } from '@/constants/modelPrice';
+import { MODEL_LIST } from '@/constants/modelList';
 
 export type TModelType = 'chat' | 'audio';
 
 export type TModel<T> = {
   type: T;
   name: string;
-  price: {
-    in: {
-      value: number;
-      per: string;
-    };
-    out: {
-      value: number;
-      per: string;
-    };
+  provider: {
+    name: 'OpenAI' | 'Self-hosted';
+    baseUrl?: string;
   };
-
-  provider: 'OpenAI' | 'Self-hosted';
 };
 
 export type TModelSlice = {
@@ -27,8 +19,8 @@ export type TModelSlice = {
 };
 
 const initialState = {
-  chat: MODEL_PRICE[0],
-  audio: MODEL_PRICE[3],
+  chat: MODEL_LIST[0],
+  audio: MODEL_LIST[3],
 } satisfies TModelSlice;
 
 const modelSlice = createSlice({
@@ -40,7 +32,7 @@ const modelSlice = createSlice({
       action: PayloadAction<{ type: TModelType; name: string }[]>,
     ) {
       return action.payload.reduce((acc, { type, name }) => {
-        const foundModel = MODEL_PRICE.find(
+        const foundModel = MODEL_LIST.find(
           (model) => model.type === type && model.name === name,
         );
 

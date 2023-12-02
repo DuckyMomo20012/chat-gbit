@@ -31,6 +31,8 @@ const convoSlice = createSlice({
 
     removeMessage: convoAdapter.removeOne,
 
+    removeAllMessage: convoAdapter.removeAll,
+
     // FIXME: This is a temporary implementation for backward compatibility.
     setTyping: (
       state,
@@ -74,8 +76,13 @@ const convoSlice = createSlice({
   },
 });
 
-export const { addMessage, removeMessage, setTyping, mutateMessage } =
-  convoSlice.actions;
+export const {
+  addMessage,
+  removeMessage,
+  removeAllMessage,
+  setTyping,
+  mutateMessage,
+} = convoSlice.actions;
 
 export default convoSlice.reducer;
 
