@@ -128,7 +128,7 @@ const ModelForm = () => {
           />
         </Group>
 
-        <Group position="center">
+        <Group justify="center">
           <Button disabled={!isDirty} onClick={() => reset()} variant="outline">
             Discard
           </Button>

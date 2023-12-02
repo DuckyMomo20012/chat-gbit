@@ -108,7 +108,7 @@ const NavMenuList = ({
                 color={path.color}
                 component={Link}
                 href={path.path}
-                leftIcon={
+                leftSection={
                   path.icon && (
                     <Icon
                       height={DEFAULT_ICON_HEIGHT}
@@ -117,7 +117,7 @@ const NavMenuList = ({
                     />
                   )
                 }
-                rightIcon={
+                rightSection={
                   path.subPath && (
                     <Icon
                       height={DEFAULT_ICON_HEIGHT}

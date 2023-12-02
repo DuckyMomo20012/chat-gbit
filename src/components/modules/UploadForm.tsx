@@ -161,7 +161,7 @@ const UploadForm = () => {
           radius="sm"
           {...register('hideMessages')}
         />
-        <Group position="center">
+        <Group justify="center">
           <Button disabled={!isDirty} onClick={() => reset()} variant="outline">
             Discard
           </Button>

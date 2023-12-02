@@ -47,15 +47,15 @@ const NavLinkList = ({
             color={path.color}
             component={Link}
             href={path.path}
-            icon={
+            key={`${index}-${count}`}
+            label={path.label}
+            leftSection={
               path.icon && (
                 <ThemeIcon color={path.color} size="lg" variant="light">
                   <Icon height={24} icon={path.icon} width={24} />
                 </ThemeIcon>
               )
             }
-            key={`${index}-${count}`}
-            label={path.label}
             onClick={handleLinkClick}
             rightSection={
               continueLevel && !!path.subPath ? (

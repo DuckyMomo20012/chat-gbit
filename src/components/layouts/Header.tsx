@@ -5,7 +5,6 @@ import {
   Avatar,
   Group,
   Image,
-  Header as MantineHeader,
   Text,
   Tooltip,
   useMantineColorScheme,
@@ -111,109 +110,107 @@ const Header = ({ setNavBarOpened }: HeaderProps) => {
   }, [itemState, childrenWidth, containerWidth]);
 
   return (
-    <MantineHeader height={48} px={24}>
-      <Group className="h-full" noWrap position="apart">
-        <ActionIcon
-          aria-label="Open navigation menu"
-          className="sm:hidden"
-          onClick={() => {
-            setNavBarOpened((prevNavBarOpened) => !prevNavBarOpened);
-          }}
-          size="lg"
-          variant="subtle"
+    <Group className="h-full" justify="apart" wrap="nowrap">
+      <ActionIcon
+        aria-label="Open navigation menu"
+        className="sm:hidden"
+        onClick={() => {
+          setNavBarOpened((prevNavBarOpened) => !prevNavBarOpened);
+        }}
+        size="lg"
+        variant="subtle"
+      >
+        <Icon height={24} icon="material-symbols:menu" width={24} />
+      </ActionIcon>
+
+      <Group className="sm:flex hidden" justify="left">
+        <Anchor
+          className="flex items-center gap-2 whitespace-nowrap"
+          component={Link}
+          href="/"
+          underline="never"
         >
-          <Icon height={24} icon="material-symbols:menu" width={24} />
-        </ActionIcon>
+          <Avatar color="indigo" radius="sm" size="md" variant="filled">
+            <Image alt="logo" height={28} src="/img/chatgpt.svg" width={28} />
+          </Avatar>
+          <Text className="text-center" fw={700}>
+            Chat GBiT
+          </Text>
+        </Anchor>
+      </Group>
 
-        <Group className="sm:flex hidden" position="left">
-          <Anchor
-            className="flex items-center gap-2 whitespace-nowrap"
-            component={Link}
-            href="/"
-            underline={false}
-          >
-            <Avatar color="indigo" radius="sm" size="md" variant="filled">
-              <Image alt="logo" height={28} src="/img/chatgpt.svg" width={28} />
-            </Avatar>
-            <Text align="center" fw={700}>
-              Chat GBiT
-            </Text>
-          </Anchor>
-        </Group>
-
-        <Group className="sm:flex hidden flex-grow h-full">
+      <Group className="sm:flex hidden flex-grow h-full">
+        <Group
+          className="h-full relative flex-grow overflow-hidden"
+          ref={containerRef}
+        >
           <Group
-            className="h-full relative flex-grow overflow-hidden"
-            ref={containerRef}
+            className="h-full absolute"
+            ref={childrenRef}
+            style={{ ...(hidden && hiddenStyles) }}
+            wrap="nowrap"
           >
-            <Group
-              className="h-full absolute"
-              noWrap
-              ref={childrenRef}
-              style={{ ...(hidden && hiddenStyles) }}
-            >
-              <NavMenuList level={3} paths={itemState.items} />
-              {itemState.hiddenItems.length > 0 && (
-                <NavMenuListCompact level={3} paths={itemState.hiddenItems} />
-              )}
-            </Group>
+            <NavMenuList level={3} paths={itemState.items} />
+            {itemState.hiddenItems.length > 0 && (
+              <NavMenuListCompact level={3} paths={itemState.hiddenItems} />
+            )}
           </Group>
         </Group>
-
-        <Group noWrap>
-          <Tooltip label="Clear conversation">
-            <ActionIcon
-              aria-label="Clear conversation"
-              color="red"
-              onClick={() => dispatch(removeAllMessage())}
-              size="lg"
-              variant="outline"
-            >
-              <Icon icon="material-symbols:delete-outline" width={24} />
-            </ActionIcon>
-          </Tooltip>
-
-          <ChatToolbar />
-
-          <Tooltip label={dark ? 'Light mode' : 'Dark mode'}>
-            <ActionIcon
-              aria-label="Toggle color scheme"
-              className="sm:flex hidden"
-              color="blue"
-              data-test-id="color-scheme-toggle"
-              onClick={() => toggleColorScheme()}
-              size="lg"
-              variant="outline"
-            >
-              <Icon
-                icon={
-                  dark
-                    ? 'material-symbols:dark-mode'
-                    : 'material-symbols:light-mode'
-                }
-                width={24}
-              />
-            </ActionIcon>
-          </Tooltip>
-          <Tooltip label="Source code">
-            <Anchor
-              data-test-id="github-link"
-              href="https://github.com/DuckyMomo20012/chat-gbit"
-              target="_blank"
-            >
-              <ActionIcon
-                aria-label="GitHub link"
-                role="link"
-                size="lg"
-                variant="outline"
-              >
-                <Icon icon="ant-design:github-filled" width={24} />
-              </ActionIcon>
-            </Anchor>
-          </Tooltip>
-        </Group>
       </Group>
-    </MantineHeader>
+
+      <Group wrap="nowrap">
+        <Tooltip label="Clear conversation">
+          <ActionIcon
+            aria-label="Clear conversation"
+            color="red"
+            onClick={() => dispatch(removeAllMessage())}
+            size="lg"
+            variant="outline"
+          >
+            <Icon icon="material-symbols:delete-outline" width={24} />
+          </ActionIcon>
+        </Tooltip>
+
+        <ChatToolbar />
+
+        <Tooltip label={dark ? 'Light mode' : 'Dark mode'}>
+          <ActionIcon
+            aria-label="Toggle color scheme"
+            className="sm:flex hidden"
+            color="blue"
+            data-test-id="color-scheme-toggle"
+            onClick={() => toggleColorScheme()}
+            size="lg"
+            variant="outline"
+          >
+            <Icon
+              icon={
+                dark
+                  ? 'material-symbols:dark-mode'
+                  : 'material-symbols:light-mode'
+              }
+              width={24}
+            />
+          </ActionIcon>
+        </Tooltip>
+        <Tooltip label="Source code">
+          <Anchor
+            data-test-id="github-link"
+            href="https://github.com/DuckyMomo20012/chat-gbit"
+            target="_blank"
+          >
+            <ActionIcon
+              aria-label="GitHub link"
+              role="link"
+              size="lg"
+              variant="outline"
+            >
+              <Icon icon="ant-design:github-filled" width={24} />
+            </ActionIcon>
+          </Anchor>
+        </Tooltip>
+      </Group>
+    </Group>
   );
 };
 

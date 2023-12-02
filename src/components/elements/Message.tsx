@@ -71,7 +71,10 @@ const Message = forwardRef(function Message(
         'bg-pink-100 dark:bg-pink-700': role === 'system',
       })}
     >
-      <Group className="w-full md:max-w-2xl lg:max-w-2xl xl:max-w-3xl" noWrap>
+      <Group
+        className="w-full md:max-w-2xl lg:max-w-2xl xl:max-w-3xl"
+        wrap="nowrap"
+      >
         <Tooltip label={role.toUpperCase()} position="left">
           <MantineAvatar
             className="self-start"
