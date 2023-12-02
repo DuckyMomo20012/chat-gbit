@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/no-unresolved
 import 'windi.css';
+import '@mantine/core/styles.css';
 
 import type { NextComponentType } from 'next';
 import type { AppProps } from 'next/app';
