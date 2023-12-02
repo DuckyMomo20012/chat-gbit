@@ -8,17 +8,6 @@ export type TModelType = 'chat' | 'audio';
 export type TModel<T> = {
   type: T;
   name: string;
-  price: {
-    in: {
-      value: number;
-      per: string;
-    };
-    out: {
-      value: number;
-      per: string;
-    };
-  };
-
   provider: {
     name: 'OpenAI' | 'Self-hosted';
     baseUrl?: string;
