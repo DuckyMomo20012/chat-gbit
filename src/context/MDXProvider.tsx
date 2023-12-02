@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { CodeHighlight } from '@mantine/code-highlight';
 import {
   Anchor,
   Blockquote,
@@ -8,7 +9,6 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import { Prism } from '@mantine/prism';
 import { MDXProvider as BaseMDXProvider } from '@mdx-js/react';
 
 const components = {
@@ -47,9 +47,10 @@ const components = {
     const language =
       props.children?.props?.className?.replace(/language-/, '') || '';
     return (
-      <Prism language={language} withLineNumbers>
-        {props.children?.props?.children}
-      </Prism>
+      <CodeHighlight
+        code={props.children?.props?.children}
+        language={language}
+      />
     );
   },
   strong: (props: any) => <Text {...props} weight="bold" />,
