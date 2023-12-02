@@ -12,7 +12,7 @@ import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { z } from 'zod';
-import { MODEL_PRICE } from '@/constants/modelPrice';
+import { MODEL_LIST } from '@/constants/modelPrice';
 import {
   type TModel,
   type TModelType,
@@ -33,9 +33,7 @@ const modelSchema = z.object({
     .nullable()
     .refine(
       (val) =>
-        MODEL_PRICE.find(
-          (model) => model.type === 'chat' && model.name === val,
-        ),
+        MODEL_LIST.find((model) => model.type === 'chat' && model.name === val),
       {
         message: 'Invalid model',
       },
@@ -45,7 +43,7 @@ const modelSchema = z.object({
     .nullable()
     .refine(
       (val) =>
-        MODEL_PRICE.find(
+        MODEL_LIST.find(
           (model) => model.type === 'audio' && model.name === val,
         ),
       {
@@ -111,10 +109,10 @@ const ModelForm = () => {
   const watchChatModel = watch('chatModel');
   const watchAudioModel = watch('audioModel');
 
-  const selectingChatModel = MODEL_PRICE.find(
+  const selectingChatModel = MODEL_LIST.find(
     (model) => model.name === watchChatModel,
   );
-  const selectingAudioModel = MODEL_PRICE.find(
+  const selectingAudioModel = MODEL_LIST.find(
     (model) => model.name === watchAudioModel,
   );
 
@@ -152,12 +150,12 @@ const ModelForm = () => {
             name="chatModel"
             render={({ field }) => (
               <Select
-                data={MODEL_PRICE.filter((model) => model.type === 'chat').map(
+                data={MODEL_LIST.filter((model) => model.type === 'chat').map(
                   (model) => {
                     return {
                       label: model.name,
                       value: model.name,
-                      group: model.provider,
+                      group: model.provider.name,
                     };
                   },
                 )}
@@ -175,12 +173,12 @@ const ModelForm = () => {
             name="audioModel"
             render={({ field }) => (
               <Select
-                data={MODEL_PRICE.filter((model) => model.type === 'audio').map(
+                data={MODEL_LIST.filter((model) => model.type === 'audio').map(
                   (model) => {
                     return {
                       label: model.name,
                       value: model.name,
-                      group: model.provider,
+                      group: model.provider.name,
                     };
                   },
                 )}

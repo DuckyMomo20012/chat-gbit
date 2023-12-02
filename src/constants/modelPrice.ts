@@ -1,6 +1,6 @@
 import type { TModel, TModelType } from '@/store/slice/modelSlice';
 
-export const MODEL_PRICE = [
+export const MODEL_LIST = [
   {
     type: 'chat',
     name: 'gpt-3.5-turbo',
@@ -8,7 +8,7 @@ export const MODEL_PRICE = [
       in: { value: 0.0002, per: '1K tokens' },
       out: { value: 0.0002, per: '1K tokens' },
     },
-    provider: 'OpenAI',
+    provider: { name: 'OpenAI' },
   },
   {
     type: 'chat',
@@ -17,7 +17,7 @@ export const MODEL_PRICE = [
       in: { value: 0.0002, per: '1K tokens' },
       out: { value: 0.0002, per: '1K tokens' },
     },
-    provider: 'OpenAI',
+    provider: { name: 'OpenAI' },
   },
   {
     type: 'chat',
@@ -26,7 +26,7 @@ export const MODEL_PRICE = [
       in: { value: 0, per: 'tokens' },
       out: { value: 0, per: 'tokens' },
     },
-    provider: 'Self-hosted',
+    provider: { name: 'Self-hosted', url: process.env.LOCAL_AI_BASE_URL },
   },
   {
     type: 'audio',
@@ -35,6 +35,6 @@ export const MODEL_PRICE = [
       in: { value: 0, per: 'minute' },
       out: { value: 0, per: 'minute' },
     },
-    provider: 'Self-hosted',
+    provider: { name: 'Self-hosted', url: process.env.LOCAL_AI_BASE_URL },
   },
 ] as const satisfies readonly TModel<TModelType>[];
