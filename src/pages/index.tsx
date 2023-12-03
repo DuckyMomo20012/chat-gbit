@@ -132,10 +132,7 @@ const HomePage = () => {
   };
 
   return (
-    <Stack
-      align="center"
-      className="h-[calc(100vh-var(--mantine-header-height)-var(--mantine-footer-height))] relative w-full overflow-hidden"
-    >
+    <Stack align="center" className="flex-1">
       <Head>
         <title>New Chat</title>
         <meta content="Create new Chat GBiT" name="description"></meta>
@@ -143,11 +140,11 @@ const HomePage = () => {
 
       <Convo chat={chat} isFetching={isLoading} typingsRef={typingsRef} />
 
-      <Stack className="absolute bottom-0 w-full z-100">
+      <Stack className="absolute bottom-6 w-full z-100">
         <Stack align="center" className="backdrop-filter backdrop-blur-xl p-4">
           {isTyping && (
             <Button
-              leftIcon={
+              leftSection={
                 <Icon
                   height={16}
                   icon="material-symbols:stop-outline"
@@ -175,7 +172,7 @@ const HomePage = () => {
 
           {allowRegenerate && (
             <Button
-              leftIcon={
+              leftSection={
                 <Icon
                   height={16}
                   icon="material-symbols:autorenew"
@@ -202,7 +199,7 @@ const HomePage = () => {
             <Button
               className="self-center"
               color="lime"
-              leftIcon={
+              leftSection={
                 <Icon
                   height={24}
                   icon={
@@ -238,7 +235,7 @@ const HomePage = () => {
             )}
           </Stack>
 
-          <Text align="center" color="dimmed" fz="sm">
+          <Text c="dimmed" className="text-center" fz="sm">
             This program is designed for testing ChatGPT API only.
           </Text>
         </Stack>

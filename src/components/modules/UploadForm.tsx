@@ -118,6 +118,7 @@ const UploadForm = () => {
         </Alert>
 
         <JsonInput
+          autosize
           label="Training conversation"
           maxRows={10}
           minRows={10}
@@ -161,7 +162,7 @@ const UploadForm = () => {
           radius="sm"
           {...register('hideMessages')}
         />
-        <Group position="center">
+        <Group justify="center">
           <Button disabled={!isDirty} onClick={() => reset()} variant="outline">
             Discard
           </Button>

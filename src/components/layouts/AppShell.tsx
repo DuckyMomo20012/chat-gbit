@@ -1,24 +1,19 @@
-import { AppShell as MantineAppShell, Overlay } from '@mantine/core';
-import { useState } from 'react';
+import { AppShell as MantineAppShell } from '@mantine/core';
 import { Footer } from '@/components/layouts/Footer';
 import { Header } from '@/components/layouts/Header';
-import { Navbar } from '@/components/layouts/Navbar';
 
 const AppShell = ({ children }: { children?: React.ReactNode }) => {
-  const [navBarOpened, setNavBarOpened] = useState<boolean>(false);
-
   return (
-    <MantineAppShell
-      className="h-screen"
-      footer={<Footer />}
-      header={<Header setNavBarOpened={setNavBarOpened} />}
-      navbar={
-        <Navbar navBarOpened={navBarOpened} setNavBarOpened={setNavBarOpened} />
-      }
-      padding={0}
-    >
-      {navBarOpened && <Overlay color="black" opacity={0.5} zIndex={199} />}
-      {children}
+    <MantineAppShell header={{ height: 60 }} padding="md">
+      <MantineAppShell.Header>
+        <Header />
+      </MantineAppShell.Header>
+
+      <MantineAppShell.Main>{children}</MantineAppShell.Main>
+
+      <MantineAppShell.Footer>
+        <Footer />
+      </MantineAppShell.Footer>
     </MantineAppShell>
   );
 };

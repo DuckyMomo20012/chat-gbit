@@ -188,7 +188,7 @@ const VoiceInput = forwardRef(function VoiceInput(
         <Button
           color="indigo"
           disabled={disabled}
-          leftIcon={
+          leftSection={
             <Icon height={24} icon="material-symbols:mic-outline" width={24} />
           }
           onClick={() => setState('recording')}
@@ -201,7 +201,7 @@ const VoiceInput = forwardRef(function VoiceInput(
         <Group>
           <Button
             color={state === 'paused' ? 'yellow' : 'green'}
-            leftIcon={
+            leftSection={
               <Icon
                 height={24}
                 icon={
@@ -221,7 +221,7 @@ const VoiceInput = forwardRef(function VoiceInput(
           </Button>
           <Button
             color="red"
-            leftIcon={
+            leftSection={
               <Icon
                 height={24}
                 icon="material-symbols:stop-outline"
@@ -236,7 +236,7 @@ const VoiceInput = forwardRef(function VoiceInput(
         </Group>
       )}
       {errors && (
-        <Text align="center" color="red">
+        <Text c="red" className="text-center">
           {errors}
         </Text>
       )}

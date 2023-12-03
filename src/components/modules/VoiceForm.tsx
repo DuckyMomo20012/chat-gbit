@@ -99,7 +99,7 @@ const VoiceForm = ({
     <form className="w-full md:w-1/2" onSubmit={handleSubmit(onSubmit)}>
       <Stack align="center">
         {isLoading && (
-          <Group spacing="xs">
+          <Group gap="xs">
             <Loader size="xs" />
             <Text>Transcribing</Text>
           </Group>
