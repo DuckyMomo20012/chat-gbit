@@ -8,7 +8,7 @@ const QueryProvider = ({ children }: { children?: React.ReactNode }) => {
     <QueryClientProvider client={queryClient}>
       <>
         {children}
-        <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
+        <ReactQueryDevtools initialIsOpen={false} />
       </>
     </QueryClientProvider>
   );

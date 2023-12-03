@@ -69,7 +69,7 @@ const VoiceForm = ({
     }
   }, [reset, isSubmitSuccessful]);
 
-  const { isLoading, error, mutateAsync } = useMutation({
+  const { isPending, error, mutateAsync } = useMutation({
     mutationFn: async (
       formData: TVoiceForm,
     ): Promise<OpenAI.Audio.Transcription> => {
@@ -98,7 +98,7 @@ const VoiceForm = ({
   return (
     <form className="w-full md:w-1/2" onSubmit={handleSubmit(onSubmit)}>
       <Stack align="center">
-        {isLoading && (
+        {isPending && (
           <Group gap="xs">
             <Loader size="xs" />
             <Text>Transcribing</Text>
