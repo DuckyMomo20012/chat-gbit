@@ -29,7 +29,7 @@ const RECORD_OPTIONS = {
 } satisfies MediaRecorderOptions;
 
 const VoiceInput = forwardRef(function VoiceInput(
-  { playSound, timeout }: { playSound?: boolean; timeout?: number },
+  { timeout }: { timeout?: number },
   ref,
 ) {
   const [state, setState] = useState<MediaRecorder['state']>('inactive');
@@ -77,15 +77,6 @@ const VoiceInput = forwardRef(function VoiceInput(
       // NOTE: Set state to inactive to handle unexpected stop event, (e.g.
       // when the media stream being captured ends unexpectedly)
       setState('inactive');
-
-      if (playSound) {
-        const blob = new Blob(chunksRef.current, {
-          type: RECORD_OPTIONS.mimeType,
-        });
-        const url = URL.createObjectURL(blob);
-        const audio = new Audio(url);
-        audio.play();
-      }
     };
 
     const startRecording = async () => {
@@ -155,7 +146,7 @@ const VoiceInput = forwardRef(function VoiceInput(
     } else if (state === 'inactive') {
       stopRecording();
     }
-  }, [state, playSound, timeout]);
+  }, [state, timeout]);
 
   useImperativeHandle(
     ref,
