@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { ActionIcon, Checkbox, Stack, TextInput } from '@mantine/core';
+import { ActionIcon, Checkbox, Group, Stack, TextInput } from '@mantine/core';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import type { TPromptForm } from '@/pages/index';
@@ -34,35 +34,33 @@ const PromptForm = ({
   };
 
   return (
-    <form className="w-full md:w-1/2" onSubmit={handleSubmit(onSubmit)}>
+    <form className="w-full max-w-xl" onSubmit={handleSubmit(onSubmit)}>
       <Stack>
-        <TextInput
-          rightSection={
-            <ActionIcon
-              color="blue"
-              loading={isBusy}
-              size="md"
-              type="submit"
-              variant="light"
-            >
-              <Icon
-                height={16}
-                icon="material-symbols:send-outline"
-                width={16}
-              />
-            </ActionIcon>
-          }
-          {...register('prompt', {
-            validate: {
-              notEmpty: (value: string) => value.trim().length > 0,
-              notBusy: () => !isBusy,
-            },
-          })}
-        />
+        <Group className="justify-center">
+          <TextInput
+            className="flex-1"
+            {...register('prompt', {
+              validate: {
+                notEmpty: (value: string) => value.trim().length > 0,
+                notBusy: () => !isBusy,
+              },
+            })}
+          />
+          <ActionIcon
+            color="blue"
+            loading={isBusy}
+            size="lg"
+            type="submit"
+            variant="light"
+          >
+            <Icon height={18} icon="material-symbols:send-outline" width={18} />
+          </ActionIcon>
+        </Group>
         {allowSystemMessage && (
           <Checkbox
             label="Set as system instruction"
             {...register('asSystemMessage')}
+            radius="sm"
           />
         )}
       </Stack>

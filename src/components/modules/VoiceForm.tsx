@@ -96,18 +96,20 @@ const VoiceForm = ({
   };
 
   return (
-    <form className="w-full md:w-1/2" onSubmit={handleSubmit(onSubmit)}>
-      <Stack align="center">
+    <form className="w-full max-w-xl" onSubmit={handleSubmit(onSubmit)}>
+      <Stack>
         {isPending && (
-          <Group gap="xs">
+          <Group className="justify-center" gap="xs">
             <Loader size="xs" />
             <Text>Transcribing</Text>
           </Group>
         )}
         {(error as AxiosError) && (
-          <Text color="red">There was an error transcribing your voice.</Text>
+          <Group className="justify-center">
+            <Text c="red">There was an error transcribing your voice.</Text>
+          </Group>
         )}
-        <Group>
+        <Group className="justify-center">
           <VoiceInput
             ref={(handle: TVoiceInputHandle) => {
               if (handle === null) return;
@@ -126,13 +128,14 @@ const VoiceForm = ({
             type="submit"
             variant="light"
           >
-            <Icon height={24} icon="material-symbols:send-outline" width={24} />
+            <Icon height={18} icon="material-symbols:send-outline" width={18} />
           </ActionIcon>
         </Group>
         {allowSystemMessage && (
           <Checkbox
             label="Set as system instruction"
             {...register('asSystemMessage')}
+            radius="sm"
           />
         )}
       </Stack>
