@@ -183,7 +183,7 @@ const VoiceInput = forwardRef(function VoiceInput(
 
   return (
     <Stack>
-      {state === 'inactive' && (
+      {state === 'inactive' && chunks.length === 0 && (
         <Button
           color="indigo"
           disabled={disabled}
@@ -196,6 +196,17 @@ const VoiceInput = forwardRef(function VoiceInput(
           Start recording
         </Button>
       )}
+
+      {state === 'inactive' && chunks.length > 0 && (
+        // eslint-disable-next-line jsx-a11y/media-has-caption
+        <audio
+          controls
+          src={URL.createObjectURL(
+            new Blob(chunks, { type: RECORD_OPTIONS.mimeType }),
+          )}
+        />
+      )}
+
       {state !== 'inactive' && (
         <Group>
           <Button
