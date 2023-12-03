@@ -1,5 +1,4 @@
 import MDXPlugin from '@next/mdx';
-import WindiCSSWebpackPlugin from 'windicss-webpack-plugin';
 
 const withMDX = MDXPlugin({
   extension: /\.mdx?$/,
@@ -16,10 +15,6 @@ const withMDX = MDXPlugin({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  webpack: (config) => {
-    config.plugins.push(new WindiCSSWebpackPlugin());
-    return config;
-  },
   eslint: {
     ignoreDuringBuilds: true,
   },

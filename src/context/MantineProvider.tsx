@@ -5,14 +5,14 @@ import {
   createTheme,
   rem,
 } from '@mantine/core';
-import windiDefaultColors from 'windicss/colors';
+import twDefaultColors from 'tailwindcss/colors';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const convertColor = (windiColors: any) => {
+const convertColor = (twColors: any) => {
   const convertedColor: {
     [key: string]: string | string[];
   } = {};
-  Object.keys(windiColors)
+  Object.keys(twColors)
     .filter(
       (keyColor) =>
         [
@@ -25,8 +25,8 @@ const convertColor = (windiColors: any) => {
         ].includes(keyColor) === false,
     )
     .forEach((color) => {
-      if (windiColors[color] instanceof Object) {
-        convertedColor[color] = Object.values(windiColors[color]);
+      if (twColors[color] instanceof Object) {
+        convertedColor[color] = Object.values(twColors[color]);
       }
     });
 
@@ -35,7 +35,7 @@ const convertColor = (windiColors: any) => {
 
 const theme = createTheme({
   colors: {
-    ...convertColor(windiDefaultColors),
+    ...convertColor(twDefaultColors),
     dark: [
       '#f8fafc',
       '#f1f5f9',
