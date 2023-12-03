@@ -94,9 +94,8 @@ const VoiceInput = forwardRef(function VoiceInput(
         // useEffect() hook ONLY on first mount, but I prefer to initialize it
         // when the user clicks the start button, each start button click
         // creates a new stream
-        const stream = await navigator.mediaDevices.getUserMedia(
-          STREAM_CONSTRAINTS,
-        );
+        const stream =
+          await navigator.mediaDevices.getUserMedia(STREAM_CONSTRAINTS);
 
         const recorder = new MediaRecorder(stream, RECORD_OPTIONS);
 

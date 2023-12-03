@@ -82,8 +82,8 @@ const Convo = ({
   }, []);
 
   return (
-    <Stack className="w-full h-full relative">
-      <Stack className="w-full relative overflow-y-auto">
+    <Stack className="relative h-full w-full">
+      <Stack className="relative w-full overflow-y-auto">
         {chat.map((item) => {
           if (item?.hidden) return null;
 
@@ -148,10 +148,10 @@ const Convo = ({
 
         {isFetching && <PlaceholderMessage role="assistant" />}
 
-        <Space className="w-full h-72 md:h-48 flex-shrink-0" ref={bottomRef} />
+        <Space className="h-72 w-full flex-shrink-0 md:h-48" ref={bottomRef} />
       </Stack>
       <ActionIcon
-        className="bottom-32 right-8 absolute z-110 hidden"
+        className="absolute bottom-32 right-8 z-[110] hidden"
         color="indigo"
         onClick={() => {
           bottomRef.current?.scrollIntoView({ behavior: 'smooth' });

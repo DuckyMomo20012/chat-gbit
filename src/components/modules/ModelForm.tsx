@@ -48,13 +48,16 @@ const mapModelToSelect = (
 ) => {
   const groupByProvider = model
     .filter((m) => m.type === type)
-    .reduce((acc, m) => {
-      const provider = m.provider.name;
+    .reduce(
+      (acc, m) => {
+        const provider = m.provider.name;
 
-      acc[provider] = acc[provider] || [];
-      acc[provider] = [...acc[provider], { label: m.name, value: m.name }];
-      return acc;
-    }, {} as Record<string, { label: string; value: string }[]>);
+        acc[provider] = acc[provider] || [];
+        acc[provider] = [...acc[provider], { label: m.name, value: m.name }];
+        return acc;
+      },
+      {} as Record<string, { label: string; value: string }[]>,
+    );
 
   return Object.entries(groupByProvider).map(([provider, models]) => {
     return {

@@ -4,15 +4,14 @@ import { type OpenAI } from 'openai';
 import { PURGE } from 'redux-persist';
 import type { RootState } from '@/store/store';
 
-export type TChat =
-  | {
-      id: string;
-      role: OpenAI.Chat.ChatCompletionRole;
-      content: string;
-      isTyping: boolean;
-      hidden?: boolean;
-      trained?: boolean;
-    } & Partial<OpenAI.Chat.ChatCompletion>;
+export type TChat = {
+  id: string;
+  role: OpenAI.Chat.ChatCompletionRole;
+  content: string;
+  isTyping: boolean;
+  hidden?: boolean;
+  trained?: boolean;
+} & Partial<OpenAI.Chat.ChatCompletion>;
 
 const convoAdapter = createEntityAdapter<TChat>();
 

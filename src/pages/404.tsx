@@ -13,13 +13,19 @@ import Link from 'next/link';
 
 const NotFound = () => {
   return (
-    <Center className="h-full">
+    <Center className="h-full w-full flex-1 @container">
       <Head>
         <title>404 - Not Found</title>
         <meta content="404 - Not Found" name="description"></meta>
       </Head>
-      <Stack className="w-3/4 md:w-1/2 lg:w-1/3">
-        <Image alt="404" className="aspect-[5/4]" src="https://http.cat/404" />
+      <Stack align="center" className="min-w-4/5 w-4/5 max-w-xl @lg:w-full">
+        <Image
+          alt="404"
+          className="aspect-[5/4]"
+          height={800}
+          src="https://http.cat/404"
+          width={1000}
+        />
         <Title className="text-center" order={1}>
           You have found a secret place.
         </Title>
@@ -28,11 +34,9 @@ const NotFound = () => {
           address, or the page has been moved to another URL.
         </Text>
         <Group justify="center">
-          <Link href="/">
-            <Button size="md" variant="light">
-              Take me back to home page
-            </Button>
-          </Link>
+          <Button component={Link} href="/" size="md" variant="light">
+            Take me back to home page
+          </Button>
         </Group>
       </Stack>
     </Center>

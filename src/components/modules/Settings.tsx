@@ -4,7 +4,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { ModelForm } from '@/components/modules/ModelForm';
 import { UploadForm } from '@/components/modules/UploadForm';
 
-const ChatToolbar = () => {
+const Settings = () => {
   const [isSettingOpen, { open: openSetting, close: closeSetting }] =
     useDisclosure(false);
 
@@ -47,4 +47,4 @@ const ChatToolbar = () => {
   );
 };
 
-export { ChatToolbar };
+export { Settings };

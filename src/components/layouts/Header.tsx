@@ -11,7 +11,7 @@ import {
 } from '@mantine/core';
 import Link from 'next/link';
 import { useDispatch } from 'react-redux';
-import { ChatToolbar } from '@/components/modules/ChatToolbar';
+import { Settings } from '@/components/modules/Settings';
 import { removeAllMessage } from '@/store/slice/convoSlice';
 
 const items = [
@@ -70,12 +70,12 @@ const Header = () => {
           </ActionIcon>
         </Tooltip>
 
-        <ChatToolbar />
+        <Settings />
 
         <Tooltip label={dark ? 'Light mode' : 'Dark mode'}>
           <ActionIcon
             aria-label="Toggle color scheme"
-            className="sm:flex hidden"
+            className="hidden sm:flex"
             color="blue"
             data-test-id="color-scheme-toggle"
             onClick={() => toggleColorScheme()}
