@@ -1,6 +1,5 @@
-import MDXPlugin from '@next/mdx';
-
-const withMDX = MDXPlugin({
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const withMDX = require('@next/mdx')({
   extension: /\.mdx?$/,
   options: {
     // If you use remark-gfm, you'll need to use next.config.mjs
@@ -23,4 +22,4 @@ const nextConfig = {
   reactStrictMode: true,
 };
 
-export default withMDX(nextConfig);
+module.exports = withMDX(nextConfig);
