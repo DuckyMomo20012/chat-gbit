@@ -151,7 +151,7 @@ const Convo = ({
         <Space className="h-72 w-full flex-shrink-0 md:h-48" ref={bottomRef} />
       </Stack>
       <ActionIcon
-        className="z-110 absolute bottom-32 right-8 hidden"
+        className="absolute bottom-32 right-8 z-[110] hidden"
         color="indigo"
         onClick={() => {
           bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
