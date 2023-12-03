@@ -6,7 +6,6 @@ import {
   Image,
   Loader,
   Avatar as MantineAvatar,
-  Text,
   Tooltip,
 } from '@mantine/core';
 import { evaluate } from '@mdx-js/mdx';
@@ -114,13 +113,9 @@ const Message = forwardRef(function Message(
           </MantineAvatar>
         </Tooltip>
 
-        <Text className="min-w-0 flex-grow break-words">
-          {isTyping ? (
-            <Box component="span" ref={ref} />
-          ) : (
-            <Text>{parsed}</Text>
-          )}
-        </Text>
+        <Box className="children:min-w-0 children:break-words flex-grow">
+          {isTyping ? <Box component="span" ref={ref} /> : <>{parsed}</>}
+        </Box>
       </Group>
     </Center>
   );
