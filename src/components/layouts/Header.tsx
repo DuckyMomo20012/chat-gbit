@@ -75,7 +75,7 @@ const Header = () => {
         <Tooltip label={dark ? 'Light mode' : 'Dark mode'}>
           <ActionIcon
             aria-label="Toggle color scheme"
-            className="sm:flex hidden"
+            className="hidden sm:flex"
             color="blue"
             data-test-id="color-scheme-toggle"
             onClick={() => toggleColorScheme()}
