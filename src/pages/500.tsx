@@ -11,7 +11,7 @@ import Head from 'next/head';
 
 function ServerError() {
   return (
-    <Center className="h-full">
+    <Center className="h-full w-full flex-1 @container">
       <Head>
         <title>Server Error</title>
         <meta
@@ -19,8 +19,14 @@ function ServerError() {
           name="description"
         ></meta>
       </Head>
-      <Stack className="w-3/4 md:w-1/2 lg:w-1/3">
-        <Image alt="500" className="aspect-[5/4]" src="https://http.cat/500" />
+      <Stack align="center" className="min-w-4/5 w-4/5 max-w-xl @lg:w-full">
+        <Image
+          alt="500"
+          className="aspect-[5/4]"
+          height={800}
+          src="https://http.cat/500"
+          width={1000}
+        />
         <Title className="text-center" order={1}>
           Something bad just happened...
         </Title>
