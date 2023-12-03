@@ -109,7 +109,7 @@ const VoiceForm = ({
             <Text c="red">There was an error transcribing your voice.</Text>
           </Group>
         )}
-        <Group className="justify-center">
+        <Group className="items-center justify-center">
           <VoiceInput
             ref={(handle: TVoiceInputHandle) => {
               if (handle === null) return;
@@ -121,7 +121,6 @@ const VoiceForm = ({
             timeout={RECORD_TIMEOUT}
           />
           <ActionIcon
-            className="self-start"
             color="pink"
             disabled={isBusy}
             size="lg"

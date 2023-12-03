@@ -1,6 +1,14 @@
+/* eslint-disable jsx-a11y/media-has-caption */
 import { Icon } from '@iconify/react';
-import { Button, Group, Stack, Text } from '@mantine/core';
 import {
+  ActionIcon,
+  Group,
+  type MantineSize,
+  Stack,
+  Text,
+} from '@mantine/core';
+import {
+  ComponentProps,
   forwardRef,
   useEffect,
   useImperativeHandle,
@@ -19,6 +27,17 @@ export type TVoiceInputHandle = {
   chunks: Array<Blob>;
 };
 
+export type TVoiceInputProps = {
+  size?: MantineSize;
+  iconSize?: number;
+  timeout?: number;
+  startElement?: React.ReactNode;
+  pauseElement?: React.ReactNode;
+  resumeElement?: React.ReactNode;
+  stopElement?: React.ReactNode;
+  clearElement?: React.ReactNode;
+};
+
 const STREAM_CONSTRAINTS = {
   audio: true,
   video: false,
@@ -29,7 +48,16 @@ const RECORD_OPTIONS = {
 } satisfies MediaRecorderOptions;
 
 const VoiceInput = forwardRef(function VoiceInput(
-  { playSound, timeout }: { playSound?: boolean; timeout?: number },
+  {
+    size = 'lg',
+    iconSize = 24,
+    timeout,
+    startElement,
+    pauseElement,
+    resumeElement,
+    stopElement,
+    clearElement,
+  }: TVoiceInputProps,
   ref,
 ) {
   const [state, setState] = useState<MediaRecorder['state']>('inactive');
@@ -40,6 +68,22 @@ const VoiceInput = forwardRef(function VoiceInput(
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Array<Blob>>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const StartElement = (props: ComponentProps<'div'>) => (
+    <div {...props}>{startElement}</div>
+  );
+  const PauseElement = (props: ComponentProps<'div'>) => (
+    <div {...props}>{pauseElement}</div>
+  );
+  const ResumeElement = (props: ComponentProps<'div'>) => (
+    <div {...props}>{resumeElement}</div>
+  );
+  const StopElement = (props: ComponentProps<'div'>) => (
+    <div {...props}>{stopElement}</div>
+  );
+  const ClearElement = (props: ComponentProps<'div'>) => (
+    <div {...props}>{clearElement}</div>
+  );
 
   useEffect(() => {
     // NOTE: Check if the browser supports MediaRecorder API
@@ -77,15 +121,6 @@ const VoiceInput = forwardRef(function VoiceInput(
       // NOTE: Set state to inactive to handle unexpected stop event, (e.g.
       // when the media stream being captured ends unexpectedly)
       setState('inactive');
-
-      if (playSound) {
-        const blob = new Blob(chunksRef.current, {
-          type: RECORD_OPTIONS.mimeType,
-        });
-        const url = URL.createObjectURL(blob);
-        const audio = new Audio(url);
-        audio.play();
-      }
     };
 
     const startRecording = async () => {
@@ -155,7 +190,7 @@ const VoiceInput = forwardRef(function VoiceInput(
     } else if (state === 'inactive') {
       stopRecording();
     }
-  }, [state, playSound, timeout]);
+  }, [state, timeout]);
 
   useImperativeHandle(
     ref,
@@ -183,57 +218,120 @@ const VoiceInput = forwardRef(function VoiceInput(
 
   return (
     <Stack>
-      {state === 'inactive' && (
-        <Button
-          color="indigo"
-          disabled={disabled}
-          leftSection={
-            <Icon height={24} icon="material-symbols:mic-outline" width={24} />
-          }
-          onClick={() => setState('recording')}
-          variant="light"
-        >
-          Start recording
-        </Button>
-      )}
-      {state !== 'inactive' && (
-        <Group>
-          <Button
-            color={state === 'paused' ? 'yellow' : 'green'}
-            leftSection={
+      <Group>
+        {state === 'inactive' &&
+          chunks.length === 0 &&
+          (startElement ? (
+            <StartElement onClick={() => setState('recording')} />
+          ) : (
+            <ActionIcon
+              color="indigo"
+              disabled={disabled}
+              onClick={() => setState('recording')}
+              size={size}
+              variant="outline"
+            >
               <Icon
-                height={24}
-                icon={
-                  state === 'paused'
-                    ? 'material-symbols:resume-outline'
-                    : 'material-symbols:pause-outline'
-                }
-                width={24}
+                height={iconSize}
+                icon="material-symbols:mic-outline"
+                width={iconSize}
               />
-            }
-            onClick={() =>
-              setState(state === 'paused' ? 'recording' : 'paused')
-            }
-            variant="light"
-          >
-            {state === 'paused' ? 'Resume' : 'Pause'}
-          </Button>
-          <Button
-            color="red"
-            leftSection={
+            </ActionIcon>
+          ))}
+
+        {state === 'inactive' && chunks.length > 0 && (
+          <>
+            {clearElement ? (
+              <ClearElement
+                onClick={() => {
+                  chunksRef.current = [];
+                  setChunks([]);
+                  setState('inactive');
+                }}
+              />
+            ) : (
+              <ActionIcon
+                color="red"
+                onClick={() => {
+                  chunksRef.current = [];
+                  setChunks([]);
+                  setState('inactive');
+                }}
+                size={size}
+                variant="outline"
+              >
+                <Icon
+                  height={iconSize}
+                  icon="material-symbols:close-rounded"
+                  width={iconSize}
+                />
+              </ActionIcon>
+            )}
+
+            <audio
+              controls
+              src={URL.createObjectURL(
+                new Blob(chunks, { type: RECORD_OPTIONS.mimeType }),
+              )}
+            />
+          </>
+        )}
+
+        {state === 'recording' &&
+          (pauseElement ? (
+            <PauseElement onClick={() => setState('paused')} />
+          ) : (
+            <ActionIcon
+              color="yellow"
+              onClick={() => setState('paused')}
+              size={size}
+              variant="outline"
+            >
               <Icon
-                height={24}
+                height={iconSize}
+                icon="material-symbols:pause-outline"
+                width={iconSize}
+              />
+            </ActionIcon>
+          ))}
+
+        {state === 'paused' &&
+          (resumeElement ? (
+            <ResumeElement onClick={() => setState('recording')} />
+          ) : (
+            <ActionIcon
+              color="green"
+              onClick={() => setState('recording')}
+              size={size}
+              variant="outline"
+            >
+              <Icon
+                height={iconSize}
+                icon="material-symbols:resume-outline"
+                width={iconSize}
+              />
+            </ActionIcon>
+          ))}
+
+        {state !== 'inactive' &&
+          (stopElement ? (
+            <StopElement onClick={() => setState('inactive')} />
+          ) : (
+            <ActionIcon
+              color="red"
+              onClick={() => setState('inactive')}
+              size={size}
+              variant="outline"
+            >
+              <Icon
+                height={iconSize}
                 icon="material-symbols:stop-outline"
-                width={24}
+                width={iconSize}
               />
-            }
-            onClick={() => setState('inactive')}
-            variant="light"
-          >
-            Stop
-          </Button>
-        </Group>
-      )}
+            </ActionIcon>
+          ))}
+      </Group>
+
       {errors && (
         <Text c="red" className="text-center">
           {errors}
