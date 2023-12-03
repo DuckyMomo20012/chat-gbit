@@ -41,7 +41,7 @@ const HomePage = () => {
   const status = useRef<'stop' | 'submit' | 'refetch'>('stop');
   const {
     data: completion,
-    isLoading,
+    isPending,
     mutate,
   } = useMutation({
     mutationFn: async (): Promise<OpenAI.Chat.ChatCompletion> => {
@@ -59,7 +59,7 @@ const HomePage = () => {
     },
   });
 
-  const isBusy = isLoading || isTyping;
+  const isBusy = isPending || isTyping;
 
   useEffect(() => {
     if (status.current === 'submit') {
@@ -138,7 +138,7 @@ const HomePage = () => {
         <meta content="Create new Chat GBiT" name="description"></meta>
       </Head>
 
-      <Convo chat={chat} isFetching={isLoading} typingsRef={typingsRef} />
+      <Convo chat={chat} isFetching={isPending} typingsRef={typingsRef} />
 
       <Stack className="absolute bottom-6 w-full z-100">
         <Stack align="center" className="backdrop-filter backdrop-blur-xl p-4">
