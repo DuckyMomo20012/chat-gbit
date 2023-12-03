@@ -5,7 +5,7 @@ const Footer = () => {
   const { colorScheme } = useMantineColorScheme();
   const dark = colorScheme === 'dark';
   return (
-    <Stack align="center" className="children:w-1/2 items-center">
+    <Stack align="center" className="items-center">
       <Text className="w-full text-center" size="sm">
         Made with{' '}
         <Icon
