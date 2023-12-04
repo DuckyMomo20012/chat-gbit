@@ -11,7 +11,7 @@ import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { z } from 'zod';
 import { fromZodError } from 'zod-validation-error';
-import { addMessage, selectAllConvo } from '@/store/slice/convoSlice';
+import { addPrompt, selectAllConvo } from '@/store/slice/convoSlice';
 import { RootState, persistor } from '@/store/store';
 
 type TUploadForm = {
@@ -82,7 +82,7 @@ const UploadForm = () => {
 
         convo.forEach((message) => {
           dispatch(
-            addMessage({
+            addPrompt({
               ...message,
               isTyping: false,
               hidden: data.hideMessages,

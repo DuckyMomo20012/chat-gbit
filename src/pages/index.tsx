@@ -4,14 +4,16 @@ import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import Head from 'next/head';
 import { type OpenAI } from 'openai';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type Typed from 'typed.js';
 import { Convo } from '@/components/modules/Convo';
 import { PromptForm } from '@/components/modules/PromptForm';
 import { VoiceForm } from '@/components/modules/VoiceForm';
 import {
-  addMessage,
+  addCompletion,
+  addPrompt,
+  addSystemMessage,
   mutateMessage,
   removeMessage,
   selectAllConvo,
@@ -38,7 +40,6 @@ const HomePage = () => {
     Map<string, { node: HTMLSpanElement; typed: Typed }>
   >(new Map());
 
-  const status = useRef<'stop' | 'submit' | 'refetch'>('stop');
   const {
     data: completion,
     isPending,
@@ -57,32 +58,20 @@ const HomePage = () => {
 
       return data;
     },
-  });
-
-  const isBusy = isPending || isTyping;
-
-  useEffect(() => {
-    if (status.current === 'submit') {
-      mutate();
-    }
-  }, [chat, mutate]);
-
-  useEffect(() => {
-    if (completion && status.current !== 'stop') {
-      if (completion.choices[0].message?.content) {
+    onSuccess: (data) => {
+      if (data.choices[0].message?.content) {
         dispatch(
-          addMessage({
+          addCompletion({
             ...completion,
-            role: 'assistant',
-            content: completion.choices[0].message?.content,
+            content: data.choices[0].message?.content,
             isTyping: true,
           }),
         );
-
-        status.current = 'stop';
       }
-    }
-  }, [completion, dispatch]);
+    },
+  });
+
+  const isBusy = isPending || isTyping;
 
   const allowRegenerate = useMemo(() => {
     return !isBusy && lastMessage && lastMessage.role !== 'system';
@@ -95,8 +84,7 @@ const HomePage = () => {
 
     if (data?.asSystemMessage) {
       dispatch(
-        addMessage({
-          role: 'system',
+        addSystemMessage({
           content: data.prompt,
           isTyping: false,
         }),
@@ -104,31 +92,15 @@ const HomePage = () => {
       return;
     }
 
-    if (lastMessage?.role === 'user') {
-      // NOTE: Mutate last prompt message if there is no completion added
-      dispatch(
-        mutateMessage({
-          id: lastMessage.id,
-          mutation: {
-            role: 'user',
-            content: data.prompt,
-            isTyping: false,
-          },
-        }),
-      );
-    } else {
-      // NOTE: Add new prompt message if there is a completion added before this
-      // message
-      dispatch(
-        addMessage({
-          role: 'user',
-          content: data.prompt,
-          isTyping: false,
-        }),
-      );
-    }
+    dispatch(
+      addPrompt({
+        content: data.prompt,
+        isTyping: false,
+      }),
+    );
 
-    status.current = 'submit';
+    // NOTE: Submit prompt
+    mutate();
   };
 
   return (
@@ -183,14 +155,13 @@ const HomePage = () => {
                 />
               }
               onClick={() => {
-                mutate();
-                status.current = 'refetch';
-
                 // NOTE: Remove last message if it's assistant's message before
                 // regenerating
                 if (lastMessage?.role === 'assistant') {
                   dispatch(removeMessage(lastMessage.id));
                 }
+
+                mutate();
               }}
               variant="outline"
             >
