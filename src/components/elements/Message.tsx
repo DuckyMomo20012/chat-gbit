@@ -17,7 +17,7 @@ import * as runtime from 'react/jsx-runtime';
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import type { TChat } from '@/store/slice/convoSlice';
 
-type TMessageProp = Pick<TChat, 'role' | 'content' | 'isTyping'> & {
+export type TMessageProp = Pick<TChat, 'role' | 'content' | 'isTyping'> & {
   userName?: string;
   colors?: Array<string>;
 };
