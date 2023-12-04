@@ -110,6 +110,22 @@ const convoSlice = createSlice({
         changes: mutation,
       });
     },
+
+    clearTypingMessage: (state) => {
+      const typingMessage = convoAdapter
+        .getSelectors()
+        .selectAll(state)
+        .find((message) => message.isTyping);
+
+      if (typingMessage) {
+        convoAdapter.updateOne(state, {
+          id: typingMessage.id,
+          changes: {
+            isTyping: false,
+          },
+        });
+      }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(PURGE, (state) => {
@@ -126,6 +142,7 @@ export const {
   removeAllMessage,
   setTyping,
   mutateMessage,
+  clearTypingMessage,
 } = convoSlice.actions;
 
 export default convoSlice.reducer;
