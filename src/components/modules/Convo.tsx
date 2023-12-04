@@ -4,21 +4,15 @@ import { Icon } from '@iconify/react';
 import { ActionIcon, Space, Stack } from '@mantine/core';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import Typed from 'typed.js';
-import { Message } from '@/components/elements/Message';
-import { PlaceholderMessage } from '@/components/elements/PlaceholderMessage';
-import { setTyping } from '@/store/slice/convoSlice';
+import { TypedMessage } from '@/components/elements/TypedMessage';
+import { mutateMessage, setTyping } from '@/store/slice/convoSlice';
 import type { TChat } from '@/store/slice/convoSlice';
 
 const Convo = ({
   chat,
-  typingsRef,
   isFetching,
 }: {
   chat: Array<TChat>;
-  typingsRef: React.MutableRefObject<
-    Map<string, { node: HTMLSpanElement; typed: Typed }>
-  >;
   isFetching: boolean;
 }) => {
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -88,39 +82,14 @@ const Convo = ({
           if (item?.hidden) return null;
 
           return (
-            <Message
+            <TypedMessage
               colors={config.colors}
               content={item.content}
               isTyping={item.isTyping}
               key={item.id}
-              ref={(node: HTMLSpanElement) => {
-                // NOTE: Component unmounting, so we need to clean up.
-                if (!node) {
-                  typingsRef.current.get(item.id)?.typed.destroy();
-                  typingsRef.current.delete(item.id);
-                  return;
-                }
-
-                const typed = new Typed(node, {
-                  strings: [
-                    item.content
-                      // Ref: https://stackoverflow.com/a/6234804/12512981
-                      .replace(/&/g, '&amp;') // NOTE: Must be done first!
-                      .replace(/</g, '&lt;')
-                      .replace(/>/g, '&gt;')
-                      .replace(/"/g, '&quot;')
-                      .replace(/'/g, '&#039;')
-                      // NOTE: Replace the backticks with HTML codes to prevent the
-                      // Typed.js library from ignoring the backticks. Don't worry,
-                      // on browser, the backticks will be rendered correctly, not
-                      // the HTML codes.
-                      .replace(/`/g, '&#96;')
-                      // NOTE: A little hacky, we pause the typing for 1ms to
-                      // trigger the onTypingPaused event.
-                      .replace(/([^\s]+)/g, '^1 `$1`'),
-                  ],
-                  typeSpeed: 80,
-                  cursorChar: '█',
+              role={item.role}
+              typedOptions={(typedValRef) => {
+                return {
                   onStringTyped: () => {
                     dispatch(
                       setTyping({
@@ -136,17 +105,29 @@ const Convo = ({
                       });
                     }
                   },
-                });
+                  onDestroy: () => {
+                    if (!typedValRef.current) return;
 
-                typingsRef.current.set(item.id, { node, typed });
+                    dispatch(
+                      mutateMessage({
+                        id: item.id,
+                        mutation: {
+                          isTyping: false,
+                          content: typedValRef.current,
+                        },
+                      }),
+                    );
+                  },
+                };
               }}
-              role={item.role}
               userName={config.userName}
             />
           );
         })}
 
-        {isFetching && <PlaceholderMessage role="assistant" />}
+        {isFetching && (
+          <TypedMessage content="" isTyping={true} role="assistant" />
+        )}
 
         <Space className="h-72 w-full flex-shrink-0 md:h-48" ref={bottomRef} />
       </Stack>

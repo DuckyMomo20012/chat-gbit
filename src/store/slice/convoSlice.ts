@@ -19,12 +19,55 @@ const convoSlice = createSlice({
   name: 'convo',
   initialState: convoAdapter.getInitialState(),
   reducers: {
-    addMessage: (state, action: PayloadAction<Omit<TChat, 'id'>>) => {
+    addPrompt: (state, action: PayloadAction<Omit<TChat, 'id' | 'role'>>) => {
+      const { payload } = action;
+
+      const lastMessage = convoAdapter.getSelectors().selectAll(state).at(-1);
+
+      // NOTE: Mutate last prompt message if there is no completion added
+      if (lastMessage?.role === 'user') {
+        convoAdapter.updateOne(state, {
+          id: lastMessage.id,
+          changes: {
+            content: lastMessage.content + payload.content,
+          },
+        });
+
+        return;
+      }
+
+      // NOTE: Add new prompt message if there is a completion added before this
+      // message
+      convoAdapter.addOne(state, {
+        ...payload,
+        id: nanoid(),
+        role: 'user',
+      });
+    },
+
+    addCompletion: (
+      state,
+      action: PayloadAction<Omit<TChat, 'id' | 'role'>>,
+    ) => {
       const { payload } = action;
 
       convoAdapter.addOne(state, {
         ...payload,
         id: nanoid(),
+        role: 'assistant',
+      });
+    },
+
+    addSystemMessage: (
+      state,
+      action: PayloadAction<Omit<TChat, 'id' | 'role'>>,
+    ) => {
+      const { payload } = action;
+
+      convoAdapter.addOne(state, {
+        ...payload,
+        id: nanoid(),
+        role: 'system',
       });
     },
 
@@ -67,6 +110,22 @@ const convoSlice = createSlice({
         changes: mutation,
       });
     },
+
+    clearTypingMessage: (state) => {
+      const typingMessage = convoAdapter
+        .getSelectors()
+        .selectAll(state)
+        .find((message) => message.isTyping);
+
+      if (typingMessage) {
+        convoAdapter.updateOne(state, {
+          id: typingMessage.id,
+          changes: {
+            isTyping: false,
+          },
+        });
+      }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(PURGE, (state) => {
@@ -76,11 +135,14 @@ const convoSlice = createSlice({
 });
 
 export const {
-  addMessage,
+  addPrompt,
+  addCompletion,
+  addSystemMessage,
   removeMessage,
   removeAllMessage,
   setTyping,
   mutateMessage,
+  clearTypingMessage,
 } = convoSlice.actions;
 
 export default convoSlice.reducer;
