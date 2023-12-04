@@ -4,7 +4,7 @@ import { Icon } from '@iconify/react';
 import { ActionIcon, Space, Stack } from '@mantine/core';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { PlaceholderMessage } from '@/components/elements/PlaceholderMessage';
+import { TypedMessage } from '@/components/elements/TypedMessage';
 import { mutateMessage, setTyping } from '@/store/slice/convoSlice';
 import type { TChat } from '@/store/slice/convoSlice';
 
@@ -82,7 +82,7 @@ const Convo = ({
           if (item?.hidden) return null;
 
           return (
-            <PlaceholderMessage
+            <TypedMessage
               colors={config.colors}
               content={item.content}
               isTyping={item.isTyping}
@@ -126,7 +126,7 @@ const Convo = ({
         })}
 
         {isFetching && (
-          <PlaceholderMessage content="" isTyping={true} role="assistant" />
+          <TypedMessage content="" isTyping={true} role="assistant" />
         )}
 
         <Space className="h-72 w-full flex-shrink-0 md:h-48" ref={bottomRef} />
