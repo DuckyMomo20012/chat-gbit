@@ -4,9 +4,8 @@ import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import Head from 'next/head';
 import { type OpenAI } from 'openai';
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import type Typed from 'typed.js';
 import { Convo } from '@/components/modules/Convo';
 import { PromptForm } from '@/components/modules/PromptForm';
 import { VoiceForm } from '@/components/modules/VoiceForm';
@@ -14,7 +13,7 @@ import {
   addCompletion,
   addPrompt,
   addSystemMessage,
-  mutateMessage,
+  clearTypingMessage,
   removeMessage,
   selectAllConvo,
 } from '@/store/slice/convoSlice';
@@ -35,10 +34,6 @@ const HomePage = () => {
   const dispatch = useDispatch();
 
   const [inputMode, setInputMode] = useState<'voice' | 'text'>('text');
-
-  const typingsRef = useRef<
-    Map<string, { node: HTMLSpanElement; typed: Typed }>
-  >(new Map());
 
   const {
     data: completion,
@@ -113,7 +108,7 @@ const HomePage = () => {
         <meta content="Create new Chat GBiT" name="description"></meta>
       </Head>
 
-      <Convo chat={chat} isFetching={isPending} typingsRef={typingsRef} />
+      <Convo chat={chat} isFetching={isPending} />
 
       <Stack className="absolute bottom-0 z-[100] w-screen pb-4">
         <Stack align="center" className="p-4 backdrop-blur-xl backdrop-filter">
@@ -127,17 +122,7 @@ const HomePage = () => {
                 />
               }
               onClick={() => {
-                typingsRef.current?.forEach((val, key) => {
-                  dispatch(
-                    mutateMessage({
-                      id: key,
-                      mutation: {
-                        isTyping: false,
-                        content: val.node.innerText,
-                      },
-                    }),
-                  );
-                });
+                dispatch(clearTypingMessage());
               }}
               variant="outline"
             >
