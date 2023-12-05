@@ -1,8 +1,10 @@
 import { Icon } from '@iconify/react';
 import { Button, Stack, Text } from '@mantine/core';
+import { nanoid } from '@reduxjs/toolkit';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { type OpenAI } from 'openai';
 import { useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,6 +19,7 @@ import {
   removeMessage,
   selectAllConvo,
 } from '@/store/slice/convoSlice';
+import { addConvoMessage, addHistory } from '@/store/slice/historySlice';
 import type { RootState } from '@/store/store';
 
 export type TPromptForm = {
@@ -25,6 +28,10 @@ export type TPromptForm = {
 };
 
 const HomePage = () => {
+  const router = useRouter();
+
+  const historyId = router.query?.chatId?.at(0) || '';
+
   const chat = useSelector(selectAllConvo);
   const lastMessage = useSelector((state: RootState) =>
     selectAllConvo(state).at(-1),
@@ -77,6 +84,14 @@ const HomePage = () => {
   const submitPrompt = async (data: TPromptForm) => {
     if (isBusy) return;
 
+    const newHistoryId = historyId || nanoid();
+
+    if (!historyId) {
+      dispatch(addHistory({ id: newHistoryId, title: 'New Chat', convo: [] }));
+
+      router.push(`/${newHistoryId}`);
+    }
+
     if (data?.asSystemMessage) {
       dispatch(
         addSystemMessage({
@@ -88,9 +103,13 @@ const HomePage = () => {
     }
 
     dispatch(
-      addPrompt({
-        content: data.prompt,
-        isTyping: false,
+      addConvoMessage({
+        historyId: newHistoryId,
+        message: {
+          content: data.prompt,
+          role: 'user',
+          isTyping: false,
+        },
       }),
     );
 

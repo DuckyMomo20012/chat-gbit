@@ -13,12 +13,14 @@ export type TChat = {
   trained?: boolean;
 } & Partial<OpenAI.Chat.ChatCompletion>;
 
-const convoAdapter = createEntityAdapter<TChat>();
+export const convoAdapter = createEntityAdapter<TChat>();
 
 const convoSlice = createSlice({
   name: 'convo',
   initialState: convoAdapter.getInitialState(),
   reducers: {
+    addMessage: convoAdapter.addOne,
+
     addPrompt: (state, action: PayloadAction<Omit<TChat, 'id' | 'role'>>) => {
       const { payload } = action;
 
@@ -135,6 +137,7 @@ const convoSlice = createSlice({
 });
 
 export const {
+  addMessage,
   addPrompt,
   addCompletion,
   addSystemMessage,
