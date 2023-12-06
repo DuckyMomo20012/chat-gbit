@@ -9,10 +9,11 @@ import {
   Tooltip,
   useMantineColorScheme,
 } from '@mantine/core';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 import Link from 'next/link';
-import { useDispatch } from 'react-redux';
+import { useRouter } from 'next/router';
 import { Settings } from '@/components/modules/Settings';
-import { removeAllMessage } from '@/store/slice/convoSlice';
 
 const items = [
   {
@@ -24,10 +25,28 @@ const items = [
 ];
 
 const Header = () => {
-  const dispatch = useDispatch();
+  const router = useRouter();
+
+  const { slug } = router.query;
+  const id = slug?.at(0);
 
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const dark = colorScheme === 'dark';
+
+  const queryClient = useQueryClient();
+
+  const { mutate: clearConversation } = useMutation({
+    mutationFn: async () => {
+      const { data } = await axios.post(`/api/conversations/${id}/clear`);
+
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['conversations', router.query.slug],
+      });
+    },
+  });
 
   return (
     <Group className="h-full w-full px-4">
@@ -58,17 +77,19 @@ const Header = () => {
       </Group>
 
       <Group className="flex-grow" justify="flex-end">
-        <Tooltip label="Clear conversation">
-          <ActionIcon
-            aria-label="Clear conversation"
-            color="red"
-            onClick={() => dispatch(removeAllMessage())}
-            size="lg"
-            variant="outline"
-          >
-            <Icon icon="material-symbols:delete-outline" width={24} />
-          </ActionIcon>
-        </Tooltip>
+        {id && (
+          <Tooltip label="Clear conversation">
+            <ActionIcon
+              aria-label="Clear conversation"
+              color="red"
+              onClick={() => clearConversation()}
+              size="lg"
+              variant="outline"
+            >
+              <Icon icon="material-symbols:delete-outline" width={24} />
+            </ActionIcon>
+          </Tooltip>
+        )}
 
         <Settings />
 
