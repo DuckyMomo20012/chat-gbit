@@ -5,6 +5,12 @@ import prisma from '@/lib/prisma';
 
 export const completionBodySchema = z.object({
   model: z.string(),
+  messages: z.array(
+    z.object({
+      role: z.enum(['user', 'assistant', 'system']),
+      content: z.string(),
+    }),
+  ),
 });
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -15,26 +21,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       try {
         const parsedBody = completionBodySchema.parse(req.body);
 
-        const allMessages = await prisma.conversation.findUniqueOrThrow({
-          where: { id: id as string },
-          include: {
-            messages: {
-              orderBy: {
-                createdAt: 'asc',
-              },
-            },
-          },
-        });
-
         const completion = await getCompletions({
           model: parsedBody.model,
-          messages:
-            allMessages?.messages.map((m) => ({
-              role: m.role,
-              content: m.content,
-            })) || [],
+          messages: parsedBody.messages,
         });
-        await prisma.message.create({
+
+        const result = await prisma.message.create({
           data: {
             content: completion.choices[0].message.content || '',
             role: 'assistant',
@@ -42,7 +34,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           },
         });
 
-        return res.status(200).json(completion);
+        return res.status(200).json(result);
       } catch (err) {
         if (err instanceof z.ZodError) {
           return res.status(400).json({ error: 'Bad request' });
