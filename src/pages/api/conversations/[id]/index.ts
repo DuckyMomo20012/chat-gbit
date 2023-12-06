@@ -12,7 +12,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         const result = await prisma.conversation.findUniqueOrThrow({
           where: { id: id as string },
           include: {
-            messages: true,
+            messages: {
+              orderBy: {
+                createdAt: 'asc',
+              },
+            },
           },
         });
 
