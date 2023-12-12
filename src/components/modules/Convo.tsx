@@ -78,7 +78,7 @@ const Convo = ({
   return (
     <Stack className="relative h-full w-full">
       <Stack className="relative w-full overflow-y-auto">
-        {chat.map((item) => {
+        {chat?.map((item) => {
           if (item?.hidden) return null;
 
           return (

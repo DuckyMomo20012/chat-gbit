@@ -19,7 +19,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         const allMessages = await prisma.conversation.findUnique({
           where: { id: id as string },
           include: {
-            messages: true,
+            messages: {
+              orderBy: {
+                createdAt: 'asc',
+              },
+            },
           },
         });
 

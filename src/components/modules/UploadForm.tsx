@@ -6,13 +6,14 @@ import {
   JsonInput,
   Stack,
 } from '@mantine/core';
-import { useEffect, useMemo } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import axios, { AxiosError } from 'axios';
+import { useRouter } from 'next/router';
+import { useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { useDispatch, useSelector } from 'react-redux';
 import { z } from 'zod';
 import { fromZodError } from 'zod-validation-error';
-import { addPrompt, selectAllConvo } from '@/store/slice/convoSlice';
-import { RootState, persistor } from '@/store/store';
+import { persistor } from '@/store/store';
 
 type TUploadForm = {
   convo: string;
@@ -27,23 +28,98 @@ const convoSchema = z.array(
 );
 
 const UploadForm = () => {
-  const dispatch = useDispatch();
-  const hiddenMessage = useSelector((state: RootState) =>
-    selectAllConvo(state)
-      .filter((item) => item.hidden || item.trained)
-      .map((item) => ({
-        role: item.role,
-        content: item.content,
-      })),
-  );
+  const router = useRouter();
 
-  const defaultValues = useMemo(() => {
-    return {
-      convo:
-        hiddenMessage.length > 0 ? JSON.stringify(hiddenMessage, null, 2) : '',
-      hideMessages: false,
-    } satisfies TUploadForm;
-  }, [hiddenMessage]);
+  const { slug } = router.query;
+  const id = slug?.at(0);
+
+  const getConvoId = useCallback(async () => {
+    if (!id) {
+      const { data: convo } = await axios.post(`/api/conversations`, {
+        title: 'Untitled',
+      });
+
+      await router.push(`/${convo.id}`);
+
+      return convo.id;
+    }
+
+    return id;
+  }, [id, router]);
+
+  const queryClient = useQueryClient();
+
+  const { data: trainedMessages } = useQuery({
+    queryKey: ['conversations', 'upload', router.query.slug],
+    queryFn: async () => {
+      try {
+        // NOTE: Handle root path
+        if (!id) return [];
+
+        const { data } = await axios.get(`/api/conversations/${id}`);
+
+        return (
+          data.messages as {
+            role: 'user' | 'assistant' | 'system';
+            content: string;
+            isHidden: boolean;
+            isTrained: boolean;
+          }[]
+        )
+          .filter((m) => m.isTrained)
+          .map((m) => ({
+            role: m.role,
+            content: m.content,
+          }));
+      } catch (err) {
+        if (err instanceof AxiosError) {
+          throw err;
+        }
+      }
+
+      return [];
+    },
+  });
+
+  const { isPending: isSubmittingPrompt, mutate: uploadTrainMessages } =
+    useMutation({
+      mutationFn: async ({
+        conversationId,
+        messages,
+        isHidden,
+        isTrained,
+      }: {
+        conversationId: string;
+        messages: {
+          role: 'user' | 'system' | 'assistant';
+          content: string;
+        }[];
+        isHidden?: boolean;
+        isTrained?: boolean;
+      }) => {
+        // NOTE: Clear all the prompt before uploading
+        await axios.post(`/api/conversations/${conversationId}/clear`);
+
+        const result = await Promise.all(
+          messages.map((m) => {
+            return axios.post(`/api/conversations/${conversationId}/prompt`, {
+              role: m.role,
+              content: m.content,
+              isHidden,
+              isTrained,
+            });
+          }),
+        );
+
+        return result;
+      },
+      onSuccess: () => {
+        // NOTE: Invalidate the query, because the prompt still created even if error
+        queryClient.invalidateQueries({
+          queryKey: ['conversations', router.query.slug],
+        });
+      },
+    });
 
   const {
     setValue,
@@ -52,21 +128,36 @@ const UploadForm = () => {
     setError,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitSuccessful, isDirty },
+    formState: { errors, isDirty },
   } = useForm<TUploadForm>({
     mode: 'onChange',
-    defaultValues,
+    defaultValues: {
+      convo: '',
+      hideMessages: false,
+    },
   });
 
   const watchConvo = watch('convo');
 
   useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset(defaultValues);
-    }
-  }, [isSubmitSuccessful, defaultValues, reset]);
+    if (!trainedMessages || trainedMessages.length === 0) return;
 
-  const onSubmit = (data: TUploadForm) => {
+    const formattedConvo =
+      trainedMessages?.length > 0
+        ? JSON.stringify(trainedMessages, null, 2)
+        : '';
+    reset(
+      {
+        convo: formattedConvo,
+        hideMessages: false,
+      } satisfies TUploadForm,
+      {
+        keepDefaultValues: false,
+      },
+    );
+  }, [trainedMessages, reset]);
+
+  const onSubmit = async (data: TUploadForm) => {
     try {
       if (data.convo === '') {
         persistor.purge();
@@ -78,17 +169,13 @@ const UploadForm = () => {
 
       // NOTE: We purge the convo even if the data is an empty array
       if (convo.length >= 0) {
-        persistor.purge();
+        const conversationId = await getConvoId();
 
-        convo.forEach((message) => {
-          dispatch(
-            addPrompt({
-              ...message,
-              isTyping: false,
-              hidden: data.hideMessages,
-              trained: true,
-            }),
-          );
+        uploadTrainMessages({
+          conversationId,
+          messages: convo,
+          isHidden: data.hideMessages,
+          isTrained: true,
         });
       }
     } catch (error) {
@@ -163,10 +250,14 @@ const UploadForm = () => {
           {...register('hideMessages')}
         />
         <Group justify="center">
-          <Button disabled={!isDirty} onClick={() => reset()} variant="outline">
+          <Button
+            disabled={!isDirty || isSubmittingPrompt}
+            onClick={() => reset()}
+            variant="outline"
+          >
             Discard
           </Button>
-          <Button disabled={!isDirty} type="submit">
+          <Button disabled={!isDirty || isSubmittingPrompt} type="submit">
             Update
           </Button>
         </Group>
