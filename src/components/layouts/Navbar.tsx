@@ -1,9 +1,8 @@
-import { Icon } from '@iconify/react';
-import { ActionIcon, Menu, NavLink, ScrollArea, Stack } from '@mantine/core';
+import { ScrollArea, Stack } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { ConvoMenu } from '../modules/ConvoMenu';
 
 const Navbar = () => {
   const router = useRouter();
@@ -31,59 +30,11 @@ const Navbar = () => {
           })
           ?.map((conversation: { id: string; title: string }) => {
             return (
-              <NavLink
+              <ConvoMenu
                 active={conversation.id === id}
-                className="rounded-md"
-                component={Link}
-                href={`/${conversation.id}`}
+                id={conversation.id}
                 key={conversation.id}
                 label={conversation.title}
-                rightSection={
-                  <Menu position="bottom-start">
-                    <Menu.Target>
-                      <ActionIcon
-                        color="gray"
-                        onClick={(e) => e.preventDefault()}
-                        variant="subtle"
-                      >
-                        <Icon
-                          height={16}
-                          icon="material-symbols:more-horiz"
-                          width={16}
-                        />
-                      </ActionIcon>
-                    </Menu.Target>
-
-                    <Menu.Dropdown>
-                      <Menu.Item
-                        leftSection={
-                          <Icon
-                            height={16}
-                            icon="material-symbols:edit-square-outline-rounded"
-                            width={16}
-                          />
-                        }
-                        variant="subtle"
-                      >
-                        Rename
-                      </Menu.Item>
-                      <Menu.Item
-                        color="red"
-                        leftSection={
-                          <Icon
-                            height={16}
-                            icon="material-symbols:delete-outline-rounded"
-                            width={16}
-                          />
-                        }
-                        variant="subtle"
-                      >
-                        Delete chat
-                      </Menu.Item>
-                    </Menu.Dropdown>
-                  </Menu>
-                }
-                variant="light"
               />
             );
           })}
