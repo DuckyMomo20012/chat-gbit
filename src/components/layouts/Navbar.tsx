@@ -1,6 +1,8 @@
-import { ScrollArea, Stack } from '@mantine/core';
+import { Icon } from '@iconify/react';
+import { NavLink, ScrollArea, Stack, Text } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { ConvoMenu } from '../modules/ConvoMenu';
 
@@ -21,6 +23,24 @@ const Navbar = () => {
 
   return (
     <Stack className="h-full">
+      <Stack className="px-4 pt-4">
+        <NavLink
+          active
+          className="rounded-md"
+          component={Link}
+          href="/"
+          label={<Text>New chat</Text>}
+          rightSection={
+            <Icon
+              height={24}
+              icon="material-symbols:chat-outline-rounded"
+              width={24}
+            />
+          }
+          variant="filled"
+        />
+      </Stack>
+
       <ScrollArea className="p-4">
         {conversations
           ?.sort((a: { createdAt: string }, b: { createdAt: string }) => {
