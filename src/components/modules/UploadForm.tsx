@@ -13,7 +13,6 @@ import { useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { fromZodError } from 'zod-validation-error';
-import { persistor } from '@/store/store';
 
 type TUploadForm = {
   convo: string;
@@ -156,7 +155,6 @@ const UploadForm = () => {
   const onSubmit = async (data: TUploadForm) => {
     try {
       if (data.convo === '') {
-        persistor.purge();
         return;
       }
 
