@@ -3,17 +3,14 @@ import {
   ActionIcon,
   Anchor,
   Avatar,
+  Burger,
   Group,
   Image,
   Text,
   Tooltip,
   useMantineColorScheme,
 } from '@mantine/core';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { Settings } from '@/components/modules/Settings';
 
 const items = [
   {
@@ -24,32 +21,24 @@ const items = [
   },
 ];
 
-const Header = () => {
-  const router = useRouter();
-
-  const { slug } = router.query;
-  const id = slug?.at(0);
-
+const Header = ({
+  isNavbarOpened,
+  toggleNavbar,
+}: {
+  isNavbarOpened: boolean;
+  toggleNavbar: () => void;
+}) => {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const dark = colorScheme === 'dark';
 
-  const queryClient = useQueryClient();
-
-  const { mutate: clearConversation } = useMutation({
-    mutationFn: async () => {
-      const { data } = await axios.post(`/api/conversations/${id}/clear`);
-
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['conversations', router.query.slug],
-      });
-    },
-  });
-
   return (
-    <Group className="h-full w-full px-4">
+    <Group className="h-full w-full flex-nowrap px-4">
+      <Burger
+        hiddenFrom="sm"
+        onClick={toggleNavbar}
+        opened={isNavbarOpened}
+        size="sm"
+      />
       <Anchor
         className="flex items-center gap-2 whitespace-nowrap"
         component={Link}
@@ -77,22 +66,6 @@ const Header = () => {
       </Group>
 
       <Group className="flex-grow" justify="flex-end">
-        {id && (
-          <Tooltip label="Clear conversation">
-            <ActionIcon
-              aria-label="Clear conversation"
-              color="red"
-              onClick={() => clearConversation()}
-              size="lg"
-              variant="outline"
-            >
-              <Icon icon="material-symbols:delete-outline" width={24} />
-            </ActionIcon>
-          </Tooltip>
-        )}
-
-        <Settings />
-
         <Tooltip label={dark ? 'Light mode' : 'Dark mode'}>
           <ActionIcon
             aria-label="Toggle color scheme"

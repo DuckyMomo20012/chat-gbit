@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { Button, Stack, Text } from '@mantine/core';
+import { Button, Group, Stack, Text } from '@mantine/core';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import Head from 'next/head';
@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux';
 import { TTypedMessageHandle } from '@/components/elements/TypedMessage';
 import { Convo } from '@/components/modules/Convo';
 import { PromptForm } from '@/components/modules/PromptForm';
+import { Settings } from '@/components/modules/Settings';
 import { VoiceForm } from '@/components/modules/VoiceForm';
 import type { RootState } from '@/store/store';
 
@@ -234,7 +235,7 @@ const HomePage = () => {
   return (
     <Stack
       align="center"
-      className="h-[calc(100dvh_-_var(--app-shell-header-offset)_-_var(--app-shell-footer-offset)_-_var(--app-shell-padding)_*_2)]"
+      className="relative h-[calc(100dvh_-_var(--app-shell-header-offset)_-_var(--app-shell-footer-offset)_-_var(--app-shell-padding)_*_2)]"
     >
       <Head>
         <title>New Chat</title>
@@ -248,7 +249,7 @@ const HomePage = () => {
         typingRefs={typingRefs}
       />
 
-      <Stack className="absolute bottom-0 z-[100] w-screen pb-4">
+      <Stack className="absolute bottom-0 left-0 right-0 z-[100] pb-4">
         <Stack align="center" className="p-4 backdrop-blur-xl backdrop-filter">
           {typingMsgs.length > 0 && (
             <Button
@@ -318,27 +319,31 @@ const HomePage = () => {
           )}
 
           <Stack align="center" className="w-full">
-            <Button
-              className="self-center"
-              color="lime"
-              leftSection={
-                <Icon
-                  height={24}
-                  icon={
-                    inputMode === 'text'
-                      ? 'material-symbols:voice-chat-outline'
-                      : 'material-symbols:keyboard-alt-outline'
-                  }
-                  width={24}
-                />
-              }
-              onClick={() => {
-                setInputMode((prev) => (prev === 'text' ? 'voice' : 'text'));
-              }}
-              variant="light"
-            >
-              {inputMode === 'text' ? 'Voice input' : 'Text input'}
-            </Button>
+            <Group>
+              <Button
+                className="self-center"
+                color="lime"
+                leftSection={
+                  <Icon
+                    height={24}
+                    icon={
+                      inputMode === 'text'
+                        ? 'material-symbols:voice-chat-outline'
+                        : 'material-symbols:keyboard-alt-outline'
+                    }
+                    width={24}
+                  />
+                }
+                onClick={() => {
+                  setInputMode((prev) => (prev === 'text' ? 'voice' : 'text'));
+                }}
+                variant="light"
+              >
+                {inputMode === 'text' ? 'Voice input' : 'Text input'}
+              </Button>
+
+              <Settings />
+            </Group>
 
             {inputMode === 'text' && (
               <PromptForm
