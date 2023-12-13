@@ -123,7 +123,7 @@ const HomePage = () => {
       role: 'user' | 'system';
       content: string;
       conversationId: string;
-    }): Promise<OpenAI.Chat.ChatCompletion> => {
+    }) => {
       const { data } = await axios.post(
         `/api/conversations/${conversationId}/prompt`,
         {
@@ -143,7 +143,7 @@ const HomePage = () => {
           },
           {
             onSuccess: (data) => {
-              setTypingMsgs([...typingMsgs, data.id]);
+              setTypingMsgs((prev) => [...prev, data.id]);
 
               typingRefs.current = [
                 ...typingRefs.current,
@@ -159,16 +159,18 @@ const HomePage = () => {
     },
   });
 
-  const { isPending: isRegenerating, mutate: regenerate } = useMutation({
-    mutationFn: async (): Promise<OpenAI.Chat.ChatCompletion> => {
-      const { data } = await axios.post(`/api/conversations/${id}/regenerate`, {
-        model: currModel.chat.name,
-      });
+  const { isPending: isRegenerating, mutateAsync: regenerate } = useMutation({
+    mutationFn: async ({ conversationId }: { conversationId: string }) => {
+      const { data } = await axios.post(
+        `/api/conversations/${conversationId}/regenerate`,
+        {
+          model: currModel.chat.name,
+        },
+      );
 
       return data;
     },
     onSuccess: () => {
-      // NOTE: Invalidate the query, because the prompt still created even if error
       queryClient.invalidateQueries({
         queryKey: ['conversations', router.query.slug],
       });
@@ -197,7 +199,11 @@ const HomePage = () => {
   });
 
   const isBusy =
-    isSubmittingPrompt || isFetchingCompletions || isRegenerating || isFetching;
+    isSubmittingPrompt ||
+    isFetchingCompletions ||
+    isRegenerating ||
+    isFetching ||
+    typingMsgs.length > 0;
 
   const allowRegenerate = useMemo(() => {
     return !isBusy && lastMessage && lastMessage.role !== 'system';
@@ -292,7 +298,19 @@ const HomePage = () => {
                   width={16}
                 />
               }
-              onClick={() => regenerate()}
+              onClick={async () => {
+                const data = await regenerate({ conversationId: id as string });
+
+                setTypingMsgs((prev) => [...prev, data.id]);
+
+                typingRefs.current = [
+                  ...typingRefs.current,
+                  {
+                    id: data.id,
+                    ref: null,
+                  },
+                ];
+              }}
               variant="outline"
             >
               Regenerate response
