@@ -122,7 +122,7 @@ const Message = forwardRef(function Message(
           </MantineAvatar>
         </Tooltip>
 
-        <Box className="children:min-w-0 children:break-words flex-grow">
+        <Box className="min-w-0 flex-1 [&>*]:break-words">
           <Box component="span" ref={ref}>
             {parsed || content}
           </Box>
