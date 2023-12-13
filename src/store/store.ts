@@ -10,7 +10,6 @@ import {
   persistStore,
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import convoReducer from './slice/convoSlice';
 import modelReducer from './slice/modelSlice';
 
 const persistConfig = {
@@ -21,7 +20,6 @@ const persistConfig = {
 const persistedReducer = persistReducer(
   persistConfig,
   combineReducers({
-    convo: convoReducer,
     model: modelReducer,
   }),
 );
