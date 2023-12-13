@@ -48,7 +48,7 @@ const components = {
       props.children?.props?.className?.replace(/language-/, '') || '';
     return (
       <CodeHighlight
-        code={props.children?.props?.children}
+        code={props.children?.props?.children || ''}
         language={language}
       />
     );
