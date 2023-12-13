@@ -68,6 +68,11 @@ const TypedMessage = forwardRef(function TypedMessage(
       cursorChar: '█',
       ...(typedOptions && typedOptions(messageRef)),
 
+      // NOTE: Set to full content after the typing is done, to prevent missing content.
+      onComplete: () => {
+        setTypedContent(content);
+      },
+
       onTypingPaused: () => {
         setTypedContent(messageRef.current?.textContent || '');
       },
