@@ -4,11 +4,7 @@ import { Header } from '@/components/layouts/Header';
 
 const AppShell = ({ children }: { children?: React.ReactNode }) => {
   return (
-    <MantineAppShell
-      footer={{ height: 20 }}
-      header={{ height: 60 }}
-      padding="md"
-    >
+    <MantineAppShell footer={{ height: 20 }} header={{ height: 60 }}>
       <MantineAppShell.Header>
         <Header />
       </MantineAppShell.Header>
