@@ -234,7 +234,7 @@ const HomePage = () => {
   return (
     <Stack
       align="center"
-      className="h-[calc(100dvh_-_var(--app-shell-header-offset)_-_var(--app-shell-footer-offset)_-_var(--app-shell-padding)_*_2)]"
+      className="relative h-[calc(100dvh_-_var(--app-shell-header-offset)_-_var(--app-shell-footer-offset)_-_var(--app-shell-padding)_*_2)]"
     >
       <Head>
         <title>New Chat</title>
@@ -248,7 +248,7 @@ const HomePage = () => {
         typingRefs={typingRefs}
       />
 
-      <Stack className="absolute bottom-0 z-[100] w-screen pb-4">
+      <Stack className="absolute bottom-0 left-0 right-0 z-[100] pb-4">
         <Stack align="center" className="p-4 backdrop-blur-xl backdrop-filter">
           {typingMsgs.length > 0 && (
             <Button
