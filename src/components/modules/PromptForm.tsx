@@ -2,7 +2,7 @@ import { Icon } from '@iconify/react';
 import { ActionIcon, Checkbox, Group, Stack, TextInput } from '@mantine/core';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import type { TPromptForm } from '@/pages/index';
+import type { TPromptForm } from '@/pages/[[...slug]]';
 
 const PromptForm = ({
   isBusy,

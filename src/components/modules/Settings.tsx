@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { ActionIcon, Modal, Stack, Title, Tooltip } from '@mantine/core';
+import { ActionIcon, Modal, Stack, Text, Title, Tooltip } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { ModelForm } from '@/components/modules/ModelForm';
 import { UploadForm } from '@/components/modules/UploadForm';
@@ -20,13 +20,21 @@ const Settings = () => {
       >
         <Stack>
           <Stack>
-            <Title order={3}>Models</Title>
+            <Stack gap={0}>
+              <Title order={3}>Models</Title>
+
+              <Text c="gray">(All conversations)</Text>
+            </Stack>
 
             <ModelForm />
           </Stack>
 
           <Stack>
-            <Title order={3}>Training</Title>
+            <Stack gap={0}>
+              <Title order={3}>Training</Title>
+
+              <Text c="gray">(Current conversation only)</Text>
+            </Stack>
             <UploadForm />
           </Stack>
         </Stack>

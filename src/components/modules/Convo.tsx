@@ -104,6 +104,7 @@ const Convo = ({
             <TypedMessage
               colors={config.colors}
               content={item.content}
+              isTrained={item.isTrained}
               isTyping={isTyping}
               // NOTE: We have to combine the key with the updatedAt field, so
               // it will re-render after regeneration.
