@@ -118,13 +118,16 @@ const UploadForm = () => {
         queryClient.invalidateQueries({
           queryKey: ['conversations', router.query.slug],
         });
+
+        queryClient.invalidateQueries({
+          queryKey: ['conversations', 'upload', router.query.slug],
+        });
       },
     });
 
   const {
     setValue,
     register,
-    watch,
     setError,
     handleSubmit,
     reset,
@@ -137,24 +140,17 @@ const UploadForm = () => {
     },
   });
 
-  const watchConvo = watch('convo');
-
   useEffect(() => {
-    if (!trainedMessages || trainedMessages.length === 0) return;
+    if (!trainedMessages) return;
 
     const formattedConvo =
       trainedMessages?.length > 0
         ? JSON.stringify(trainedMessages, null, 2)
         : '';
-    reset(
-      {
-        convo: formattedConvo,
-        hideMessages: false,
-      } satisfies TUploadForm,
-      {
-        keepDefaultValues: false,
-      },
-    );
+    reset({
+      convo: formattedConvo,
+      hideMessages: false,
+    } satisfies TUploadForm);
   }, [trainedMessages, reset]);
 
   const onSubmit = async (data: TUploadForm) => {
@@ -244,7 +240,6 @@ const UploadForm = () => {
           }}
         />
         <Checkbox
-          disabled={watchConvo === ''}
           label="Hide training messages"
           radius="sm"
           {...register('hideMessages')}
