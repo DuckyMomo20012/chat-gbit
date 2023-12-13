@@ -22,6 +22,8 @@ const Convo = ({
     isHidden?: boolean;
     isTrained?: boolean;
     conversationId: string;
+    createdAt: string;
+    updatedAt: string;
   }>;
   typingRefs: React.MutableRefObject<
     {
@@ -103,12 +105,16 @@ const Convo = ({
               colors={config.colors}
               content={item.content}
               isTyping={isTyping}
-              key={item.id}
+              // NOTE: We have to combine the key with the updatedAt field, so
+              // it will re-render after regeneration.
+              key={`${item.id}-${item.updatedAt}`}
               ref={(handle) => {
                 if (!handle) {
                   return;
                 }
 
+                // NOTE: We only update the handle here, NOT add new handle, so
+                // we don't have to check for isTyping.
                 if (handle) {
                   const newTypingRefs = typingRefs?.current.map((msg) => {
                     if (msg.id === item.id) {
@@ -134,18 +140,13 @@ const Convo = ({
                     if (currentRef) {
                       currentRef.ref?.stop();
 
-                      const newTypingMsgs = typingMsgs.filter(
-                        (msg) => msg !== item.id,
+                      typingRefs.current = typingRefs?.current.filter(
+                        (msg) => msg.id !== item.id,
                       );
 
-                      setTypingMsgs(newTypingMsgs);
-                    }
-                  },
-                  onTypingPaused: () => {
-                    if (intersectEntryRef.current?.isIntersecting) {
-                      bottomRef.current?.scrollIntoView({
-                        behavior: 'smooth',
-                      });
+                      setTypingMsgs((prev) =>
+                        prev.filter((msg) => msg !== item.id),
+                      );
                     }
                   },
                 };
