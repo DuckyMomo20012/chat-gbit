@@ -3,6 +3,7 @@ import {
   ActionIcon,
   Anchor,
   Avatar,
+  Burger,
   Group,
   Image,
   Text,
@@ -24,7 +25,13 @@ const items = [
   },
 ];
 
-const Header = () => {
+const Header = ({
+  isNavbarOpened,
+  toggleNavbar,
+}: {
+  isNavbarOpened: boolean;
+  toggleNavbar: () => void;
+}) => {
   const router = useRouter();
 
   const { slug } = router.query;
@@ -49,7 +56,13 @@ const Header = () => {
   });
 
   return (
-    <Group className="h-full w-full px-4">
+    <Group className="h-full w-full flex-nowrap px-4">
+      <Burger
+        hiddenFrom="sm"
+        onClick={toggleNavbar}
+        opened={isNavbarOpened}
+        size="sm"
+      />
       <Anchor
         className="flex items-center gap-2 whitespace-nowrap"
         component={Link}
