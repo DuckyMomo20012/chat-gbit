@@ -238,7 +238,7 @@ const HomePage = () => {
       className="relative h-[calc(100dvh_-_var(--app-shell-header-offset)_-_var(--app-shell-footer-offset)_-_var(--app-shell-padding)_*_2)]"
     >
       <Head>
-        <title>New Chat</title>
+        <title>{conversation?.title || 'Chat GBiT'}</title>
         <meta content="Create new Chat GBiT" name="description"></meta>
       </Head>
 
