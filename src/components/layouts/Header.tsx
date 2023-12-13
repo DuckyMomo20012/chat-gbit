@@ -11,7 +11,6 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import Link from 'next/link';
-import { Settings } from '@/components/modules/Settings';
 
 const items = [
   {
@@ -67,8 +66,6 @@ const Header = ({
       </Group>
 
       <Group className="flex-grow" justify="flex-end">
-        <Settings />
-
         <Tooltip label={dark ? 'Light mode' : 'Dark mode'}>
           <ActionIcon
             aria-label="Toggle color scheme"
