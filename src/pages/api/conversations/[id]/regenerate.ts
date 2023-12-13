@@ -40,25 +40,26 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
         // NOTE: Mutate last completion message
         if (lastMessage?.role === 'assistant') {
-          await prisma.message.update({
+          const result = await prisma.message.update({
             where: { id: lastMessage.id },
             data: {
               content: completion.choices[0].message.content || '',
               role: 'assistant',
             },
           });
-        } else {
-          // NOTE: Add new completion message
-          await prisma.message.create({
-            data: {
-              content: completion.choices[0].message.content || '',
-              role: 'assistant',
-              conversationId: id as string,
-            },
-          });
-        }
 
-        return res.status(200).json(completion);
+          return res.status(200).json(result);
+        }
+        // NOTE: Add new completion message
+        const result = await prisma.message.create({
+          data: {
+            content: completion.choices[0].message.content || '',
+            role: 'assistant',
+            conversationId: id as string,
+          },
+        });
+
+        return res.status(200).json(result);
       } catch (err) {
         if (err instanceof z.ZodError) {
           return res.status(400).json({ error: 'Bad request' });

@@ -5,8 +5,9 @@ import axios, { AxiosError } from 'axios';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { type OpenAI } from 'openai';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { TTypedMessageHandle } from '@/components/elements/TypedMessage';
 import { Convo } from '@/components/modules/Convo';
 import { PromptForm } from '@/components/modules/PromptForm';
 import { VoiceForm } from '@/components/modules/VoiceForm';
@@ -40,6 +41,14 @@ const HomePage = () => {
 
     return id;
   }, [id, router]);
+
+  const [typingMsgs, setTypingMsgs] = useState<string[]>([]);
+  const typingRefs = useRef<
+    {
+      id: string;
+      ref: TTypedMessageHandle | null;
+    }[]
+  >([]);
 
   const queryClient = useQueryClient();
 
@@ -114,7 +123,7 @@ const HomePage = () => {
       role: 'user' | 'system';
       content: string;
       conversationId: string;
-    }): Promise<OpenAI.Chat.ChatCompletion> => {
+    }) => {
       const { data } = await axios.post(
         `/api/conversations/${conversationId}/prompt`,
         {
@@ -126,29 +135,63 @@ const HomePage = () => {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['conversations', router.query.slug],
-      });
-
       if (id) {
-        getCompletions({
-          model: currModel.chat.name,
-          conversationId: id,
-        });
+        getCompletions(
+          {
+            model: currModel.chat.name,
+            conversationId: id,
+          },
+          {
+            onSuccess: (data) => {
+              setTypingMsgs((prev) => [...prev, data.id]);
+
+              typingRefs.current = [
+                ...typingRefs.current,
+                {
+                  id: data.id,
+                  ref: null,
+                },
+              ];
+            },
+          },
+        );
       }
     },
   });
 
-  const { isPending: isRegenerating, mutate: regenerate } = useMutation({
-    mutationFn: async (): Promise<OpenAI.Chat.ChatCompletion> => {
-      const { data } = await axios.post(`/api/conversations/${id}/regenerate`, {
-        model: currModel.chat.name,
+  const { isPending: isRegenerating, mutateAsync: regenerate } = useMutation({
+    mutationFn: async ({ conversationId }: { conversationId: string }) => {
+      const { data } = await axios.post(
+        `/api/conversations/${conversationId}/regenerate`,
+        {
+          model: currModel.chat.name,
+        },
+      );
+
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['conversations', router.query.slug],
+      });
+    },
+  });
+
+  const { mutate: updateContent } = useMutation({
+    mutationFn: async ({
+      content,
+      messageId,
+    }: {
+      content: string;
+      messageId: string;
+    }) => {
+      const { data } = await axios.patch(`/api/messages/${messageId}`, {
+        content,
       });
 
       return data;
     },
     onSuccess: () => {
-      // NOTE: Invalidate the query, because the prompt still created even if error
       queryClient.invalidateQueries({
         queryKey: ['conversations', router.query.slug],
       });
@@ -156,7 +199,11 @@ const HomePage = () => {
   });
 
   const isBusy =
-    isSubmittingPrompt || isFetchingCompletions || isRegenerating || isFetching;
+    isSubmittingPrompt ||
+    isFetchingCompletions ||
+    isRegenerating ||
+    isFetching ||
+    typingMsgs.length > 0;
 
   const allowRegenerate = useMemo(() => {
     return !isBusy && lastMessage && lastMessage.role !== 'system';
@@ -194,11 +241,16 @@ const HomePage = () => {
         <meta content="Create new Chat GBiT" name="description"></meta>
       </Head>
 
-      <Convo chat={conversation?.messages} isFetching={isFetchingCompletions} />
+      <Convo
+        chat={conversation?.messages}
+        setTypingMsgs={setTypingMsgs}
+        typingMsgs={typingMsgs}
+        typingRefs={typingRefs}
+      />
 
       <Stack className="absolute bottom-0 z-[100] w-screen pb-4">
         <Stack align="center" className="p-4 backdrop-blur-xl backdrop-filter">
-          {/* {isTyping && (
+          {typingMsgs.length > 0 && (
             <Button
               leftSection={
                 <Icon
@@ -208,13 +260,34 @@ const HomePage = () => {
                 />
               }
               onClick={() => {
-                dispatch(clearTypingMessage());
+                typingMsgs.forEach((msgId) => {
+                  const typingRef = typingRefs?.current?.find(
+                    (msg) => msg.id === msgId,
+                  );
+
+                  const textContent = typingRef?.ref?.stop();
+
+                  if (textContent) {
+                    updateContent({
+                      content: textContent,
+                      messageId: msgId,
+                    });
+
+                    typingRefs.current = typingRefs?.current.filter(
+                      (msg) => msg.id !== msgId,
+                    );
+
+                    setTypingMsgs((prev) =>
+                      prev.filter((msg) => msg !== msgId),
+                    );
+                  }
+                });
               }}
               variant="outline"
             >
               Stop generating
             </Button>
-          )} */}
+          )}
 
           {allowRegenerate && (
             <Button
@@ -225,7 +298,19 @@ const HomePage = () => {
                   width={16}
                 />
               }
-              onClick={() => regenerate()}
+              onClick={async () => {
+                const data = await regenerate({ conversationId: id as string });
+
+                setTypingMsgs((prev) => [...prev, data.id]);
+
+                typingRefs.current = [
+                  ...typingRefs.current,
+                  {
+                    id: data.id,
+                    ref: null,
+                  },
+                ];
+              }}
               variant="outline"
             >
               Regenerate response

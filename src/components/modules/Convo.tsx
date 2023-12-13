@@ -3,17 +3,36 @@ import { faker } from '@faker-js/faker';
 import { Icon } from '@iconify/react';
 import { ActionIcon, Space, Stack } from '@mantine/core';
 import { useEffect, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { TypedMessage } from '@/components/elements/TypedMessage';
-import { mutateMessage, setTyping } from '@/store/slice/convoSlice';
-import type { TChat } from '@/store/slice/convoSlice';
+import {
+  TTypedMessageHandle,
+  TypedMessage,
+} from '@/components/elements/TypedMessage';
 
 const Convo = ({
   chat,
-  isFetching,
+  typingRefs,
+  typingMsgs,
+  setTypingMsgs,
 }: {
-  chat: Array<TChat>;
-  isFetching: boolean;
+  chat: Array<{
+    id: string;
+    role: 'user' | 'assistant' | 'system';
+    content: string;
+    isTyping: boolean;
+    isHidden?: boolean;
+    isTrained?: boolean;
+    conversationId: string;
+    createdAt: string;
+    updatedAt: string;
+  }>;
+  typingRefs: React.MutableRefObject<
+    {
+      id: string;
+      ref: TTypedMessageHandle | null;
+    }[]
+  >;
+  typingMsgs: string[];
+  setTypingMsgs: React.Dispatch<React.SetStateAction<string[]>>;
 }) => {
   const bottomRef = useRef<HTMLDivElement>(null);
   const scrollButtonRef = useRef<HTMLButtonElement>(null);
@@ -25,8 +44,6 @@ const Convo = ({
     userName: '',
     colors: [],
   });
-
-  const dispatch = useDispatch();
 
   useEffect(() => {
     const fakeName = faker.name.fullName();
@@ -79,44 +96,58 @@ const Convo = ({
     <Stack className="relative h-full w-full">
       <Stack className="relative w-full overflow-y-auto">
         {chat?.map((item) => {
-          if (item?.hidden) return null;
+          if (item?.isHidden) return null;
+
+          const isTyping = !!typingMsgs.find((msgId) => msgId === item.id);
 
           return (
             <TypedMessage
               colors={config.colors}
               content={item.content}
-              isTyping={item.isTyping}
-              key={item.id}
+              isTyping={isTyping}
+              // NOTE: We have to combine the key with the updatedAt field, so
+              // it will re-render after regeneration.
+              key={`${item.id}-${item.updatedAt}`}
+              ref={(handle) => {
+                if (!handle) {
+                  return;
+                }
+
+                // NOTE: We only update the handle here, NOT add new handle, so
+                // we don't have to check for isTyping.
+                if (handle) {
+                  const newTypingRefs = typingRefs?.current.map((msg) => {
+                    if (msg.id === item.id) {
+                      return {
+                        ...msg,
+                        ref: handle,
+                      };
+                    }
+                    return msg;
+                  });
+
+                  typingRefs.current = newTypingRefs;
+                }
+              }}
               role={item.role}
-              typedOptions={(typedValRef) => {
+              typedOptions={() => {
                 return {
                   onStringTyped: () => {
-                    dispatch(
-                      setTyping({
-                        id: item.id,
-                        isTyping: false,
-                      }),
+                    const currentRef = typingRefs?.current.find(
+                      (msg) => msg.id === item.id,
                     );
-                  },
-                  onTypingPaused: () => {
-                    if (intersectEntryRef.current?.isIntersecting) {
-                      bottomRef.current?.scrollIntoView({
-                        behavior: 'smooth',
-                      });
-                    }
-                  },
-                  onDestroy: () => {
-                    if (!typedValRef.current) return;
 
-                    dispatch(
-                      mutateMessage({
-                        id: item.id,
-                        mutation: {
-                          isTyping: false,
-                          content: typedValRef.current,
-                        },
-                      }),
-                    );
+                    if (currentRef) {
+                      currentRef.ref?.stop();
+
+                      typingRefs.current = typingRefs?.current.filter(
+                        (msg) => msg.id !== item.id,
+                      );
+
+                      setTypingMsgs((prev) =>
+                        prev.filter((msg) => msg !== item.id),
+                      );
+                    }
                   },
                 };
               }}
@@ -124,10 +155,6 @@ const Convo = ({
             />
           );
         })}
-
-        {isFetching && (
-          <TypedMessage content="" isTyping={true} role="assistant" />
-        )}
 
         <Space className="h-72 w-full flex-shrink-0 md:h-48" ref={bottomRef} />
       </Stack>

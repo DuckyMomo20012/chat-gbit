@@ -12,24 +12,28 @@ import { evaluate } from '@mdx-js/mdx';
 import { useMDXComponents } from '@mdx-js/react';
 import Avatar from 'boring-avatars';
 import clsx from 'clsx';
+import { type OpenAI } from 'openai';
 import { forwardRef, useEffect, useState } from 'react';
 import * as runtime from 'react/jsx-runtime';
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
-import type { TChat } from '@/store/slice/convoSlice';
 
-export type TMessageProp = Pick<TChat, 'role' | 'content' | 'isTyping'> & {
+export type TMessageProp = {
+  content: string;
+  role: OpenAI.Chat.ChatCompletionRole;
   userName?: string;
   colors?: Array<string>;
 };
 
 const Message = forwardRef(function Message(
-  { userName, colors, role, content, isTyping }: TMessageProp,
+  { userName, colors, role, content }: TMessageProp,
   ref: React.Ref<HTMLSpanElement>,
 ) {
   const components = useMDXComponents();
   const [parsed, setParsed] = useState<React.ReactNode>();
 
   useEffect(() => {
+    if (!content) return;
+
     const evaluateBody = async () => {
       const { default: BodyContent } = await evaluate(content, {
         ...runtime,
@@ -56,11 +60,16 @@ const Message = forwardRef(function Message(
         ],
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any);
-
-      setParsed(<BodyContent />);
+      // NOTE: Prevent not found error
+      // Ref: https://github.com/vercel/next.js/discussions/25049#discussioncomment-3987794
+      setParsed(BodyContent({}));
     };
 
-    evaluateBody();
+    try {
+      evaluateBody();
+    } catch (err) {
+      console.error(err);
+    }
   }, [content, components]);
 
   return (
@@ -114,7 +123,9 @@ const Message = forwardRef(function Message(
         </Tooltip>
 
         <Box className="children:min-w-0 children:break-words flex-grow">
-          {isTyping ? <Box component="span" ref={ref} /> : <>{parsed}</>}
+          <Box component="span" ref={ref}>
+            {parsed || content}
+          </Box>
         </Box>
       </Group>
     </Center>
