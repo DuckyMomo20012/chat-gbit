@@ -22,10 +22,11 @@ export type TMessageProp = {
   role: OpenAI.Chat.ChatCompletionRole;
   userName?: string;
   colors?: Array<string>;
+  isTrained?: boolean;
 };
 
 const Message = forwardRef(function Message(
-  { userName, colors, role, content }: TMessageProp,
+  { userName, colors, role, content, isTrained }: TMessageProp,
   ref: React.Ref<HTMLSpanElement>,
 ) {
   const components = useMDXComponents();
@@ -83,7 +84,10 @@ const Message = forwardRef(function Message(
         className="w-full md:max-w-2xl lg:max-w-2xl xl:max-w-3xl"
         wrap="nowrap"
       >
-        <Tooltip label={role.toUpperCase()} position="left">
+        <Tooltip
+          label={`${role.toUpperCase()}${isTrained ? '\n(TRAINED)' : ''}`}
+          position="left"
+        >
           <MantineAvatar
             className="self-start"
             color="indigo"
