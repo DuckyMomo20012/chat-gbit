@@ -10,6 +10,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  email     String   @unique
+  password  String
+  name      String?
+
+  conversations Conversation[]
+}
+
 enum Role {
   user
   assistant
@@ -36,5 +47,9 @@ model Conversation {
   updatedAt DateTime @updatedAt
   title     String
 
+  userId String
+
   messages Message[]
+
+  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
