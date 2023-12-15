@@ -45,6 +45,20 @@ export default NextAuth({
       },
     }),
   ],
+  callbacks: {
+    session: ({ session, token }) => {
+      return {
+        ...session,
+        // NOTE: Add userId to session for use in API routes
+        user: {
+          ...session.user,
+          id: token.sub,
+          name: token.name,
+          email: token.email,
+        },
+      };
+    },
+  },
   pages: {
     signIn: '/auth/sign-in',
   },
