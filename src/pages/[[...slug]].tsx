@@ -376,4 +376,6 @@ HomePage.getLayout = (page: React.ReactNode) => {
   return <AppShell>{page}</AppShell>;
 };
 
+HomePage.auth = true;
+
 export default HomePage;
