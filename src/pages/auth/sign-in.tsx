@@ -1,8 +1,8 @@
 import { Card, Center, Stack, Text } from '@mantine/core';
 import Head from 'next/head';
 import Link from 'next/link';
+import { SignInForm } from '@/components/forms/SignInForm';
 import { AppShell } from '@/components/layouts/AppShell';
-import { SignInForm } from '@/components/modules/SignInForm';
 
 const SignIn = () => {
   return (

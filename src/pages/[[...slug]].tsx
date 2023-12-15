@@ -9,12 +9,12 @@ import { type OpenAI } from 'openai';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { TTypedMessageHandle } from '@/components/elements/TypedMessage';
+import { PromptForm } from '@/components/forms/PromptForm';
+import { VoiceForm } from '@/components/forms/VoiceForm';
 import { AppShell } from '@/components/layouts/AppShell';
 import { ChatLayout } from '@/components/layouts/ChatLayout';
 import { Convo } from '@/components/modules/Convo';
-import { PromptForm } from '@/components/modules/PromptForm';
 import { Settings } from '@/components/modules/Settings';
-import { VoiceForm } from '@/components/modules/VoiceForm';
 import type { RootState } from '@/store/store';
 
 export type TPromptForm = {
