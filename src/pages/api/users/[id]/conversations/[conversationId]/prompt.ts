@@ -1,17 +1,20 @@
 import { type NextApiRequest, type NextApiResponse } from 'next';
 import { z } from 'zod';
 import prisma from '@/lib/prisma';
-import { messageBodySchema } from '@/pages/api/messages/index';
 
-export const promptBodySchema = messageBodySchema.pick({
-  role: true,
-  content: true,
-  isHidden: true,
-  isTrained: true,
+export const promptBodySchema = z.object({
+  content: z.string().max(191),
+  role: z.enum(['system', 'user', 'assistant']),
+  isHidden: z.boolean().optional(),
+  isTrained: z.boolean().optional(),
 });
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { id } = req.query;
+  const { id: userId, conversationId } = req.query;
+
+  if (!userId || !conversationId) {
+    return res.status(400).json({ error: 'Bad request' });
+  }
 
   switch (req.method) {
     case 'POST': {
@@ -19,7 +22,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         const parsedBody = promptBodySchema.parse(req.body);
 
         const allMessages = await prisma.conversation.findUniqueOrThrow({
-          where: { id: id as string },
+          where: { id: conversationId as string, userId: userId as string },
           include: {
             messages: {
               orderBy: {
@@ -51,7 +54,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           data: {
             content: parsedBody.content,
             role: parsedBody.role,
-            conversationId: id as string,
+            conversationId: conversationId as string,
             isHidden: parsedBody.isHidden,
             isTrained: parsedBody.isTrained,
           },

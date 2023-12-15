@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import { ConvoForm } from './ConvoForm';
 
 const ConvoMenu = ({
@@ -21,12 +22,15 @@ const ConvoMenu = ({
 
   const router = useRouter();
 
+  const { data: session } = useSession();
+  const userId = session?.user?.id;
+
   const queryClient = useQueryClient();
 
   const { mutate: deleteConversation } = useMutation({
     mutationFn: async ({ conversationId }: { conversationId: string }) => {
       const { data } = await axios.delete(
-        `/api/conversations/${conversationId}`,
+        `/api/users/${userId}/conversations/${conversationId}`,
       );
 
       return data;

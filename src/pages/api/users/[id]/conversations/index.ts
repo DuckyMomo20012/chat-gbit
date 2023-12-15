@@ -7,11 +7,27 @@ export const conversationBodySchema = z.object({
 });
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const { id } = req.query;
+
+  if (!id) {
+    return res.status(400).json({ error: 'Bad request' });
+  }
+
   switch (req.method) {
     case 'GET': {
-      const result = await prisma.conversation.findMany();
+      try {
+        const result = await prisma.conversation.findMany({
+          where: { userId: id as string },
+        });
 
-      return res.status(200).json(result);
+        return res.status(200).json(result);
+      } catch (err) {
+        if (err instanceof z.ZodError) {
+          return res.status(400).json({ error: 'Bad request' });
+        }
+
+        return res.status(404).json({ error: 'Not found' });
+      }
     }
 
     case 'POST': {
@@ -19,7 +35,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         const parsedBody = conversationBodySchema.parse(req.body);
 
         const result = await prisma.conversation.create({
-          data: parsedBody,
+          data: {
+            ...parsedBody,
+            userId: id as string,
+          },
         });
 
         return res.status(200).json(result);

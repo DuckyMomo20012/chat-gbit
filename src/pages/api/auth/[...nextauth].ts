@@ -1,16 +1,7 @@
-import { sha1 } from 'hash-wasm';
+import { bcryptVerify } from 'hash-wasm';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-
-function getOneUser() {
-  const user = {
-    email: 'tienvinh@gmail.com',
-    name: 'Dương Tiến Vinh',
-    password: '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', // 1234
-  };
-
-  return Promise.resolve({ ...user, password: user.password });
-}
+import prisma from '@/lib/prisma';
 
 export default NextAuth({
   providers: [
@@ -32,18 +23,44 @@ export default NextAuth({
 
         // Inputs from login form
         const { email, password } = credentials;
-        const hashPassword = await sha1(password);
-        const user = await getOneUser();
-        if (user && user.password === hashPassword) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          return user as any;
+
+        const user = await prisma.user.findUnique({
+          where: {
+            email,
+          },
+        });
+
+        if (user) {
+          const isVerified = await bcryptVerify({
+            password,
+            hash: user.password,
+          });
+
+          if (!isVerified) return null;
+
+          return user;
         }
+
         return null;
       },
     }),
   ],
+  callbacks: {
+    session: ({ session, token }) => {
+      return {
+        ...session,
+        // NOTE: Add userId to session for use in API routes
+        user: {
+          ...session.user,
+          id: token.sub,
+          name: token.name,
+          email: token.email,
+        },
+      };
+    },
+  },
   pages: {
-    signIn: '/auth/login',
+    signIn: '/auth/sign-in',
   },
   events: {
     signIn(message) {

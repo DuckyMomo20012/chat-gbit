@@ -14,11 +14,19 @@ export const completionBodySchema = z.object({
 });
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { id } = req.query;
+  const { id: userId, conversationId } = req.query;
+
+  if (!userId || !conversationId) {
+    return res.status(400).json({ error: 'Bad request' });
+  }
 
   switch (req.method) {
     case 'POST': {
       try {
+        await prisma.conversation.findUniqueOrThrow({
+          where: { id: conversationId as string, userId: userId as string },
+        });
+
         const parsedBody = completionBodySchema.parse(req.body);
 
         const completion = await getCompletions({
@@ -30,7 +38,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           data: {
             content: completion.choices[0].message.content || '',
             role: 'assistant',
-            conversationId: id as string,
+            conversationId: conversationId as string,
           },
         });
 

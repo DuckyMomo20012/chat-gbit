@@ -9,6 +9,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import { useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -32,11 +33,17 @@ const UploadForm = () => {
   const { slug } = router.query;
   const id = slug?.at(0);
 
+  const { data: session } = useSession();
+  const userId = session?.user?.id;
+
   const getConvoId = useCallback(async () => {
     if (!id) {
-      const { data: convo } = await axios.post(`/api/conversations`, {
-        title: 'Untitled',
-      });
+      const { data: convo } = await axios.post(
+        `/api/users/${userId}/conversations`,
+        {
+          title: 'Untitled',
+        },
+      );
 
       await router.push(`/${convo.id}`);
 
@@ -44,18 +51,20 @@ const UploadForm = () => {
     }
 
     return id;
-  }, [id, router]);
+  }, [id, userId, router]);
 
   const queryClient = useQueryClient();
 
   const { data: trainedMessages } = useQuery({
-    queryKey: ['conversations', 'upload', router.query.slug],
+    queryKey: ['conversations', 'upload', userId, router.query.slug],
     queryFn: async () => {
       try {
         // NOTE: Handle root path
         if (!id) return [];
 
-        const { data } = await axios.get(`/api/conversations/${id}`);
+        const { data } = await axios.get(
+          `/api/users/${userId}/conversations/${id}`,
+        );
 
         return (
           data.messages as {
@@ -97,16 +106,21 @@ const UploadForm = () => {
         isTrained?: boolean;
       }) => {
         // NOTE: Clear all the prompt before uploading
-        await axios.post(`/api/conversations/${conversationId}/clear`);
+        await axios.post(
+          `/api/users/${userId}/conversations/${conversationId}/clear`,
+        );
 
         const result = await Promise.all(
           messages.map((m) => {
-            return axios.post(`/api/conversations/${conversationId}/prompt`, {
-              role: m.role,
-              content: m.content,
-              isHidden,
-              isTrained,
-            });
+            return axios.post(
+              `/api/users/${userId}/conversations/${conversationId}/prompt`,
+              {
+                role: m.role,
+                content: m.content,
+                isHidden,
+                isTrained,
+              },
+            );
           }),
         );
 

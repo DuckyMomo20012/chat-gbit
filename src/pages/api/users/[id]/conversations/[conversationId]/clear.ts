@@ -2,13 +2,17 @@ import { type NextApiRequest, type NextApiResponse } from 'next';
 import prisma from '@/lib/prisma';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { id } = req.query;
+  const { id: userId, conversationId } = req.query;
+
+  if (!userId || !conversationId) {
+    return res.status(400).json({ error: 'Bad request' });
+  }
 
   switch (req.method) {
     case 'POST': {
       try {
         const result = await prisma.conversation.update({
-          where: { id: id as string },
+          where: { id: conversationId as string, userId: userId as string },
           data: {
             messages: {
               deleteMany: {},

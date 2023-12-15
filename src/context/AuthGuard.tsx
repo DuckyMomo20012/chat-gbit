@@ -47,7 +47,7 @@ const AuthGuard = ({ children }: { children?: React.ReactNode }) => {
         <Modal
           onClose={() => {
             setOpened(false);
-            router.push('/auth/login');
+            router.push('/auth/sign-in');
           }}
           opened={opened}
           withCloseButton={false}

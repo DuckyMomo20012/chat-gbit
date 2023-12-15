@@ -2,10 +2,14 @@ import { type NextApiRequest, type NextApiResponse } from 'next';
 import { z } from 'zod';
 import { getCompletions } from '@/lib/openai';
 import prisma from '@/lib/prisma';
-import { completionBodySchema } from '@/pages/api/conversations/[id]/completions';
+import { completionBodySchema } from '@/pages/api/users/[id]/conversations/[conversationId]/completions';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { id } = req.query;
+  const { id: userId, conversationId } = req.query;
+
+  if (!userId || !conversationId) {
+    return res.status(400).json({ error: 'Bad request' });
+  }
 
   switch (req.method) {
     case 'POST': {
@@ -17,7 +21,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           .parse(req.body);
 
         const allMessages = await prisma.conversation.findUnique({
-          where: { id: id as string },
+          where: { id: conversationId as string, userId: userId as string },
           include: {
             messages: {
               orderBy: {
@@ -55,7 +59,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           data: {
             content: completion.choices[0].message.content || '',
             role: 'assistant',
-            conversationId: id as string,
+            conversationId: conversationId as string,
           },
         });
 

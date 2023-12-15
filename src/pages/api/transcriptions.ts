@@ -2,7 +2,7 @@ import fs from 'fs';
 import formidable from 'formidable';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { z } from 'zod';
-import { openai } from '@/lib/openai';
+import { getTranscriptions } from '@/lib/openai';
 
 export const config = {
   api: {
@@ -14,15 +14,12 @@ const EXTENSION_MAP: { [key: string]: string } = {
   'audio/webm;codecs=opus': 'webm',
 };
 
-const bodySchema = z.object({
-  model: z.enum(['whisper-1']),
+export const transcriptionBodySchema = z.object({
+  model: z.string(),
   audio: z.unknown(),
 });
 
-export default async function getTranscriptions(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const form = formidable({
       keepExtensions: true,
@@ -33,7 +30,7 @@ export default async function getTranscriptions(
       form.parse(req, (err, fields, files) => {
         if (err) reject(err);
         try {
-          bodySchema.parse({
+          transcriptionBodySchema.parse({
             ...fields,
             ...files,
           });
@@ -55,22 +52,27 @@ export default async function getTranscriptions(
     });
     const file = fs.createReadStream(newFilepath);
 
-    const response = await openai.audio.transcriptions.create({
-      model: formFields.model as string,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      file: file as any,
-    });
+    try {
+      const response = await getTranscriptions({
+        model: formFields.model as string,
+        file,
+      });
 
-    res.status(200).json(response);
+      res.status(200).json(response);
+    } catch (error) {
+      res.status(500).json({ error: 'Internal server error' });
+    }
 
     fs.rm(newFilepath, (rmErr) => {
       if (rmErr) throw rmErr;
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      res.status(400).json({ error: error.message });
+      res.status(400).json({ error: 'Bad request' });
     } else {
-      res.status(500).json({ error: (error as Error).message });
+      res.status(500).json({ error: 'Internal server error' });
     }
   }
 }
+
+export default handler;
