@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import { type OpenAI } from 'openai';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -26,15 +27,21 @@ const HomePage = () => {
   const { slug } = router.query;
   const id = slug?.at(0);
 
+  const { data: session } = useSession();
+  const userId = session?.user?.id;
+
   const currModel = useSelector((state: RootState) => state.model);
 
   const [inputMode, setInputMode] = useState<'voice' | 'text'>('text');
 
   const getConvoId = useCallback(async () => {
     if (!id) {
-      const { data: convo } = await axios.post(`/api/conversations`, {
-        title: 'Untitled',
-      });
+      const { data: convo } = await axios.post(
+        `/api/users/${userId}/conversations`,
+        {
+          title: 'Untitled',
+        },
+      );
 
       await router.push(`/${convo.id}`);
 
@@ -42,7 +49,7 @@ const HomePage = () => {
     }
 
     return id;
-  }, [id, router]);
+  }, [id, userId, router]);
 
   const [typingMsgs, setTypingMsgs] = useState<string[]>([]);
   const typingRefs = useRef<
@@ -63,7 +70,9 @@ const HomePage = () => {
         // NOTE: Handle root path
         if (!id) return [];
 
-        const { data } = await axios.get(`/api/conversations/${id}`);
+        const { data } = await axios.get(
+          `/api/users/${userId}/conversations/${id}`,
+        );
 
         return data;
       } catch (err) {
@@ -88,7 +97,7 @@ const HomePage = () => {
         conversationId: string;
       }): Promise<OpenAI.Chat.ChatCompletion> => {
         const { data } = await axios.post(
-          `/api/conversations/${conversationId}/completions`,
+          `/api/users/${userId}/conversations/${conversationId}/completions`,
           {
             model,
             messages:
@@ -127,7 +136,7 @@ const HomePage = () => {
       conversationId: string;
     }) => {
       const { data } = await axios.post(
-        `/api/conversations/${conversationId}/prompt`,
+        `/api/users/${userId}/conversations/${conversationId}/prompt`,
         {
           role,
           content,
@@ -164,7 +173,7 @@ const HomePage = () => {
   const { isPending: isRegenerating, mutateAsync: regenerate } = useMutation({
     mutationFn: async ({ conversationId }: { conversationId: string }) => {
       const { data } = await axios.post(
-        `/api/conversations/${conversationId}/regenerate`,
+        `/api/users/${userId}/conversations/${conversationId}/regenerate`,
         {
           model: currModel.chat.name,
         },

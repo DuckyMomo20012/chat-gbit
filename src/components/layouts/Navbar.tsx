@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import { ConvoMenu } from '../modules/ConvoMenu';
 
 const Navbar = () => {
@@ -12,10 +13,13 @@ const Navbar = () => {
   const { slug } = router.query;
   const id = slug?.at(0);
 
+  const { data: session } = useSession();
+  const userId = session?.user?.id;
+
   const { data: conversations } = useQuery({
-    queryKey: ['conversations'],
+    queryKey: ['conversations', userId],
     queryFn: async () => {
-      const { data } = await axios.get('/api/conversations');
+      const { data } = await axios.get(`/api/users/${userId}/conversations`);
 
       return data;
     },
