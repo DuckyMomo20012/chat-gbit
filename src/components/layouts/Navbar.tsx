@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { ConvoMenu } from '../modules/ConvoMenu';
 
 const Navbar = () => {
@@ -45,7 +45,7 @@ const Navbar = () => {
         />
       </Stack>
 
-      <ScrollArea className="p-4">
+      <ScrollArea className="h-full p-4">
         {conversations
           ?.sort((a: { createdAt: string }, b: { createdAt: string }) => {
             return (
@@ -63,6 +63,28 @@ const Navbar = () => {
             );
           })}
       </ScrollArea>
+
+      <Stack className="px-4 pb-4">
+        <NavLink
+          active
+          className="rounded-md"
+          color="red"
+          label="Sign out"
+          onClick={() =>
+            signOut({
+              redirect: false,
+              callbackUrl: '/auth/sign-in',
+            })
+          }
+          rightSection={
+            <Icon
+              height={18}
+              icon="material-symbols:logout-rounded"
+              width={18}
+            />
+          }
+        />
+      </Stack>
     </Stack>
   );
 };
