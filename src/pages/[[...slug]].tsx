@@ -10,6 +10,7 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { TTypedMessageHandle } from '@/components/elements/TypedMessage';
 import { AppShell } from '@/components/layouts/AppShell';
+import { ChatLayout } from '@/components/layouts/ChatLayout';
 import { Convo } from '@/components/modules/Convo';
 import { PromptForm } from '@/components/modules/PromptForm';
 import { Settings } from '@/components/modules/Settings';
@@ -382,7 +383,11 @@ const HomePage = () => {
 };
 
 HomePage.getLayout = (page: React.ReactNode) => {
-  return <AppShell>{page}</AppShell>;
+  return (
+    <AppShell withNavbar>
+      <ChatLayout>{page}</ChatLayout>
+    </AppShell>
+  );
 };
 
 HomePage.auth = true;

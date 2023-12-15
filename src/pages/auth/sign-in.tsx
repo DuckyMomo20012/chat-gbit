@@ -1,6 +1,7 @@
 import { Card, Center, Stack, Text } from '@mantine/core';
 import Head from 'next/head';
 import Link from 'next/link';
+import { AppShell } from '@/components/layouts/AppShell';
 import { SignInForm } from '@/components/modules/SignInForm';
 
 const SignIn = () => {
@@ -34,6 +35,10 @@ const SignIn = () => {
       </Center>
     </>
   );
+};
+
+SignIn.getLayout = (page: React.ReactNode) => {
+  return <AppShell withNavbar={false}>{page}</AppShell>;
 };
 
 export default SignIn;
