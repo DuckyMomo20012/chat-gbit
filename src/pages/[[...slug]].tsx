@@ -8,6 +8,7 @@ import { type OpenAI } from 'openai';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { TTypedMessageHandle } from '@/components/elements/TypedMessage';
+import { AppShell } from '@/components/layouts/AppShell';
 import { Convo } from '@/components/modules/Convo';
 import { PromptForm } from '@/components/modules/PromptForm';
 import { Settings } from '@/components/modules/Settings';
@@ -369,6 +370,10 @@ const HomePage = () => {
       </Stack>
     </Stack>
   );
+};
+
+HomePage.getLayout = (page: React.ReactNode) => {
+  return <AppShell>{page}</AppShell>;
 };
 
 export default HomePage;
