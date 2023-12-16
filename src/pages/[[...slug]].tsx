@@ -315,17 +315,23 @@ const HomePage = () => {
                 />
               }
               onClick={async () => {
-                const data = await regenerate({ conversationId: id as string });
+                try {
+                  const data = await regenerate({
+                    conversationId: id as string,
+                  });
 
-                setTypingMsgs((prev) => [...prev, data.id]);
+                  setTypingMsgs((prev) => [...prev, data.id]);
 
-                typingRefs.current = [
-                  ...typingRefs.current,
-                  {
-                    id: data.id,
-                    ref: null,
-                  },
-                ];
+                  typingRefs.current = [
+                    ...typingRefs.current,
+                    {
+                      id: data.id,
+                      ref: null,
+                    },
+                  ];
+                } catch (err) {
+                  console.log(err);
+                }
               }}
               variant="outline"
             >
