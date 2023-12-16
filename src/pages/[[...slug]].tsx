@@ -147,6 +147,10 @@ const HomePage = () => {
       return data;
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['conversations', router.query.slug],
+      });
+
       if (id) {
         getCompletions(
           {
