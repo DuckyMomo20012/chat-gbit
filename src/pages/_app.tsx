@@ -1,5 +1,6 @@
 import '@/styles/globals.css';
 
+import { Notifications } from '@mantine/notifications';
 import type { NextComponentType } from 'next';
 import type { AppProps } from 'next/app';
 import { Session } from 'next-auth';
@@ -36,6 +37,7 @@ function MyApp({
           <MantineProvider>
             <MDXProvider>
               <NextNProgress />
+              <Notifications />
               {/* Guarding pages */}
               {Component.auth ? (
                 <AuthGuard>{getLayout(<Component {...pageProps} />)}</AuthGuard>

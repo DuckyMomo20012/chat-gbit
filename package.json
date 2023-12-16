@@ -22,6 +22,7 @@
     "@mantine/code-highlight": "7.2.2",
     "@mantine/core": "7.2.2",
     "@mantine/hooks": "7.2.2",
+    "@mantine/notifications": "7.3.2",
     "@mdx-js/loader": "2.3.0",
     "@mdx-js/mdx": "2.3.0",
     "@mdx-js/react": "2.3.0",
