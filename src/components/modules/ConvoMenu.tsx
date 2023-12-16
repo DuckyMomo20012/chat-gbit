@@ -37,7 +37,7 @@ const ConvoMenu = ({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['conversations'],
+        queryKey: ['conversations', userId],
         // NOTE: We need to invalidate exact queryKey to make sure that we don't
         // invalidate the deleted conversation query.
         exact: true,
