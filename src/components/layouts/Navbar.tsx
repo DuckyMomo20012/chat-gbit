@@ -4,8 +4,9 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { signOut, useSession } from 'next-auth/react';
-import { ConvoMenu } from '../modules/ConvoMenu';
+import { useSession } from 'next-auth/react';
+import { ConvoMenu } from '@/components/modules/ConvoMenu';
+import { ProfileMenu } from '@/components/modules/ProfileMenu';
 
 const Navbar = () => {
   const router = useRouter();
@@ -65,25 +66,7 @@ const Navbar = () => {
       </ScrollArea>
 
       <Stack className="px-4 pb-4">
-        <NavLink
-          active
-          className="rounded-md"
-          color="red"
-          label="Sign out"
-          onClick={() =>
-            signOut({
-              redirect: false,
-              callbackUrl: '/auth/sign-in',
-            })
-          }
-          rightSection={
-            <Icon
-              height={18}
-              icon="material-symbols:logout-rounded"
-              width={18}
-            />
-          }
-        />
+        <ProfileMenu />
       </Stack>
     </Stack>
   );
