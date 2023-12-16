@@ -1,7 +1,8 @@
 import { Card, Center, Stack, Text } from '@mantine/core';
 import Head from 'next/head';
 import Link from 'next/link';
-import { SignUpForm } from '@/components/modules/SignUpForm';
+import { SignUpForm } from '@/components/forms/SignUpForm';
+import { AppShell } from '@/components/layouts/AppShell';
 
 const SignUp = () => {
   return (
@@ -34,6 +35,10 @@ const SignUp = () => {
       </Center>
     </>
   );
+};
+
+SignUp.getLayout = (page: React.ReactNode) => {
+  return <AppShell withNavbar={false}>{page}</AppShell>;
 };
 
 export default SignUp;

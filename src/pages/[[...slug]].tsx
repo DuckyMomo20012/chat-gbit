@@ -9,11 +9,12 @@ import { type OpenAI } from 'openai';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { TTypedMessageHandle } from '@/components/elements/TypedMessage';
+import { PromptForm } from '@/components/forms/PromptForm';
+import { VoiceForm } from '@/components/forms/VoiceForm';
 import { AppShell } from '@/components/layouts/AppShell';
+import { ChatLayout } from '@/components/layouts/ChatLayout';
 import { Convo } from '@/components/modules/Convo';
-import { PromptForm } from '@/components/modules/PromptForm';
 import { Settings } from '@/components/modules/Settings';
-import { VoiceForm } from '@/components/modules/VoiceForm';
 import type { RootState } from '@/store/store';
 
 export type TPromptForm = {
@@ -146,6 +147,10 @@ const HomePage = () => {
       return data;
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['conversations', router.query.slug],
+      });
+
       if (id) {
         getCompletions(
           {
@@ -310,17 +315,23 @@ const HomePage = () => {
                 />
               }
               onClick={async () => {
-                const data = await regenerate({ conversationId: id as string });
+                try {
+                  const data = await regenerate({
+                    conversationId: id as string,
+                  });
 
-                setTypingMsgs((prev) => [...prev, data.id]);
+                  setTypingMsgs((prev) => [...prev, data.id]);
 
-                typingRefs.current = [
-                  ...typingRefs.current,
-                  {
-                    id: data.id,
-                    ref: null,
-                  },
-                ];
+                  typingRefs.current = [
+                    ...typingRefs.current,
+                    {
+                      id: data.id,
+                      ref: null,
+                    },
+                  ];
+                } catch (err) {
+                  console.log(err);
+                }
               }}
               variant="outline"
             >
@@ -382,7 +393,11 @@ const HomePage = () => {
 };
 
 HomePage.getLayout = (page: React.ReactNode) => {
-  return <AppShell>{page}</AppShell>;
+  return (
+    <AppShell withNavbar>
+      <ChatLayout>{page}</ChatLayout>
+    </AppShell>
+  );
 };
 
 HomePage.auth = true;

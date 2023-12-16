@@ -6,7 +6,7 @@ import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-import { ConvoForm } from './ConvoForm';
+import { ConvoForm } from '../forms/ConvoForm';
 
 const ConvoMenu = ({
   id,
@@ -37,7 +37,7 @@ const ConvoMenu = ({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['conversations'],
+        queryKey: ['conversations', userId],
         // NOTE: We need to invalidate exact queryKey to make sure that we don't
         // invalidate the deleted conversation query.
         exact: true,

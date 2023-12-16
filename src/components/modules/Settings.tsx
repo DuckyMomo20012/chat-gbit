@@ -1,8 +1,8 @@
 import { Icon } from '@iconify/react';
 import { ActionIcon, Modal, Stack, Text, Title, Tooltip } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { ModelForm } from '@/components/modules/ModelForm';
-import { UploadForm } from '@/components/modules/UploadForm';
+import { ModelForm } from '@/components/forms/ModelForm';
+import { UploadForm } from '@/components/forms/UploadForm';
 
 const Settings = () => {
   const [isSettingOpen, { open: openSetting, close: closeSetting }] =
