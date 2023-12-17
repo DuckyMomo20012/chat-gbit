@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { Button, Group, Stack, Text } from '@mantine/core';
+import { Alert, Button, Group, Stack, Text } from '@mantine/core';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import Head from 'next/head';
@@ -34,6 +34,8 @@ const HomePage = () => {
   const currModel = useSelector((state: RootState) => state.model);
 
   const [inputMode, setInputMode] = useState<'voice' | 'text'>('text');
+
+  const [isError, setIsError] = useState(false);
 
   const getConvoId = useCallback(async () => {
     if (!id) {
@@ -123,6 +125,9 @@ const HomePage = () => {
         queryClient.invalidateQueries({
           queryKey: ['conversations', router.query.slug],
         });
+      },
+      onError: () => {
+        setIsError(true);
       },
     });
 
@@ -266,6 +271,24 @@ const HomePage = () => {
 
       <Stack className="absolute bottom-0 left-0 right-0 z-[100] pb-4">
         <Stack align="center" className="p-4 backdrop-blur-xl backdrop-filter">
+          {isError && (
+            <Alert
+              color="red"
+              icon={
+                <Icon
+                  height={20}
+                  icon="material-symbols:error-outline-rounded"
+                  width={20}
+                />
+              }
+              onClose={() => setIsError(false)}
+              title="Error"
+              withCloseButton
+            >
+              Something went wrong
+            </Alert>
+          )}
+
           {typingMsgs.length > 0 && (
             <Button
               leftSection={
@@ -330,7 +353,7 @@ const HomePage = () => {
                     },
                   ];
                 } catch (err) {
-                  console.log(err);
+                  setIsError(true);
                 }
               }}
               variant="outline"
