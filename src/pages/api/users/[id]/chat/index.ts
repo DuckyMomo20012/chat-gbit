@@ -20,7 +20,7 @@ export const createChat = async (
   return prisma.chat.create({
     data: {
       ...data,
-      User: {
+      user: {
         connect: { id: userId },
       },
     },
