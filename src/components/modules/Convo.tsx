@@ -7,6 +7,7 @@ import {
   TTypedMessageHandle,
   TypedMessage,
 } from '@/components/elements/TypedMessage';
+import { type GetOneConversation } from '@/pages/api/users/[id]/conversations/[conversationId]';
 
 const Convo = ({
   chat,
@@ -14,17 +15,7 @@ const Convo = ({
   typingMsgs,
   setTypingMsgs,
 }: {
-  chat: Array<{
-    id: string;
-    role: 'user' | 'assistant' | 'system';
-    content: string;
-    isTyping: boolean;
-    isHidden?: boolean;
-    isTrained?: boolean;
-    conversationId: string;
-    createdAt: string;
-    updatedAt: string;
-  }>;
+  chat: GetOneConversation['messages'] | undefined;
   typingRefs: React.MutableRefObject<
     {
       id: string;

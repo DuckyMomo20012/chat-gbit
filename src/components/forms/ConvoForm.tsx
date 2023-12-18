@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { type GetOneConversation } from '@/pages/api/users/[id]/conversations/[conversationId]';
 
 export const conversationSchema = z.object({
   title: z.string(),
@@ -20,7 +21,7 @@ const ConvoForm = ({ conversationId }: { conversationId: string }) => {
 
   const { data: conversation } = useQuery({
     queryKey: ['conversations', userId, conversationId],
-    queryFn: async () => {
+    queryFn: async (): Promise<GetOneConversation> => {
       const { data } = await axios.get(
         `/api/users/${userId}/conversations/${conversationId}`,
       );

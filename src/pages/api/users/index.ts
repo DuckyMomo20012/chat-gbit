@@ -7,7 +7,7 @@ import prisma from '@/lib/prisma';
 
 export const userBodySchema = z.object({
   email: z.string().email(),
-  name: z.string().optional(),
+  name: z.string().nullish(),
   password: z.string().min(8),
 });
 
