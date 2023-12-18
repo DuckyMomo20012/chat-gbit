@@ -8,7 +8,7 @@ import {
   TextInput,
 } from '@mantine/core';
 import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -28,20 +28,8 @@ export type TSignUpForm = z.infer<typeof signUpSchema>;
 const SignUpForm = () => {
   const router = useRouter();
 
-  const { mutate: signUp } = useMutation({
-    mutationKey: ['users', 'signUp'],
-    mutationFn: async (data: TSignUpForm): Promise<CreateUser> => {
-      const { data: user } = await axios.post('/api/users', {
-        name: data.name,
-        email: data.email,
-        password: data.password,
-      });
-
-      return user;
-    },
-  });
-
   const {
+    setError,
     register,
     handleSubmit,
     formState: { errors },
@@ -55,10 +43,33 @@ const SignUpForm = () => {
     resolver: zodResolver(signUpSchema),
   });
 
+  const { mutate: signUp } = useMutation({
+    mutationKey: ['users', 'signUp'],
+    mutationFn: async (data: TSignUpForm): Promise<CreateUser> => {
+      const { data: user } = await axios.post('/api/users', {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+      });
+
+      return user;
+    },
+    onSuccess: () => {
+      router.push('/auth/sign-in');
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 409) {
+          setError('email', {
+            message: 'Email already exists',
+          });
+        }
+      }
+    },
+  });
+
   const onSubmit = (data: TSignUpForm) => {
     signUp(data);
-
-    router.push('/auth/sign-in');
   };
 
   return (
