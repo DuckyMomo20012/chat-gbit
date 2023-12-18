@@ -28,6 +28,7 @@ const ConvoMenu = ({
   const queryClient = useQueryClient();
 
   const { mutate: deleteChat } = useMutation({
+    mutationKey: ['chat', id, 'delete', 'user', userId],
     mutationFn: async ({ chatId }: { chatId: string }) => {
       const { data } = await axios.delete(
         `/api/users/${userId}/chat/${chatId}`,
@@ -37,7 +38,7 @@ const ConvoMenu = ({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['chat', userId],
+        queryKey: ['users', userId, 'chat'],
         // NOTE: We need to invalidate exact queryKey to make sure that we don't
         // invalidate the deleted chat query.
         exact: true,

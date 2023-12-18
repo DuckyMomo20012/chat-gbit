@@ -23,7 +23,7 @@ const ChangePasswordForm = ({ userId }: { userId?: string }) => {
   const queryClient = useQueryClient();
 
   const { mutate: updateUser } = useMutation({
-    mutationKey: ['users', 'update', userId],
+    mutationKey: ['users', userId, 'update'],
     mutationFn: async (data: TChangePasswordForm): Promise<UpdateUser> => {
       const { data: user } = await axios.patch(
         `/api/users/${userId}/change-password`,
@@ -36,7 +36,7 @@ const ChangePasswordForm = ({ userId }: { userId?: string }) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['user', userId],
+        queryKey: ['users', userId],
       });
 
       // NOTE: We need to sign out the user after changing the password because

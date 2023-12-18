@@ -54,7 +54,7 @@ const UploadForm = () => {
   const queryClient = useQueryClient();
 
   const { data: trainedMessages } = useQuery({
-    queryKey: ['chat', 'upload', userId, router.query.slug],
+    queryKey: ['users', userId, 'chat', router.query.slug, { type: 'upload' }],
     queryFn: async () => {
       try {
         // NOTE: Handle root path
@@ -80,6 +80,13 @@ const UploadForm = () => {
 
   const { isPending: isSubmittingPrompt, mutate: uploadTrainMessages } =
     useMutation({
+      mutationKey: [
+        'user',
+        userId,
+        'chat',
+        router.query.slug,
+        { type: 'upload' },
+      ],
       mutationFn: async ({
         chatId,
         messages,
@@ -113,11 +120,17 @@ const UploadForm = () => {
       onSuccess: () => {
         // NOTE: Invalidate the query, because the prompt still created even if error
         queryClient.invalidateQueries({
-          queryKey: ['chat', router.query.slug],
+          queryKey: ['users', userId, 'chat', router.query.slug],
         });
 
         queryClient.invalidateQueries({
-          queryKey: ['chat', 'upload', router.query.slug],
+          queryKey: [
+            'users',
+            userId,
+            'chat',
+            router.query.slug,
+            { type: 'upload' },
+          ],
         });
       },
     });

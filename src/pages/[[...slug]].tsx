@@ -64,7 +64,7 @@ const HomePage = () => {
   const { data: chat, isFetching } = useQuery({
     // NOTE: router.query.slug changes make the query refetch, not the "id", so
     // we have to pass all the slug to the queryKey
-    queryKey: ['chat', router.query.slug],
+    queryKey: ['users', userId, 'chat', router.query.slug],
     queryFn: async (): Promise<GetOneChat> => {
       const { data } = await axios.get(`/api/users/${userId}/chat/${id}`);
 
@@ -77,6 +77,7 @@ const HomePage = () => {
 
   const { isPending: isFetchingCompletions, mutate: getCompletions } =
     useMutation({
+      mutationKey: ['chat', router.query.slug, 'completions', 'user', userId],
       mutationFn: async ({
         model,
         chatId,
@@ -108,7 +109,7 @@ const HomePage = () => {
       },
       onSuccess: () => {
         queryClient.invalidateQueries({
-          queryKey: ['chat', router.query.slug],
+          queryKey: ['users', userId, 'chat', router.query.slug],
         });
       },
       onError: () => {
@@ -117,6 +118,7 @@ const HomePage = () => {
     });
 
   const { isPending: isSubmittingPrompt, mutate: submitPrompt } = useMutation({
+    mutationKey: ['chat', router.query.slug, 'prompt', 'user', userId],
     mutationFn: async ({
       role,
       content,
@@ -138,7 +140,7 @@ const HomePage = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['chat', router.query.slug],
+        queryKey: ['users', userId, 'chat', router.query.slug],
       });
 
       if (id) {
@@ -166,6 +168,7 @@ const HomePage = () => {
   });
 
   const { isPending: isRegenerating, mutateAsync: regenerate } = useMutation({
+    mutationKey: ['chat', router.query.slug, 'regenerate', 'user', userId],
     mutationFn: async ({ chatId }: { chatId: string }) => {
       const { data } = await axios.post(
         `/api/users/${userId}/chat/${chatId}/regenerate`,
@@ -178,12 +181,13 @@ const HomePage = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['chat', router.query.slug],
+        queryKey: ['users', userId, 'chat', router.query.slug],
       });
     },
   });
 
   const { mutate: updateContent } = useMutation({
+    mutationKey: ['chat', router.query.slug, 'updateContent', 'user', userId],
     mutationFn: async ({
       content,
       messageId,
@@ -199,7 +203,7 @@ const HomePage = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['chat', router.query.slug],
+        queryKey: ['users', userId, 'chat', router.query.slug],
       });
     },
   });

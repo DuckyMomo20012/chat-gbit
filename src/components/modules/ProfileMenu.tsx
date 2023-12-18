@@ -22,7 +22,7 @@ const ProfileMenu = () => {
   const userId = session?.user?.id;
 
   const { data: userInfo } = useQuery({
-    queryKey: ['user', userId],
+    queryKey: ['users', userId],
     queryFn: async (): Promise<GetOneUser> => {
       const { data } = await axios.get(`/api/users/${userId}`);
 

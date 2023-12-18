@@ -19,7 +19,7 @@ const Navbar = () => {
   const userId = session?.user?.id;
 
   const { data: chat } = useQuery({
-    queryKey: ['chat', userId],
+    queryKey: ['users', userId, 'chat'],
     queryFn: async (): Promise<GetChat> => {
       const { data } = await axios.get(`/api/users/${userId}/chat`);
 
