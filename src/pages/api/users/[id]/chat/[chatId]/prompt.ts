@@ -1,7 +1,7 @@
 import { type NextApiRequest, type NextApiResponse } from 'next';
 import { z } from 'zod';
 import prisma from '@/lib/prisma';
-import { getOneConversation } from '@/pages/api/users/[id]/chat/[conversationId]';
+import { getOneChat } from '@/pages/api/users/[id]/chat/[chatId]';
 
 export const promptBodySchema = z.object({
   content: z.string().max(191),
@@ -11,9 +11,9 @@ export const promptBodySchema = z.object({
 });
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { id: userId, conversationId } = req.query;
+  const { id: userId, chatId } = req.query;
 
-  if (!userId || !conversationId) {
+  if (!userId || !chatId) {
     return res.status(400).json({ error: 'Bad request' });
   }
 
@@ -22,9 +22,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       try {
         const parsedBody = promptBodySchema.parse(req.body);
 
-        const allMessages = await getOneConversation(
+        const allMessages = await getOneChat(
           userId as string,
-          conversationId as string,
+          chatId as string,
         );
 
         const lastMessage = allMessages?.messages.at(-1);
@@ -49,7 +49,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           data: {
             content: parsedBody.content,
             role: parsedBody.role,
-            conversationId: conversationId as string,
+            chatId: chatId as string,
             isHidden: parsedBody.isHidden,
             isTrained: parsedBody.isTrained,
           },

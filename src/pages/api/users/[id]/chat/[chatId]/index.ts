@@ -2,14 +2,11 @@ import { Prisma } from '@prisma/client';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 import { z } from 'zod';
 import prisma from '@/lib/prisma';
-import { conversationBodySchema } from '@/pages/api/users/[id]/chat/index';
+import { chatBodySchema } from '@/pages/api/users/[id]/chat/index';
 
-export const getOneConversation = async (
-  userId: string,
-  conversationId: string,
-) => {
-  return prisma.conversation.findUniqueOrThrow({
-    where: { id: conversationId, userId },
+export const getOneChat = async (userId: string, chatId: string) => {
+  return prisma.chat.findUniqueOrThrow({
+    where: { id: chatId, userId },
     include: {
       messages: {
         orderBy: {
@@ -20,50 +17,38 @@ export const getOneConversation = async (
   });
 };
 
-export const updateConversation = async (
+export const updateChat = async (
   userId: string,
-  conversationId: string,
-  data: Prisma.ConversationUncheckedUpdateManyWithoutUserInput,
+  chatId: string,
+  data: Prisma.ChatUncheckedUpdateManyWithoutUserInput,
 ) => {
-  return prisma.conversation.update({
-    where: { id: conversationId, userId },
+  return prisma.chat.update({
+    where: { id: chatId, userId },
     data,
   });
 };
 
-export const deleteConversation = async (
-  userId: string,
-  conversationId: string,
-) => {
-  return prisma.conversation.delete({
-    where: { id: conversationId, userId },
+export const deleteChat = async (userId: string, chatId: string) => {
+  return prisma.chat.delete({
+    where: { id: chatId, userId },
   });
 };
 
-export type GetOneConversation = Prisma.PromiseReturnType<
-  typeof getOneConversation
->;
-export type UpdateConversation = Prisma.PromiseReturnType<
-  typeof updateConversation
->;
-export type DeleteConversation = Prisma.PromiseReturnType<
-  typeof deleteConversation
->;
+export type GetOneChat = Prisma.PromiseReturnType<typeof getOneChat>;
+export type UpdateChat = Prisma.PromiseReturnType<typeof updateChat>;
+export type DeleteChat = Prisma.PromiseReturnType<typeof deleteChat>;
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { id: userId, conversationId } = req.query;
+  const { id: userId, chatId } = req.query;
 
-  if (!userId || !conversationId) {
+  if (!userId || !chatId) {
     return res.status(400).json({ error: 'Bad request' });
   }
 
   switch (req.method) {
     case 'GET': {
       try {
-        const result = await getOneConversation(
-          userId as string,
-          conversationId as string,
-        );
+        const result = await getOneChat(userId as string, chatId as string);
 
         return res.status(200).json(result);
       } catch (err) {
@@ -77,11 +62,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     case 'PATCH': {
       try {
-        const parsedBody = conversationBodySchema.parse(req.body);
+        const parsedBody = chatBodySchema.parse(req.body);
 
-        const result = await updateConversation(
+        const result = await updateChat(
           userId as string,
-          conversationId as string,
+          chatId as string,
           parsedBody,
         );
 
@@ -97,10 +82,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     case 'DELETE': {
       try {
-        const result = await deleteConversation(
-          userId as string,
-          conversationId as string,
-        );
+        const result = await deleteChat(userId as string, chatId as string);
 
         return res.status(200).json(result);
       } catch (err) {

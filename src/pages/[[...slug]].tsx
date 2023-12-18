@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { type GetOneConversation } from './api/users/[id]/chat/[conversationId]';
+import { type GetOneChat } from './api/users/[id]/chat/[chatId]';
 import { TTypedMessageHandle } from '@/components/elements/TypedMessage';
 import { PromptForm } from '@/components/forms/PromptForm';
 import { VoiceForm } from '@/components/forms/VoiceForm';
@@ -39,12 +39,9 @@ const HomePage = () => {
 
   const getConvoId = useCallback(async () => {
     if (!id) {
-      const { data: convo } = await axios.post(
-        `/api/users/${userId}/conversations`,
-        {
-          title: 'Untitled',
-        },
-      );
+      const { data: convo } = await axios.post(`/api/users/${userId}/chat`, {
+        title: 'Untitled',
+      });
 
       await router.push(`/${convo.id}`);
 
@@ -64,36 +61,34 @@ const HomePage = () => {
 
   const queryClient = useQueryClient();
 
-  const { data: conversation, isFetching } = useQuery({
+  const { data: chat, isFetching } = useQuery({
     // NOTE: router.query.slug changes make the query refetch, not the "id", so
     // we have to pass all the slug to the queryKey
-    queryKey: ['conversations', router.query.slug],
-    queryFn: async (): Promise<GetOneConversation> => {
-      const { data } = await axios.get(
-        `/api/users/${userId}/conversations/${id}`,
-      );
+    queryKey: ['chat', router.query.slug],
+    queryFn: async (): Promise<GetOneChat> => {
+      const { data } = await axios.get(`/api/users/${userId}/chat/${id}`);
 
       return data;
     },
   });
 
-  const lastMessage = conversation?.messages && conversation.messages.at(-1);
+  const lastMessage = chat?.messages && chat.messages.at(-1);
 
   const { isPending: isFetchingCompletions, mutate: getCompletions } =
     useMutation({
       mutationFn: async ({
         model,
-        conversationId,
+        chatId,
       }: {
         model: string;
-        conversationId: string;
+        chatId: string;
       }) => {
         const { data } = await axios.post(
-          `/api/users/${userId}/conversations/${conversationId}/completions`,
+          `/api/users/${userId}/chat/${chatId}/completions`,
           {
             model,
             messages:
-              conversation?.messages.map(
+              chat?.messages.map(
                 ({
                   role,
                   content,
@@ -112,7 +107,7 @@ const HomePage = () => {
       },
       onSuccess: () => {
         queryClient.invalidateQueries({
-          queryKey: ['conversations', router.query.slug],
+          queryKey: ['chat', router.query.slug],
         });
       },
       onError: () => {
@@ -124,14 +119,14 @@ const HomePage = () => {
     mutationFn: async ({
       role,
       content,
-      conversationId,
+      chatId,
     }: {
       role: 'user' | 'system';
       content: string;
-      conversationId: string;
+      chatId: string;
     }) => {
       const { data } = await axios.post(
-        `/api/users/${userId}/conversations/${conversationId}/prompt`,
+        `/api/users/${userId}/chat/${chatId}/prompt`,
         {
           role,
           content,
@@ -142,14 +137,14 @@ const HomePage = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['conversations', router.query.slug],
+        queryKey: ['chat', router.query.slug],
       });
 
       if (id) {
         getCompletions(
           {
             model: currModel.chat.name,
-            conversationId: id,
+            chatId: id,
           },
           {
             onSuccess: (data) => {
@@ -170,9 +165,9 @@ const HomePage = () => {
   });
 
   const { isPending: isRegenerating, mutateAsync: regenerate } = useMutation({
-    mutationFn: async ({ conversationId }: { conversationId: string }) => {
+    mutationFn: async ({ chatId }: { chatId: string }) => {
       const { data } = await axios.post(
-        `/api/users/${userId}/conversations/${conversationId}/regenerate`,
+        `/api/users/${userId}/chat/${chatId}/regenerate`,
         {
           model: currModel.chat.name,
         },
@@ -182,7 +177,7 @@ const HomePage = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['conversations', router.query.slug],
+        queryKey: ['chat', router.query.slug],
       });
     },
   });
@@ -203,7 +198,7 @@ const HomePage = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['conversations', router.query.slug],
+        queryKey: ['chat', router.query.slug],
       });
     },
   });
@@ -219,24 +214,24 @@ const HomePage = () => {
     return !isBusy && lastMessage && lastMessage.role !== 'system';
   }, [lastMessage, isBusy]);
 
-  const allowSystemMessage = conversation?.messages?.length === 0;
+  const allowSystemMessage = chat?.messages?.length === 0;
 
   const handleSubmit = async (data: TPromptForm) => {
     if (isBusy) return;
 
-    const conversationId = await getConvoId();
+    const chatId = await getConvoId();
 
     if (data?.asSystemMessage) {
       submitPrompt({
         role: 'system',
         content: data.prompt,
-        conversationId,
+        chatId,
       });
     } else {
       submitPrompt({
         role: 'user',
         content: data.prompt,
-        conversationId,
+        chatId,
       });
     }
   };
@@ -247,12 +242,12 @@ const HomePage = () => {
       className="relative h-[calc(100dvh_-_var(--app-shell-header-offset)_-_var(--app-shell-footer-offset)_-_var(--app-shell-padding)_*_2)]"
     >
       <Head>
-        <title>{conversation?.title || 'Chat GBiT'}</title>
+        <title>{chat?.title || 'Chat GBiT'}</title>
         <meta content="Create new Chat GBiT" name="description"></meta>
       </Head>
 
       <Convo
-        chat={conversation?.messages}
+        chat={chat?.messages}
         setTypingMsgs={setTypingMsgs}
         typingMsgs={typingMsgs}
         typingRefs={typingRefs}
@@ -329,7 +324,7 @@ const HomePage = () => {
               onClick={async () => {
                 try {
                   const data = await regenerate({
-                    conversationId: id as string,
+                    chatId: id as string,
                   });
 
                   setTypingMsgs((prev) => [...prev, data.id]);

@@ -2,13 +2,13 @@ import { type NextApiRequest, type NextApiResponse } from 'next';
 import { z } from 'zod';
 import { getCompletions } from '@/lib/openai';
 import prisma from '@/lib/prisma';
-import { getOneConversation } from '@/pages/api/users/[id]/chat/[chatId]';
+import { getOneChat } from '@/pages/api/users/[id]/chat/[chatId]';
 import { completionBodySchema } from '@/pages/api/users/[id]/chat/[chatId]/completions';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { id: userId, conversationId } = req.query;
+  const { id: userId, chatId } = req.query;
 
-  if (!userId || !conversationId) {
+  if (!userId || !chatId) {
     return res.status(400).json({ error: 'Bad request' });
   }
 
@@ -21,9 +21,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           })
           .parse(req.body);
 
-        const allMessages = await getOneConversation(
+        const allMessages = await getOneChat(
           userId as string,
-          conversationId as string,
+          chatId as string,
         );
 
         const completion = await getCompletions({
@@ -54,7 +54,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           data: {
             content: completion.choices[0].message.content || '',
             role: 'assistant',
-            conversationId: conversationId as string,
+            chatId: chatId as string,
           },
         });
 

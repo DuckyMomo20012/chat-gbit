@@ -14,7 +14,7 @@ import { useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { fromZodError } from 'zod-validation-error';
-import { type GetOneConversation } from '@/pages/api/users/[id]/chat/[conversationId]';
+import { type GetOneChat } from '@/pages/api/users/[id]/chat/[chatId]';
 
 type TUploadForm = {
   convo: string;
@@ -39,12 +39,9 @@ const UploadForm = () => {
 
   const getConvoId = useCallback(async () => {
     if (!id) {
-      const { data: convo } = await axios.post(
-        `/api/users/${userId}/conversations`,
-        {
-          title: 'Untitled',
-        },
-      );
+      const { data: convo } = await axios.post(`/api/users/${userId}/chat`, {
+        title: 'Untitled',
+      });
 
       await router.push(`/${convo.id}`);
 
@@ -57,17 +54,15 @@ const UploadForm = () => {
   const queryClient = useQueryClient();
 
   const { data: trainedMessages } = useQuery({
-    queryKey: ['conversations', 'upload', userId, router.query.slug],
+    queryKey: ['chat', 'upload', userId, router.query.slug],
     queryFn: async () => {
       try {
         // NOTE: Handle root path
         if (!id) return [];
 
-        const { data } = await axios.get(
-          `/api/users/${userId}/conversations/${id}`,
-        );
+        const { data } = await axios.get(`/api/users/${userId}/chat/${id}`);
 
-        return (data.messages as GetOneConversation['messages'])
+        return (data.messages as GetOneChat['messages'])
           .filter((m) => m.isTrained)
           .map((m) => ({
             role: m.role,
@@ -86,12 +81,12 @@ const UploadForm = () => {
   const { isPending: isSubmittingPrompt, mutate: uploadTrainMessages } =
     useMutation({
       mutationFn: async ({
-        conversationId,
+        chatId,
         messages,
         isHidden,
         isTrained,
       }: {
-        conversationId: string;
+        chatId: string;
         messages: {
           role: 'user' | 'system' | 'assistant';
           content: string;
@@ -100,21 +95,16 @@ const UploadForm = () => {
         isTrained?: boolean;
       }) => {
         // NOTE: Clear all the prompt before uploading
-        await axios.post(
-          `/api/users/${userId}/conversations/${conversationId}/clear`,
-        );
+        await axios.post(`/api/users/${userId}/chat/${chatId}/clear`);
 
         const result = await Promise.all(
           messages.map((m) => {
-            return axios.post(
-              `/api/users/${userId}/conversations/${conversationId}/prompt`,
-              {
-                role: m.role,
-                content: m.content,
-                isHidden,
-                isTrained,
-              },
-            );
+            return axios.post(`/api/users/${userId}/chat/${chatId}/prompt`, {
+              role: m.role,
+              content: m.content,
+              isHidden,
+              isTrained,
+            });
           }),
         );
 
@@ -123,11 +113,11 @@ const UploadForm = () => {
       onSuccess: () => {
         // NOTE: Invalidate the query, because the prompt still created even if error
         queryClient.invalidateQueries({
-          queryKey: ['conversations', router.query.slug],
+          queryKey: ['chat', router.query.slug],
         });
 
         queryClient.invalidateQueries({
-          queryKey: ['conversations', 'upload', router.query.slug],
+          queryKey: ['chat', 'upload', router.query.slug],
         });
       },
     });
@@ -171,10 +161,10 @@ const UploadForm = () => {
 
       // NOTE: We purge the convo even if the data is an empty array
       if (convo.length >= 0) {
-        const conversationId = await getConvoId();
+        const chatId = await getConvoId();
 
         uploadTrainMessages({
-          conversationId,
+          chatId,
           messages: convo,
           isHidden: data.hideMessages,
           isTrained: true,
@@ -202,13 +192,12 @@ const UploadForm = () => {
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack>
         <Alert color="yellow" title="Warning">
-          Update training conversation will delete{' '}
-          <b>all the conversation history</b>.
+          Update training chat will delete <b>all the chat history</b>.
         </Alert>
 
         <JsonInput
           autosize
-          label="Training conversation"
+          label="Training chat"
           maxRows={10}
           minRows={10}
           placeholder={JSON.stringify(
