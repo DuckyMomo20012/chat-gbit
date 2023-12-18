@@ -27,19 +27,19 @@ const ConvoMenu = ({
 
   const queryClient = useQueryClient();
 
-  const { mutate: deleteConversation } = useMutation({
-    mutationFn: async ({ conversationId }: { conversationId: string }) => {
+  const { mutate: deleteChat } = useMutation({
+    mutationFn: async ({ chatId }: { chatId: string }) => {
       const { data } = await axios.delete(
-        `/api/users/${userId}/conversations/${conversationId}`,
+        `/api/users/${userId}/chat/${chatId}`,
       );
 
       return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['conversations', userId],
+        queryKey: ['chat', userId],
         // NOTE: We need to invalidate exact queryKey to make sure that we don't
-        // invalidate the deleted conversation query.
+        // invalidate the deleted chat query.
         exact: true,
       });
 
@@ -48,12 +48,8 @@ const ConvoMenu = ({
   });
   return (
     <>
-      <Modal
-        onClose={closeForm}
-        opened={isFormOpened}
-        title="Edit conversation"
-      >
-        <ConvoForm conversationId={id} />
+      <Modal onClose={closeForm} opened={isFormOpened} title="Edit chat">
+        <ConvoForm chatId={id} />
       </Modal>
 
       <NavLink
@@ -108,8 +104,8 @@ const ConvoMenu = ({
                 onClick={(e) => {
                   e.stopPropagation();
 
-                  deleteConversation({
-                    conversationId: id,
+                  deleteChat({
+                    chatId: id,
                   });
                 }}
                 variant="subtle"

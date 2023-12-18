@@ -3,36 +3,32 @@ import { type NextApiRequest, type NextApiResponse } from 'next';
 import { z } from 'zod';
 import prisma from '@/lib/prisma';
 
-export const conversationBodySchema = z.object({
+export const chatBodySchema = z.object({
   title: z.string().min(1).max(191),
 });
 
-export const getConversations = async (userId: string) => {
-  return prisma.conversation.findMany({
+export const getChat = async (userId: string) => {
+  return prisma.chat.findMany({
     where: { userId },
   });
 };
 
-export const createConversation = async (
+export const createChat = async (
   userId: string,
-  data: Prisma.ConversationUncheckedCreateWithoutUserInput,
+  data: Prisma.ChatUncheckedCreateWithoutUserInput,
 ) => {
-  return prisma.conversation.create({
+  return prisma.chat.create({
     data: {
       ...data,
-      User: {
+      user: {
         connect: { id: userId },
       },
     },
   });
 };
 
-export type GetConversations = Prisma.PromiseReturnType<
-  typeof getConversations
->;
-export type CreateConversation = Prisma.PromiseReturnType<
-  typeof createConversation
->;
+export type GetChat = Prisma.PromiseReturnType<typeof getChat>;
+export type CreateChat = Prisma.PromiseReturnType<typeof createChat>;
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
@@ -44,7 +40,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case 'GET': {
       try {
-        const result = await getConversations(id as string);
+        const result = await getChat(id as string);
 
         return res.status(200).json(result);
       } catch (err) {
@@ -58,9 +54,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     case 'POST': {
       try {
-        const parsedBody = conversationBodySchema.parse(req.body);
+        const parsedBody = chatBodySchema.parse(req.body);
 
-        const result = await createConversation(id as string, parsedBody);
+        const result = await createChat(id as string, parsedBody);
 
         return res.status(200).json(result);
       } catch (err) {

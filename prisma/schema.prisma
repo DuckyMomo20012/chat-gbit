@@ -18,7 +18,7 @@ model User {
   password  String
   name      String?
 
-  conversations Conversation[]
+  chat Chat[]
 }
 
 enum Role {
@@ -36,12 +36,12 @@ model Message {
   isHidden  Boolean  @default(false)
   isTrained Boolean  @default(false)
 
-  conversationId String
+  chatId String
 
-  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  chat Chat @relation(fields: [chatId], references: [id], onDelete: Cascade)
 }
 
-model Conversation {
+model Chat {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -51,5 +51,5 @@ model Conversation {
 
   messages Message[]
 
-  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

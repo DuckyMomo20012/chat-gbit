@@ -23,7 +23,7 @@ const Settings = () => {
             <Stack gap={0}>
               <Title order={3}>Models</Title>
 
-              <Text c="gray">(All conversations)</Text>
+              <Text c="gray">(All chat)</Text>
             </Stack>
 
             <ModelForm />
@@ -33,7 +33,7 @@ const Settings = () => {
             <Stack gap={0}>
               <Title order={3}>Training</Title>
 
-              <Text c="gray">(Current conversation only)</Text>
+              <Text c="gray">(Current chat only)</Text>
             </Stack>
             <UploadForm />
           </Stack>

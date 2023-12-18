@@ -6,40 +6,36 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import {
-  type GetOneConversation,
-  type UpdateConversation,
-} from '@/pages/api/users/[id]/conversations/[conversationId]';
+  type GetOneChat,
+  type UpdateChat,
+} from '@/pages/api/users/[id]/chat/[chatId]';
 
-export const conversationSchema = z.object({
+export const chatSchema = z.object({
   title: z.string(),
 });
 
-export type TConversationForm = z.infer<typeof conversationSchema>;
+export type TChatForm = z.infer<typeof chatSchema>;
 
-const ConvoForm = ({ conversationId }: { conversationId: string }) => {
+const ConvoForm = ({ chatId }: { chatId: string }) => {
   const { data: session } = useSession();
   const userId = session?.user?.id;
 
   const queryClient = useQueryClient();
 
-  const { data: conversation } = useQuery({
-    queryKey: ['conversations', userId, conversationId],
-    queryFn: async (): Promise<GetOneConversation> => {
-      const { data } = await axios.get(
-        `/api/users/${userId}/conversations/${conversationId}`,
-      );
+  const { data: chat } = useQuery({
+    queryKey: ['chat', userId, chatId],
+    queryFn: async (): Promise<GetOneChat> => {
+      const { data } = await axios.get(`/api/users/${userId}/chat/${chatId}`);
 
       return data;
     },
   });
 
   const { mutate: updateTitle } = useMutation({
-    mutationKey: ['conversations', 'updateTitle', userId, conversationId],
-    mutationFn: async (
-      data: TConversationForm,
-    ): Promise<UpdateConversation> => {
+    mutationKey: ['chat', 'updateTitle', userId, chatId],
+    mutationFn: async (data: TChatForm): Promise<UpdateChat> => {
       const { data: convo } = await axios.patch(
-        `/api/users/${userId}/conversations/${conversationId}`,
+        `/api/users/${userId}/chat/${chatId}`,
         {
           title: data.title,
         },
@@ -49,7 +45,7 @@ const ConvoForm = ({ conversationId }: { conversationId: string }) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['conversations'],
+        queryKey: ['chat'],
       });
     },
   });
@@ -59,19 +55,19 @@ const ConvoForm = ({ conversationId }: { conversationId: string }) => {
     handleSubmit,
     reset,
     formState: { errors, isDirty },
-  } = useForm<TConversationForm>({
+  } = useForm<TChatForm>({
     defaultValues: {
       title: '',
     },
   });
 
   useEffect(() => {
-    if (conversation) {
-      reset({ title: conversation.title });
+    if (chat) {
+      reset({ title: chat.title });
     }
-  }, [conversation, reset]);
+  }, [chat, reset]);
 
-  const onSubmit = (data: TConversationForm) => {
+  const onSubmit = (data: TChatForm) => {
     updateTitle(data);
   };
 
