@@ -163,13 +163,13 @@ const UploadForm = () => {
     } satisfies TUploadForm);
   }, [trainedMessages, reset]);
 
-  const onSubmit = async (data: TUploadForm) => {
+  const onSubmit = async (formData: TUploadForm) => {
     try {
-      if (data.convo === '') {
+      if (formData.convo === '') {
         return;
       }
 
-      const parsed = JSON.parse(data.convo);
+      const parsed = JSON.parse(formData.convo);
       const convo = convoSchema.parse(parsed);
 
       // NOTE: We purge the convo even if the data is an empty array
@@ -179,7 +179,7 @@ const UploadForm = () => {
         uploadTrainMessages({
           chatId,
           messages: convo,
-          isHidden: data.hideMessages,
+          isHidden: formData.hideMessages,
           isTrained: true,
         });
       }

@@ -10,7 +10,7 @@ const PromptForm = ({
   allowSystemMessage = false,
 }: {
   isBusy: boolean;
-  submitPrompt: (data: TPromptForm) => unknown;
+  submitPrompt: (formData: TPromptForm) => unknown;
   allowSystemMessage?: boolean;
 }) => {
   const { register, reset, handleSubmit, setFocus, formState } =
@@ -29,8 +29,8 @@ const PromptForm = ({
     }
   }, [formState.isSubmitSuccessful, reset]);
 
-  const onSubmit = (data: TPromptForm) => {
-    submitPrompt(data);
+  const onSubmit = (formData: TPromptForm) => {
+    submitPrompt(formData);
   };
 
   return (
