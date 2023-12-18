@@ -140,7 +140,9 @@ const HomePage = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['users', userId, 'chat', router.query.slug],
+        // NOTE: We have to invalidate the whole chat, because we may create new
+        // chat if the chatId is not provided
+        queryKey: ['users', userId, 'chat'],
       });
 
       if (id) {

@@ -118,9 +118,10 @@ const UploadForm = () => {
         return result;
       },
       onSuccess: () => {
-        // NOTE: Invalidate the query, because the prompt still created even if error
+        // NOTE: We have to invalidate the whole chat, because we may create new
+        // chat if the chatId is not provided
         queryClient.invalidateQueries({
-          queryKey: ['users', userId, 'chat', router.query.slug],
+          queryKey: ['users', userId, 'chat'],
         });
 
         queryClient.invalidateQueries({
