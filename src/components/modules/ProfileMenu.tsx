@@ -6,6 +6,7 @@ import axios from 'axios';
 import { signOut, useSession } from 'next-auth/react';
 import { ChangePasswordForm } from '@/components/forms/ChangePasswordForm';
 import { ProfileForm } from '@/components/forms/ProfileForm';
+import { type GetOneUser } from '@/pages/api/users/[id]';
 
 const ProfileMenu = () => {
   const [
@@ -22,7 +23,7 @@ const ProfileMenu = () => {
 
   const { data: userInfo } = useQuery({
     queryKey: ['user', userId],
-    queryFn: async () => {
+    queryFn: async (): Promise<GetOneUser> => {
       const { data } = await axios.get(`/api/users/${userId}`);
 
       return data;

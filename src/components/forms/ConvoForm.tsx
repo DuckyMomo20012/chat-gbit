@@ -5,6 +5,10 @@ import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import {
+  type GetOneConversation,
+  type UpdateConversation,
+} from '@/pages/api/users/[id]/conversations/[conversationId]';
 
 export const conversationSchema = z.object({
   title: z.string(),
@@ -20,7 +24,7 @@ const ConvoForm = ({ conversationId }: { conversationId: string }) => {
 
   const { data: conversation } = useQuery({
     queryKey: ['conversations', userId, conversationId],
-    queryFn: async () => {
+    queryFn: async (): Promise<GetOneConversation> => {
       const { data } = await axios.get(
         `/api/users/${userId}/conversations/${conversationId}`,
       );
@@ -31,7 +35,9 @@ const ConvoForm = ({ conversationId }: { conversationId: string }) => {
 
   const { mutate: updateTitle } = useMutation({
     mutationKey: ['conversations', 'updateTitle', userId, conversationId],
-    mutationFn: async (data: TConversationForm) => {
+    mutationFn: async (
+      data: TConversationForm,
+    ): Promise<UpdateConversation> => {
       const { data: convo } = await axios.patch(
         `/api/users/${userId}/conversations/${conversationId}`,
         {

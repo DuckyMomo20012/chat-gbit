@@ -7,24 +7,44 @@ import prisma from '@/lib/prisma';
 
 export const userBodySchema = z.object({
   email: z.string().email(),
-  name: z.string().optional(),
+  name: z.string().nullish(),
   password: z.string().min(8),
 });
 
 export const HASH_ROUNDS = 10;
 
+export const getAllUsers = async () => {
+  return prisma.user.findMany({
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+};
+
+export const createUser = async (data: Prisma.UserCreateInput) => {
+  return prisma.user.create({
+    data,
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+};
+
+export type GetAllUsers = Prisma.PromiseReturnType<typeof getAllUsers>;
+export type CreateUser = Prisma.PromiseReturnType<typeof createUser>;
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case 'GET': {
-      const result = await prisma.user.findMany({
-        select: {
-          id: true,
-          email: true,
-          name: true,
-          createdAt: true,
-          updatedAt: true,
-        },
-      });
+      const result = await getAllUsers();
 
       return res.status(200).json(result);
     }
@@ -39,11 +59,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           costFactor: HASH_ROUNDS,
         });
 
-        const result = await prisma.user.create({
-          data: {
-            ...parsedBody,
-            password: hashPassword,
-          },
+        const result = await createUser({
+          ...parsedBody,
+          password: hashPassword,
         });
 
         return res.status(200).json(result);

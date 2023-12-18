@@ -12,7 +12,7 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { userBodySchema } from '@/pages/api/users';
+import { type CreateUser, userBodySchema } from '@/pages/api/users';
 
 export const signUpSchema = userBodySchema
   .extend({
@@ -30,7 +30,7 @@ const SignUpForm = () => {
 
   const { mutate: signUp } = useMutation({
     mutationKey: ['users', 'signUp'],
-    mutationFn: async (data: TSignUpForm) => {
+    mutationFn: async (data: TSignUpForm): Promise<CreateUser> => {
       const { data: user } = await axios.post('/api/users', {
         name: data.name,
         email: data.email,

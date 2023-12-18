@@ -5,6 +5,7 @@ import axios from 'axios';
 import { signOut } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { type UpdateUser } from '@/pages/api/users/[id]';
 
 export const changePasswordSchema = z
   .object({
@@ -23,7 +24,7 @@ const ChangePasswordForm = ({ userId }: { userId?: string }) => {
 
   const { mutate: updateUser } = useMutation({
     mutationKey: ['users', 'update', userId],
-    mutationFn: async (data: TChangePasswordForm) => {
+    mutationFn: async (data: TChangePasswordForm): Promise<UpdateUser> => {
       const { data: user } = await axios.patch(
         `/api/users/${userId}/change-password`,
         {

@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { userBodySchema } from '@/pages/api/users';
+import { type GetOneUser, type UpdateUser } from '@/pages/api/users/[id]';
 
 export const profileSchema = userBodySchema.pick({ name: true });
 
@@ -16,7 +17,7 @@ const ProfileForm = ({ userId }: { userId?: string }) => {
 
   const { data: userInfo } = useQuery({
     queryKey: ['user', userId],
-    queryFn: async () => {
+    queryFn: async (): Promise<GetOneUser> => {
       const { data } = await axios.get(`/api/users/${userId}`);
 
       return data;
@@ -26,7 +27,7 @@ const ProfileForm = ({ userId }: { userId?: string }) => {
 
   const { mutate: updateUser } = useMutation({
     mutationKey: ['users', 'update', userId],
-    mutationFn: async (data: TProfileForm) => {
+    mutationFn: async (data: TProfileForm): Promise<UpdateUser> => {
       const { data: user } = await axios.patch(`/api/users/${userId}`, {
         name: data.name,
       });

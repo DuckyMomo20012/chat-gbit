@@ -1,7 +1,52 @@
+import { Prisma } from '@prisma/client';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 import { z } from 'zod';
 import prisma from '@/lib/prisma';
 import { userBodySchema } from '@/pages/api/users/index';
+
+export const getOneUser = async (id: string) => {
+  return prisma.user.findUniqueOrThrow({
+    where: { id },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+};
+
+export const updateUser = async (id: string, data: Prisma.UserUpdateInput) => {
+  return prisma.user.update({
+    where: { id },
+    data,
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+};
+
+export const deleteUser = async (id: string) => {
+  return prisma.user.delete({
+    where: { id },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+};
+
+export type GetOneUser = Prisma.PromiseReturnType<typeof getOneUser>;
+export type UpdateUser = Prisma.PromiseReturnType<typeof updateUser>;
+export type DeleteUser = Prisma.PromiseReturnType<typeof deleteUser>;
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
@@ -13,16 +58,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case 'GET': {
       try {
-        const result = await prisma.user.findUniqueOrThrow({
-          where: { id: id as string },
-          select: {
-            id: true,
-            email: true,
-            name: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-        });
+        const result = await getOneUser(id as string);
 
         return res.status(200).json(result);
       } catch (err) {
@@ -40,17 +76,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           .partial()
           .parse(req.body);
 
-        const result = await prisma.user.update({
-          where: { id: id as string },
-          data: parsedBody,
-          select: {
-            id: true,
-            email: true,
-            name: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-        });
+        const result = await updateUser(id as string, parsedBody);
 
         return res.status(200).json(result);
       } catch (err) {
@@ -64,16 +90,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     case 'DELETE': {
       try {
-        const result = await prisma.user.delete({
-          where: { id: id as string },
-          select: {
-            id: true,
-            email: true,
-            name: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-        });
+        const result = await deleteUser(id as string);
 
         return res.status(200).json(result);
       } catch (err) {

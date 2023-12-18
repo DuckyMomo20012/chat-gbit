@@ -1,13 +1,13 @@
 import { Icon } from '@iconify/react';
 import { Alert, Button, Group, Stack, Text } from '@mantine/core';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-import { type OpenAI } from 'openai';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { type GetOneConversation } from './api/users/[id]/conversations/[conversationId]';
 import { TTypedMessageHandle } from '@/components/elements/TypedMessage';
 import { PromptForm } from '@/components/forms/PromptForm';
 import { VoiceForm } from '@/components/forms/VoiceForm';
@@ -68,23 +68,12 @@ const HomePage = () => {
     // NOTE: router.query.slug changes make the query refetch, not the "id", so
     // we have to pass all the slug to the queryKey
     queryKey: ['conversations', router.query.slug],
-    queryFn: async () => {
-      try {
-        // NOTE: Handle root path
-        if (!id) return [];
+    queryFn: async (): Promise<GetOneConversation> => {
+      const { data } = await axios.get(
+        `/api/users/${userId}/conversations/${id}`,
+      );
 
-        const { data } = await axios.get(
-          `/api/users/${userId}/conversations/${id}`,
-        );
-
-        return data;
-      } catch (err) {
-        if (err instanceof AxiosError) {
-          throw err;
-        }
-      }
-
-      return [];
+      return data;
     },
   });
 
@@ -98,7 +87,7 @@ const HomePage = () => {
       }: {
         model: string;
         conversationId: string;
-      }): Promise<OpenAI.Chat.ChatCompletion> => {
+      }) => {
         const { data } = await axios.post(
           `/api/users/${userId}/conversations/${conversationId}/completions`,
           {

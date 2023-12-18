@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { ConvoMenu } from '@/components/modules/ConvoMenu';
 import { ProfileMenu } from '@/components/modules/ProfileMenu';
+import { type GetConversations } from '@/pages/api/users/[id]/conversations';
 
 const Navbar = () => {
   const router = useRouter();
@@ -19,7 +20,7 @@ const Navbar = () => {
 
   const { data: conversations } = useQuery({
     queryKey: ['conversations', userId],
-    queryFn: async () => {
+    queryFn: async (): Promise<GetConversations> => {
       const { data } = await axios.get(`/api/users/${userId}/conversations`);
 
       return data;
@@ -48,7 +49,7 @@ const Navbar = () => {
 
       <ScrollArea className="h-full p-4">
         {conversations
-          ?.sort((a: { createdAt: string }, b: { createdAt: string }) => {
+          ?.sort((a, b) => {
             return (
               new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
             );
