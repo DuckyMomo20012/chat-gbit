@@ -70,6 +70,7 @@ const HomePage = () => {
 
       return data;
     },
+    enabled: !!id,
   });
 
   const lastMessage = chat?.messages && chat.messages.at(-1);
