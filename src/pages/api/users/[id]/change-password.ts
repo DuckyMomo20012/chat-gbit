@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import { bcrypt } from 'hash-wasm';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 import { z } from 'zod';
-import prisma from '@/lib/prisma';
+import { updateUser } from '@/pages/api/users/[id]/index';
 import { HASH_ROUNDS, userBodySchema } from '@/pages/api/users/index';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -27,18 +27,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           costFactor: HASH_ROUNDS,
         });
 
-        const result = await prisma.user.update({
-          where: { id: id as string },
-          data: {
-            password: newHashedPassword,
-          },
-          select: {
-            id: true,
-            email: true,
-            name: true,
-            createdAt: true,
-            updatedAt: true,
-          },
+        const result = await updateUser(id as string, {
+          password: newHashedPassword,
         });
 
         return res.status(200).json(result);
