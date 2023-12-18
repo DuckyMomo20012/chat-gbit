@@ -2,6 +2,7 @@ import { type NextApiRequest, type NextApiResponse } from 'next';
 import { z } from 'zod';
 import { getCompletions } from '@/lib/openai';
 import prisma from '@/lib/prisma';
+import { getOneConversation } from '@/pages/api/users/[id]/conversations/[conversationId]';
 import { completionBodySchema } from '@/pages/api/users/[id]/conversations/[conversationId]/completions';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -20,16 +21,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           })
           .parse(req.body);
 
-        const allMessages = await prisma.conversation.findUnique({
-          where: { id: conversationId as string, userId: userId as string },
-          include: {
-            messages: {
-              orderBy: {
-                createdAt: 'asc',
-              },
-            },
-          },
-        });
+        const allMessages = await getOneConversation(
+          userId as string,
+          conversationId as string,
+        );
 
         const completion = await getCompletions({
           model: parsedBody.model,

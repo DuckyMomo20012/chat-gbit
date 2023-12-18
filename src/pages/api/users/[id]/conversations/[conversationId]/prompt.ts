@@ -1,6 +1,7 @@
 import { type NextApiRequest, type NextApiResponse } from 'next';
 import { z } from 'zod';
 import prisma from '@/lib/prisma';
+import { getOneConversation } from '@/pages/api/users/[id]/conversations/[conversationId]';
 
 export const promptBodySchema = z.object({
   content: z.string().max(191),
@@ -21,16 +22,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       try {
         const parsedBody = promptBodySchema.parse(req.body);
 
-        const allMessages = await prisma.conversation.findUniqueOrThrow({
-          where: { id: conversationId as string, userId: userId as string },
-          include: {
-            messages: {
-              orderBy: {
-                createdAt: 'asc',
-              },
-            },
-          },
-        });
+        const allMessages = await getOneConversation(
+          userId as string,
+          conversationId as string,
+        );
 
         const lastMessage = allMessages?.messages.at(-1);
 

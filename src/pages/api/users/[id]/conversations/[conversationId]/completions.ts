@@ -2,6 +2,7 @@ import { type NextApiRequest, type NextApiResponse } from 'next';
 import { z } from 'zod';
 import { getCompletions } from '@/lib/openai';
 import prisma from '@/lib/prisma';
+import { getOneConversation } from '@/pages/api/users/[id]/conversations/[conversationId]';
 
 export const completionBodySchema = z.object({
   model: z.string(),
@@ -23,9 +24,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case 'POST': {
       try {
-        await prisma.conversation.findUniqueOrThrow({
-          where: { id: conversationId as string, userId: userId as string },
-        });
+        await getOneConversation(userId as string, conversationId as string);
 
         const parsedBody = completionBodySchema.parse(req.body);
 
