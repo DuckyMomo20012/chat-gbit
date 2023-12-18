@@ -12,8 +12,7 @@ import { type GetChat } from '@/pages/api/users/[id]/chat';
 const Navbar = () => {
   const router = useRouter();
 
-  const { slug } = router.query;
-  const id = slug?.at(0);
+  const id = router.query.slug?.at(0);
 
   const { data: session } = useSession();
   const userId = session?.user?.id;

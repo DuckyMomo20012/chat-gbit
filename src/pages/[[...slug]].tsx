@@ -25,8 +25,7 @@ export type TPromptForm = {
 const HomePage = () => {
   const router = useRouter();
 
-  const { slug } = router.query;
-  const id = slug?.at(0);
+  const id = router.query.slug?.at(0);
 
   const { data: session } = useSession();
   const userId = session?.user?.id;
@@ -37,7 +36,7 @@ const HomePage = () => {
 
   const [isError, setIsError] = useState(false);
 
-  const getConvoId = useCallback(async () => {
+  const getChatId = useCallback(async () => {
     if (!id) {
       const { data: convo } = await axios.post(`/api/users/${userId}/chat`, {
         title: 'Untitled',
@@ -210,12 +209,11 @@ const HomePage = () => {
   }, [lastMessage, isBusy]);
 
   const allowSystemMessage = !chat || chat?.messages?.length === 0;
-  console.log('allowSystemMessage', allowSystemMessage);
 
   const handleSubmit = async (data: TPromptForm) => {
     if (isBusy) return;
 
-    const chatId = await getConvoId();
+    const chatId = await getChatId();
 
     submitPrompt(
       {
