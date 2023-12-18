@@ -8,7 +8,7 @@ import { z } from 'zod';
 import {
   type GetOneConversation,
   type UpdateConversation,
-} from '@/pages/api/users/[id]/conversations/[conversationId]';
+} from '@/pages/api/users/[id]/chat/[conversationId]';
 
 export const conversationSchema = z.object({
   title: z.string(),

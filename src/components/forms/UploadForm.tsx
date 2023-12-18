@@ -14,7 +14,7 @@ import { useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { fromZodError } from 'zod-validation-error';
-import { type GetOneConversation } from '@/pages/api/users/[id]/conversations/[conversationId]';
+import { type GetOneConversation } from '@/pages/api/users/[id]/chat/[conversationId]';
 
 type TUploadForm = {
   convo: string;

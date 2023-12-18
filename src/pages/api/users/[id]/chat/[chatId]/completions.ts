@@ -2,7 +2,7 @@ import { type NextApiRequest, type NextApiResponse } from 'next';
 import { z } from 'zod';
 import { getCompletions } from '@/lib/openai';
 import prisma from '@/lib/prisma';
-import { getOneConversation } from '@/pages/api/users/[id]/conversations/[conversationId]';
+import { getOneConversation } from '@/pages/api/users/[id]/chat/[conversationId]';
 
 export const completionBodySchema = z.object({
   model: z.string(),

@@ -2,7 +2,7 @@ import { Prisma } from '@prisma/client';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 import { z } from 'zod';
 import prisma from '@/lib/prisma';
-import { conversationBodySchema } from '@/pages/api/users/[id]/conversations/index';
+import { conversationBodySchema } from '@/pages/api/users/[id]/chat/index';
 
 export const getOneConversation = async (
   userId: string,
