@@ -5,7 +5,6 @@ import axios from 'axios';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-import { type OpenAI } from 'openai';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { type GetOneConversation } from './api/users/[id]/conversations/[conversationId]';
@@ -88,7 +87,7 @@ const HomePage = () => {
       }: {
         model: string;
         conversationId: string;
-      }): Promise<OpenAI.Chat.ChatCompletion> => {
+      }) => {
         const { data } = await axios.post(
           `/api/users/${userId}/conversations/${conversationId}/completions`,
           {
