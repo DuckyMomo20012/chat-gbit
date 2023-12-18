@@ -23,7 +23,7 @@ const ConvoForm = ({ chatId }: { chatId: string }) => {
   const queryClient = useQueryClient();
 
   const { data: chat } = useQuery({
-    queryKey: ['chat', userId, chatId],
+    queryKey: ['users', userId, 'chat', chatId],
     queryFn: async (): Promise<GetOneChat> => {
       const { data } = await axios.get(`/api/users/${userId}/chat/${chatId}`);
 
@@ -32,7 +32,7 @@ const ConvoForm = ({ chatId }: { chatId: string }) => {
   });
 
   const { mutate: updateTitle } = useMutation({
-    mutationKey: ['chat', 'updateTitle', userId, chatId],
+    mutationKey: ['users', userId, 'chat', chatId, { type: 'updateTitle' }],
     mutationFn: async (data: TChatForm): Promise<UpdateChat> => {
       const { data: convo } = await axios.patch(
         `/api/users/${userId}/chat/${chatId}`,
@@ -45,7 +45,7 @@ const ConvoForm = ({ chatId }: { chatId: string }) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['chat'],
+        queryKey: ['users', userId, 'chat'],
       });
     },
   });

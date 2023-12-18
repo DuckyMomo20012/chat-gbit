@@ -1,18 +1,18 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Group, PasswordInput, Space, Stack } from '@mantine/core';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { signOut } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { type UpdateUser } from '@/pages/api/users/[id]';
+import { changePasswordBodySchema } from '@/pages/api/users/[id]/change-password';
 
-export const changePasswordSchema = z
-  .object({
-    password: z.string().optional(),
+export const changePasswordSchema = changePasswordBodySchema
+  .extend({
     confirmPassword: z.string().optional(),
   })
-  .refine((data) => data.password === data.confirmPassword, {
+  .refine((data) => data.newPassword === data.confirmPassword, {
     message: "Passwords don't match",
     path: ['confirmPassword'],
   });
@@ -22,13 +22,29 @@ export type TChangePasswordForm = z.infer<typeof changePasswordSchema>;
 const ChangePasswordForm = ({ userId }: { userId?: string }) => {
   const queryClient = useQueryClient();
 
+  const {
+    setError,
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isDirty },
+  } = useForm<TChangePasswordForm>({
+    defaultValues: {
+      oldPassword: '',
+      newPassword: '',
+      confirmPassword: '',
+    },
+    resolver: zodResolver(changePasswordSchema),
+  });
+
   const { mutate: updateUser } = useMutation({
-    mutationKey: ['users', 'update', userId],
+    mutationKey: ['users', userId, 'update'],
     mutationFn: async (data: TChangePasswordForm): Promise<UpdateUser> => {
       const { data: user } = await axios.patch(
         `/api/users/${userId}/change-password`,
         {
-          password: data.password,
+          oldPassword: data.oldPassword,
+          newPassword: data.newPassword,
         },
       );
 
@@ -36,7 +52,7 @@ const ChangePasswordForm = ({ userId }: { userId?: string }) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['user', userId],
+        queryKey: ['users', userId],
       });
 
       // NOTE: We need to sign out the user after changing the password because
@@ -46,19 +62,15 @@ const ChangePasswordForm = ({ userId }: { userId?: string }) => {
         callbackUrl: '/auth/sign-in',
       });
     },
-  });
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isDirty },
-  } = useForm<TChangePasswordForm>({
-    defaultValues: {
-      password: '',
-      confirmPassword: '',
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 400) {
+          setError('oldPassword', {
+            message: 'Old password is incorrect',
+          });
+        }
+      }
     },
-    resolver: zodResolver(changePasswordSchema),
   });
 
   const onSubmit = (data: TChangePasswordForm) => {
@@ -69,9 +81,14 @@ const ChangePasswordForm = ({ userId }: { userId?: string }) => {
     <form className="h-full w-full" onSubmit={handleSubmit(onSubmit)}>
       <Stack>
         <PasswordInput
-          error={errors.password?.message}
-          label="Password"
-          {...register('password')}
+          error={errors.oldPassword?.message}
+          label="Old password"
+          {...register('oldPassword')}
+        />
+        <PasswordInput
+          error={errors.newPassword?.message}
+          label="New password"
+          {...register('newPassword')}
         />
         <PasswordInput
           error={errors.confirmPassword?.message}

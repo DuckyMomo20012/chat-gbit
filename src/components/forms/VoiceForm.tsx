@@ -70,6 +70,7 @@ const VoiceForm = ({
   }, [reset, isSubmitSuccessful]);
 
   const { isPending, error, mutateAsync } = useMutation({
+    mutationKey: ['voice'],
     mutationFn: async (
       formData: TVoiceForm,
     ): Promise<OpenAI.Audio.Transcription> => {

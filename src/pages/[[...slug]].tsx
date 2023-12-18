@@ -64,18 +64,20 @@ const HomePage = () => {
   const { data: chat, isFetching } = useQuery({
     // NOTE: router.query.slug changes make the query refetch, not the "id", so
     // we have to pass all the slug to the queryKey
-    queryKey: ['chat', router.query.slug],
+    queryKey: ['users', userId, 'chat', router.query.slug],
     queryFn: async (): Promise<GetOneChat> => {
       const { data } = await axios.get(`/api/users/${userId}/chat/${id}`);
 
       return data;
     },
+    enabled: !!id,
   });
 
   const lastMessage = chat?.messages && chat.messages.at(-1);
 
   const { isPending: isFetchingCompletions, mutate: getCompletions } =
     useMutation({
+      mutationKey: ['chat', router.query.slug, 'completions', 'user', userId],
       mutationFn: async ({
         model,
         chatId,
@@ -105,10 +107,20 @@ const HomePage = () => {
 
         return data;
       },
-      onSuccess: () => {
+      onSuccess: (data) => {
         queryClient.invalidateQueries({
-          queryKey: ['chat', router.query.slug],
+          queryKey: ['users', userId, 'chat', router.query.slug],
         });
+
+        setTypingMsgs((prev) => [...prev, data.id]);
+
+        typingRefs.current = [
+          ...typingRefs.current,
+          {
+            id: data.id,
+            ref: null,
+          },
+        ];
       },
       onError: () => {
         setIsError(true);
@@ -116,6 +128,7 @@ const HomePage = () => {
     });
 
   const { isPending: isSubmittingPrompt, mutate: submitPrompt } = useMutation({
+    mutationKey: ['chat', router.query.slug, 'prompt', 'user', userId],
     mutationFn: async ({
       role,
       content,
@@ -137,34 +150,15 @@ const HomePage = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['chat', router.query.slug],
+        // NOTE: We have to invalidate the whole chat, because we may create new
+        // chat if the chatId is not provided
+        queryKey: ['users', userId, 'chat'],
       });
-
-      if (id) {
-        getCompletions(
-          {
-            model: currModel.chat.name,
-            chatId: id,
-          },
-          {
-            onSuccess: (data) => {
-              setTypingMsgs((prev) => [...prev, data.id]);
-
-              typingRefs.current = [
-                ...typingRefs.current,
-                {
-                  id: data.id,
-                  ref: null,
-                },
-              ];
-            },
-          },
-        );
-      }
     },
   });
 
   const { isPending: isRegenerating, mutateAsync: regenerate } = useMutation({
+    mutationKey: ['chat', router.query.slug, 'regenerate', 'user', userId],
     mutationFn: async ({ chatId }: { chatId: string }) => {
       const { data } = await axios.post(
         `/api/users/${userId}/chat/${chatId}/regenerate`,
@@ -177,12 +171,13 @@ const HomePage = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['chat', router.query.slug],
+        queryKey: ['users', userId, 'chat', router.query.slug],
       });
     },
   });
 
   const { mutate: updateContent } = useMutation({
+    mutationKey: ['chat', router.query.slug, 'updateContent', 'user', userId],
     mutationFn: async ({
       content,
       messageId,
@@ -198,7 +193,7 @@ const HomePage = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['chat', router.query.slug],
+        queryKey: ['users', userId, 'chat', router.query.slug],
       });
     },
   });
@@ -214,26 +209,32 @@ const HomePage = () => {
     return !isBusy && lastMessage && lastMessage.role !== 'system';
   }, [lastMessage, isBusy]);
 
-  const allowSystemMessage = chat?.messages?.length === 0;
+  const allowSystemMessage = !chat || chat?.messages?.length === 0;
+  console.log('allowSystemMessage', allowSystemMessage);
 
   const handleSubmit = async (data: TPromptForm) => {
     if (isBusy) return;
 
     const chatId = await getConvoId();
 
-    if (data?.asSystemMessage) {
-      submitPrompt({
-        role: 'system',
+    submitPrompt(
+      {
+        role: data?.asSystemMessage ? 'system' : 'user',
         content: data.prompt,
         chatId,
-      });
-    } else {
-      submitPrompt({
-        role: 'user',
-        content: data.prompt,
-        chatId,
-      });
-    }
+      },
+      {
+        onSuccess: () => {
+          // NOTE: We don't want to fetch completions for system message
+          if (data?.asSystemMessage) return;
+
+          getCompletions({
+            model: currModel.chat.name,
+            chatId,
+          });
+        },
+      },
+    );
   };
 
   return (
