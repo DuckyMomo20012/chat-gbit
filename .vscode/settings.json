@@ -5,8 +5,8 @@
   },
   "editor.bracketPairColorization.enabled": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true,
-    "source.sortImports": false
+    "source.fixAll.eslint": "explicit",
+    "source.sortImports": "never"
   },
   "editor.quickSuggestions": {
     "strings": true
