@@ -93,16 +93,16 @@ const ModelForm = () => {
     }
   }, [isSubmitSuccessful, models, reset]);
 
-  const onSubmit = (data: TModelForm) => {
+  const onSubmit = (formData: TModelForm) => {
     dispatch(
       setModel([
         {
           type: 'chat',
-          name: data.chatModel,
+          name: formData.chatModel,
         },
         {
           type: 'audio',
-          name: data.audioModel,
+          name: formData.audioModel,
         },
       ]),
     );

@@ -39,16 +39,16 @@ const ChangePasswordForm = ({ userId }: { userId?: string }) => {
 
   const { mutate: updateUser } = useMutation({
     mutationKey: ['users', userId, 'update'],
-    mutationFn: async (data: TChangePasswordForm): Promise<UpdateUser> => {
-      const { data: user } = await axios.patch(
+    mutationFn: async (formData: TChangePasswordForm): Promise<UpdateUser> => {
+      const { data } = await axios.patch(
         `/api/users/${userId}/change-password`,
         {
-          oldPassword: data.oldPassword,
-          newPassword: data.newPassword,
+          oldPassword: formData.oldPassword,
+          newPassword: formData.newPassword,
         },
       );
 
-      return user;
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -73,8 +73,8 @@ const ChangePasswordForm = ({ userId }: { userId?: string }) => {
     },
   });
 
-  const onSubmit = (data: TChangePasswordForm) => {
-    updateUser(data);
+  const onSubmit = (formData: TChangePasswordForm) => {
+    updateUser(formData);
   };
 
   return (

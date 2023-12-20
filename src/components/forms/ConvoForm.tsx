@@ -33,15 +33,15 @@ const ConvoForm = ({ chatId }: { chatId: string }) => {
 
   const { mutate: updateTitle } = useMutation({
     mutationKey: ['users', userId, 'chat', chatId, { type: 'updateTitle' }],
-    mutationFn: async (data: TChatForm): Promise<UpdateChat> => {
-      const { data: convo } = await axios.patch(
+    mutationFn: async (formData: TChatForm): Promise<UpdateChat> => {
+      const { data } = await axios.patch(
         `/api/users/${userId}/chat/${chatId}`,
         {
-          title: data.title,
+          title: formData.title,
         },
       );
 
-      return convo;
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -67,8 +67,8 @@ const ConvoForm = ({ chatId }: { chatId: string }) => {
     }
   }, [chat, reset]);
 
-  const onSubmit = (data: TChatForm) => {
-    updateTitle(data);
+  const onSubmit = (formData: TChatForm) => {
+    updateTitle(formData);
   };
 
   return (

@@ -31,21 +31,20 @@ const convoSchema = z.array(
 const UploadForm = () => {
   const router = useRouter();
 
-  const { slug } = router.query;
-  const id = slug?.at(0);
+  const id = router.query.slug?.at(0);
 
   const { data: session } = useSession();
   const userId = session?.user?.id;
 
-  const getConvoId = useCallback(async () => {
+  const getChatId = useCallback(async () => {
     if (!id) {
-      const { data: convo } = await axios.post(`/api/users/${userId}/chat`, {
+      const { data } = await axios.post(`/api/users/${userId}/chat`, {
         title: 'Untitled',
       });
 
-      await router.push(`/${convo.id}`);
+      await router.push(`/${data.id}`);
 
-      return convo.id;
+      return data.id;
     }
 
     return id;
@@ -164,23 +163,23 @@ const UploadForm = () => {
     } satisfies TUploadForm);
   }, [trainedMessages, reset]);
 
-  const onSubmit = async (data: TUploadForm) => {
+  const onSubmit = async (formData: TUploadForm) => {
     try {
-      if (data.convo === '') {
+      if (formData.convo === '') {
         return;
       }
 
-      const parsed = JSON.parse(data.convo);
+      const parsed = JSON.parse(formData.convo);
       const convo = convoSchema.parse(parsed);
 
       // NOTE: We purge the convo even if the data is an empty array
       if (convo.length >= 0) {
-        const chatId = await getConvoId();
+        const chatId = await getChatId();
 
         uploadTrainMessages({
           chatId,
           messages: convo,
-          isHidden: data.hideMessages,
+          isHidden: formData.hideMessages,
           isTrained: true,
         });
       }

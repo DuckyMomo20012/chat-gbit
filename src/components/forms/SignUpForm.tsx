@@ -45,14 +45,14 @@ const SignUpForm = () => {
 
   const { mutate: signUp } = useMutation({
     mutationKey: ['users', 'signUp'],
-    mutationFn: async (data: TSignUpForm): Promise<CreateUser> => {
-      const { data: user } = await axios.post('/api/users', {
-        name: data.name,
-        email: data.email,
-        password: data.password,
+    mutationFn: async (formData: TSignUpForm): Promise<CreateUser> => {
+      const { data } = await axios.post('/api/users', {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
       });
 
-      return user;
+      return data;
     },
     onSuccess: () => {
       router.push('/auth/sign-in');
@@ -68,8 +68,8 @@ const SignUpForm = () => {
     },
   });
 
-  const onSubmit = (data: TSignUpForm) => {
-    signUp(data);
+  const onSubmit = (formData: TSignUpForm) => {
+    signUp(formData);
   };
 
   return (

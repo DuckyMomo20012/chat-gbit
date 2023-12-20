@@ -49,7 +49,7 @@ const ProfileMenu = () => {
         <ChangePasswordForm userId={userId} />
       </Modal>
 
-      <Menu position="right-end">
+      <Menu position="top-end">
         <Menu.Target>
           <NavLink
             className="rounded-md"

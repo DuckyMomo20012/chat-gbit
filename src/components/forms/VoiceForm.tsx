@@ -34,7 +34,7 @@ const VoiceForm = ({
   allowSystemMessage = false,
 }: {
   isBusy: boolean;
-  submitPrompt: (data: TPromptForm) => unknown;
+  submitPrompt: (formData: TPromptForm) => unknown;
   allowSystemMessage?: boolean;
 }) => {
   const voiceRef = useRef<TVoiceInputHandle>();
@@ -87,12 +87,12 @@ const VoiceForm = ({
     },
   });
 
-  const onSubmit = async (data: TVoiceForm) => {
-    const transcriptions = await mutateAsync(data);
+  const onSubmit = async (formData: TVoiceForm) => {
+    const transcriptions = await mutateAsync(formData);
 
     submitPrompt({
       prompt: transcriptions.text,
-      asSystemMessage: data.asSystemMessage,
+      asSystemMessage: formData.asSystemMessage,
     });
   };
 

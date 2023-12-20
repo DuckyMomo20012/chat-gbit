@@ -35,10 +35,10 @@ const SignInForm = () => {
     resolver: zodResolver(signInSchema),
   });
 
-  const onSubmit = async (data: TSignInForm) => {
+  const onSubmit = async (formData: TSignInForm) => {
     const res = await signIn('credentials', {
-      email: data.email,
-      password: data.password,
+      email: formData.email,
+      password: formData.password,
       redirect: false,
     });
 

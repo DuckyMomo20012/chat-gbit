@@ -27,12 +27,12 @@ const ProfileForm = ({ userId }: { userId?: string }) => {
 
   const { mutate: updateUser } = useMutation({
     mutationKey: ['users', userId, 'update'],
-    mutationFn: async (data: TProfileForm): Promise<UpdateUser> => {
-      const { data: user } = await axios.patch(`/api/users/${userId}`, {
-        name: data.name,
+    mutationFn: async (formData: TProfileForm): Promise<UpdateUser> => {
+      const { data } = await axios.patch(`/api/users/${userId}`, {
+        name: formData.name,
       });
 
-      return user;
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -61,8 +61,8 @@ const ProfileForm = ({ userId }: { userId?: string }) => {
     }
   }, [userInfo, reset]);
 
-  const onSubmit = (data: TProfileForm) => {
-    updateUser(data);
+  const onSubmit = (formData: TProfileForm) => {
+    updateUser(formData);
   };
 
   return (

@@ -25,8 +25,7 @@ export type TPromptForm = {
 const HomePage = () => {
   const router = useRouter();
 
-  const { slug } = router.query;
-  const id = slug?.at(0);
+  const id = router.query.slug?.at(0);
 
   const { data: session } = useSession();
   const userId = session?.user?.id;
@@ -37,15 +36,15 @@ const HomePage = () => {
 
   const [isError, setIsError] = useState(false);
 
-  const getConvoId = useCallback(async () => {
+  const getChatId = useCallback(async () => {
     if (!id) {
-      const { data: convo } = await axios.post(`/api/users/${userId}/chat`, {
+      const { data } = await axios.post(`/api/users/${userId}/chat`, {
         title: 'Untitled',
       });
 
-      await router.push(`/${convo.id}`);
+      await router.push(`/${data.id}`);
 
-      return convo.id;
+      return data.id;
     }
 
     return id;
@@ -210,23 +209,22 @@ const HomePage = () => {
   }, [lastMessage, isBusy]);
 
   const allowSystemMessage = !chat || chat?.messages?.length === 0;
-  console.log('allowSystemMessage', allowSystemMessage);
 
-  const handleSubmit = async (data: TPromptForm) => {
+  const handleSubmit = async (formData: TPromptForm) => {
     if (isBusy) return;
 
-    const chatId = await getConvoId();
+    const chatId = await getChatId();
 
     submitPrompt(
       {
-        role: data?.asSystemMessage ? 'system' : 'user',
-        content: data.prompt,
+        role: formData?.asSystemMessage ? 'system' : 'user',
+        content: formData.prompt,
         chatId,
       },
       {
         onSuccess: () => {
           // NOTE: We don't want to fetch completions for system message
-          if (data?.asSystemMessage) return;
+          if (formData?.asSystemMessage) return;
 
           getCompletions({
             model: currModel.chat.name,
