@@ -58,10 +58,7 @@
 - [Usage](#eyes-usage)
   - [Basic usage](#basic-usage)
   - [Set model for chat](#set-model-for-chat)
-  - [Monitor usage](#monitor-usage)
-  - [Save chat history to local storage](#save-chat-history-to-local-storage)
-  - [Upload training conversation](#upload-training-conversation)
-  - [Clear chat history](#clear-chat-history)
+  - [Upload training chat](#upload-training-chat)
   - [MDX support](#mdx-support)
   - [Code highlighting](#code-highlighting)
 - [Roadmap](#compass-roadmap)
@@ -81,28 +78,28 @@
 ### :camera: Screenshots
 
 <div align="center">
+  <img src="https://github.com/DuckyMomo20012/chat-gbit/assets/64480713/8f23cd9d-7e55-45d5-867c-bdaf109a3247" alt="text_input" />
   <p>Text input demo</p>
-  <img src="https://user-images.githubusercontent.com/64480713/225955214-9c07dd9f-8ebf-4d3e-a94c-31d57958fc8e.png" alt="text_input" />
 </div>
 
 <div align="center">
+  <img src="https://github.com/DuckyMomo20012/chat-gbit/assets/64480713/12cc10ac-8cb5-44a7-81ae-8c7e32ab58fc" alt="text_input_dark_mode" />
+  <p>Text input demo (dark mode)</p>
+</div>
+
+<div align="center">
+  <img src="https://github.com/DuckyMomo20012/chat-gbit/assets/64480713/d28ec857-3eac-4837-b21f-1e7958422615" alt="voice_input" />
   <p>Voice input demo</p>
-  <img src="https://user-images.githubusercontent.com/64480713/225954834-fea4655c-2374-472c-ad93-5954bfccef27.png" alt="voice_input" />
 </div>
 
 <div align="center">
-  <p>Monitor usage</p>
-  <img src="https://user-images.githubusercontent.com/64480713/225955817-9e008443-81fd-45e1-b1be-42e81e1951c8.png" alt="usage" />
-</div>
-
-<div align="center">
-  <p>Upload training conversation</p>
-  <img src="https://user-images.githubusercontent.com/64480713/225956795-f125d777-6e0a-4de8-bc22-b263186f86d9.png" alt="upload_training" />
+  <img src="https://github.com/DuckyMomo20012/chat-gbit/assets/64480713/a0b3e3ee-a432-49ac-88f7-b94109a36854" alt="upload_training" />
+  <p>Upload training chat</p>
 </div>
 
 <div align="center">
   <p>Code highlighting</p>
-  <img src="https://user-images.githubusercontent.com/64480713/226118482-d860fd83-afea-4981-9f7b-dbc8d5f2cf93.png" alt="code_highlighting" />
+  <img src="https://github.com/DuckyMomo20012/chat-gbit/assets/64480713/7da33839-f03a-4224-bec1-aca3639e6ac5" alt="code_highlighting" />
 </div>
 
 <!-- TechStack -->
@@ -112,14 +109,12 @@
 <details>
   <summary>Client</summary>
   <ul>
-    <li><a href="https://www.javascript.com/">Javascript</a></li>
-    <li><a href="https://reactjs.org/">React.js</a></li>
+    <li><a href="https://www.typescriptlang.org/">Typescript</a></li>
     <li><a href="https://nextjs.org/">NextJS</a></li>
     <li><a href="https://redux-toolkit.js.org/">Redux Toolkit</a></li>
-    <li><a href="https://react-query.tanstack.com/">React Query</a></li>
-    <li><a href="https://windicss.org/">WindiCSS</a></li>
+    <li><a href="https://tanstack.com/query/latest">TanStack Query</a></li>
+    <li><a href="https://tailwindcss.com/">TailwindCSS</a></li>
     <li><a href="https://mantine.dev/">Mantine</a></li>
-    <li><a href="https://storybook.js.org/">Storybook</a></li>
     <li><a href="https://eslint.org/">ESLint</a></li>
     <li><a href="https://prettier.io/">Prettier</a></li>
     <li><a href="https://iconify.design/">Iconify</a></li>
@@ -129,7 +124,9 @@
 <details>
   <summary>Server</summary>
   <ul>
+    <li><a href="https://www.postgresql.org/">PostgreSQL</a></li>
     <li><a href="https://nextjs.org/">NextJS</a></li>
+    <li><a href="https://www.prisma.io/">Prisma</a></li>
   </ul>
 </details>
 
@@ -137,13 +134,13 @@
 
 ### :dart: Features
 
+- Chat history. 🆕
+- Simple authentication. 🆕
+- Self-hosted AI server with [LocalAI](https://localai.io/). 🆕
 - New chat completion.
 - Voice input.
 - Allow setting model for the chat.
-- Monitor usage.
-- Save chat history to local storage.
-- Clear chat history.
-- Upload training conversation.
+- Upload training chat.
 - Regenerate chat completion.
 - MDX support.
 - Code highlighting.
@@ -157,17 +154,23 @@ your `.env` file:
 
 - **NextAuth configs:**
 
-  `NEXTAUTH_SECRET`: Used to encrypt the NextAuth.js JWT, and to hash email
-  verification tokens.
+  - `NEXTAUTH_SECRET`: Used to encrypt the NextAuth.js JWT, and to hash email
+    verification tokens.
 
-  `NEXTAUTH_URL`: When deploying to production, set the `NEXTAUTH_URL` environment
-  variable to the canonical URL of your site.
+  - `NEXTAUTH_URL`: When deploying to production, set the `NEXTAUTH_URL` environment
+    variable to the canonical URL of your site.
 
-  > **Note**: Doesn't have to set `NEXTAUTH_URL` when deploying to vercel.
+> [!NOTE]
+> Doesn't have to set `NEXTAUTH_URL` when deploying to vercel.
 
 - **App configs:**
 
-  `OPENAI_API_KEY`: OpenAI API key.
+  - `OPENAI_API_KEY`: OpenAI API key.
+
+  - `LOCAL_AI_BASE_URL`: URL of the local AI server, this is used to connect to
+    the local AI server.
+
+  - `DATABASE_URL`: PostgreSQL database URL.
 
 E.g:
 
@@ -176,6 +179,8 @@ E.g:
 NEXTAUTH_SECRET="my-secret-key"
 NEXTAUTH_URL="http://localhost:3000/"
 OPENAI_API_KEY="sk-***"
+LOCAL_AI_BASE_URL="http://localhost:8080"
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/chatgbit"
 ```
 
 You can also check out the file `.env.example` to see all required environment
@@ -189,11 +194,20 @@ variables.
 
 ### :bangbang: Prerequisites
 
-This project uses [pnpm](https://pnpm.io/) as package manager:
+- PostgreSQL: `16.1`.
 
-```bash
-npm install --global pnpm
-```
+- This project uses [pnpm](https://pnpm.io/) as package manager:
+
+  ```bash
+  npm install --global pnpm
+  ```
+
+- Docker & Docker Compose: This project uses Docker Compose to run the
+  PostgreSQL database and the local AI server.
+
+  - Install Docker: https://docs.docker.com/get-docker/
+
+  - Install Docker Compose: https://docs.docker.com/compose/install/
 
 <!-- Run Locally -->
 
@@ -215,6 +229,24 @@ Install dependencies:
 
 ```bash
 pnpm install
+```
+
+Start the database:
+
+```bash
+docker-compose up -d
+```
+
+Or, with the Local AI server (might take a while to download the model):
+
+```bash
+docker-compose up -d -profile local-ai
+```
+
+Run the migrations:
+
+```bash
+pnpm prisma:migrate
 ```
 
 Start the server:
@@ -246,7 +278,8 @@ You can communicate with the chatbot by:
   - This feature requires microphone permission. If you haven't granted the
     permission, the browser will ask you to grant permission.
 
-  - You can ONLY record up to **30 seconds** of audio to **reduce the cost**.
+  - You can ONLY record up to **30 seconds** of audio, this feature is intended
+    to **reduce the cost**.
 
   - The audio data is persisted until the user submits the prompt, reloads the
     page, or start a new recording.
@@ -280,9 +313,10 @@ Flow description:
 - When the client is typing the completion, you can stop the generation by
   clicking the `Stop generating` button.
 
-  > **Note**: The completion is **already generated** and sent to the client
-  > before typing the completion. **So you are already billed for that
-  > completion**.
+> [!NOTE]
+> The completion is **already generated** and sent to the client
+> before typing the completion. **So you are already billed for that
+> completion (if you use OpenAI models)**.
 
 - When there is no typing completion and not fetching the completion, you can
   regenerate the completion by clicking the `Regenerate response` button.
@@ -305,66 +339,31 @@ Available models:
 
 - `gpt-3.5-turbo`
 - `gpt-3.5-turbo-0301`: supported through at least June 1st.
+- `ggml-gpt4all-j-v1.3-groovy.bin` (Self-hosted): Local AI chat model.
+- `ggml-whisper-base.bin` (Self-hosted): Local AI transcription model.
 
-> **Note**: You should change the model before submitting the prompt. Changing
-> after submitting the prompt will have no effect.
+> [!NOTE]
+> You should change the model before submitting the prompt. Changing after
+> submitting the prompt will have no effect.
 
-<!-- Monitor usage -->
+<!-- Upload training chat -->
 
-### Monitor usage
+### Upload training chat
 
-You can monitor the usage by clicking the `Usage` button.
+As the Chat Completion API supports the "hard-coded" chat, you now can
+upload training chat to the chatbot by clicking the `Settings` button.
 
-The usage panel will show the usage tokens in the chat:
+> [!CAUTION]
+> Update training chat will delete all the chat history.
 
-- `Current Tokens`: The current usage tokens of the messages **displayed in the
-  chat**.
-
-  - The `Next bill` will inform you of the minimum cost of the next bill.
-
-- `All-time Tokens`: The total usage user requested to the server. This will
-  include the usage tokens of the messages **not displaying in the chat**, e.g.,
-  stopped generation, regenerated, etc.
-
-> **Note**: The usage of Whisper API is not tracked.
-
-<!-- Save chat history to local storage -->
-
-### Save chat history to local storage
-
-By default, the chat history will be saved to local storage. Therefore, you can
-still see the chat history after refreshing the page.
-
-<!-- Upload training conversation -->
-
-### Upload training conversation
-
-As the Chat Completion API supports the "hard-coded" conversation, you now can
-upload training conversation to the chatbot by clicking the `Train` button.
-
-> **Warning**: Update training conversation will delete all the conversation
-> history.
-
-- The conversation MUST follow [chat
+- The chat MUST follow [chat
   format](https://platform.openai.com/docs/guides/chat/introduction).
 
-- User can also hide the training conversation by clicking the `Hide training
+- User can also hide the training chat by clicking the `Hide training
 messages` button.
 
 - The form is validated while typing, so you can see the error message while
   typing.
-
-> **Note**: There is a known issue that the `JsonInput` component will have
-> empty value when the conversation is cleared (clicking `Clear` button),
-> `TextInput` is fine. This won't affect the user experience, but it's still a
-> bug.
-
-<!-- Clear chat history -->
-
-### Clear chat history
-
-You can clear the chat history by clicking the `Clear conversation` button. All
-the data stored in local storage will be removed.
 
 <!-- MDX support -->
 
@@ -381,8 +380,9 @@ When parsing the markdown content, the content will be **safely** sanitized by
 - Code blocks and inline code is allowed to keep the `className` attribute to
   support code highlighting.
 
-> **Warning**: The content in `.mdx` files are **not sanitized**. You should
-> aware of the security risk.
+> [!WARNING]
+> The content in `.mdx` files are **not sanitized**. You should aware of the
+> security risk.
 
 <!-- Code highlighting -->
 
@@ -391,16 +391,19 @@ When parsing the markdown content, the content will be **safely** sanitized by
 Now the app can support code highlighting in the chat (both prompt and
 completion).
 
-> **Note**: Writing markdown content for the prompt is **not recommended**. The
-> prompt should be plain text.
+> [!NOTE]
+> Writing markdown content for the prompt is **not recommended**. The prompt
+> should be plain text.
 
 - Code highlighting is not supported while typing, you still can see the backticks
   (**\`**) in the chat.
 
 For example, when the message contains a code block or inline code:
 
-- Code block (**\`\`\`**): The code block will be highlighted with Prism code
-  highlight from the [@mantine/prism](https://mantine.dev/others/prism/).
+- Code block (**\`\`\`**): The code block will be highlighted with
+  `CodeHighlight` code highlight from the
+  [@mantine/prism](https://mantine.dev/others/code-highlight/), due to the
+  Mantine v7 upgrade.
 
   - If the code block has a language specified, e.g., `python`, the code block
     will be highlighted with the corresponding language if Prism supports it.
@@ -408,21 +411,22 @@ For example, when the message contains a code block or inline code:
 - Inline code (**\`**): The inline code will be highlighted with Mantine's
   [`Code`](https://mantine.dev/core/code/) component.
 
-> **Note**: The code highlighting **won't effect the real prompt or
-> completion**, even if the user stop the generation while typing the
-> completion. The prompt or completion will be sent to the server as plain
-> text.
+> [!NOTE]
+> The code highlighting **won't effect the real prompt or completion**, even if
+> the user stop the generation while typing the completion. The prompt or
+> completion will be sent to the server as plain text.
 
 <!-- Roadmap -->
 
 ## :compass: Roadmap
 
-- [x] Load training conversation from a local file or text input.
+- [x] Load training chat from a local file or text input.
 - [x] Hide message.
 - [x] Display code block in completion.
-- [ ] Edit user prompt.
+- [ ] ~~Edit user prompt.~~
 - [x] Support chat toolbar for the small screen.
-- [ ] Open the usage panel in a new tab.
+- [ ] ~~Open the usage panel in a new tab.~~
+- [ ] Regenerate mid chat completion.
 
 <!-- Contributing -->
 
@@ -444,20 +448,12 @@ Please read the [Code of Conduct](https://github.com/DuckyMomo20012/chat-gbit/bl
 
 ## :grey_question: FAQ
 
-- Why there is a difference between `Current Tokens` and `All-time Tokens`?
+- Why do the app migrate from the Local Storage to the PostgreSQL database?
 
-  - `Current Tokens`: The current usage tokens of the messages **displayed in
-    the chat**.
-
-  - `All-time Tokens`: The total usage user requested to the server. This will
-    include the usage tokens of the messages **not displaying in the chat**,
-    e.g., stopped generation, regenerated, etc.
-
-- Do you support other models for chat completion?
-
-  - No, the Chat Completion API only
-    [supports](https://platform.openai.com/docs/api-reference/chat/create#chat/create-model)
-    `gpt-3.5-turbo` and `gpt-3.5-turbo-0301`.
+  - We want to add the multi chat feature, but it's hard to maintain the chat
+    history in the Local Storage with Redux. We tried to implement this feature
+    in the PRs [#38](https://github.com/DuckyMomo20012/chat-gbit/pull/38),
+    [#39](https://github.com/DuckyMomo20012/chat-gbit/pull/39).
 
 <!-- License -->
 
