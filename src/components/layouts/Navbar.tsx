@@ -3,16 +3,15 @@ import { NavLink, ScrollArea, Stack, Text } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { useParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { ConvoMenu } from '@/components/modules/ConvoMenu';
 import { ProfileMenu } from '@/components/modules/ProfileMenu';
 import { type GetChat } from '@/pages/api/users/[userId]/chat';
 
 const Navbar = () => {
-  const router = useRouter();
-
-  const id = router.query.slug?.at(0);
+  const params = useParams();
+  const id = params?.slug?.at(0);
 
   const { data: session } = useSession();
   const userId = session?.user?.id;
