@@ -1,3 +1,5 @@
+'use client';
+
 import { Icon } from '@iconify/react';
 import { Alert, Button, Group, Stack, Text } from '@mantine/core';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -7,14 +9,12 @@ import { useParams, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { type GetOneChat } from './api/users/[userId]/chat/[chatId]';
 import { TTypedMessageHandle } from '@/components/elements/TypedMessage';
 import { PromptForm, type TPromptForm } from '@/components/forms/PromptForm';
 import { VoiceForm } from '@/components/forms/VoiceForm';
-import { AppShell } from '@/components/layouts/AppShell';
-import { ChatLayout } from '@/components/layouts/ChatLayout';
 import { Convo } from '@/components/modules/Convo';
 import { Settings } from '@/components/modules/Settings';
+import { type GetOneChat } from '@/pages/api/users/[userId]/chat/[chatId]';
 import type { RootState } from '@/store/store';
 
 const HomePage = () => {
@@ -392,15 +392,5 @@ const HomePage = () => {
     </Stack>
   );
 };
-
-HomePage.getLayout = (page: React.ReactNode) => {
-  return (
-    <AppShell withNavbar>
-      <ChatLayout>{page}</ChatLayout>
-    </AppShell>
-  );
-};
-
-HomePage.auth = true;
 
 export default HomePage;
