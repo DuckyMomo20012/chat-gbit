@@ -1,3 +1,5 @@
+'use client';
+
 import { AppShell as MantineAppShell } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Footer } from '@/components/layouts/Footer';

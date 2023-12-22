@@ -1,3 +1,5 @@
+'use client';
+
 import {
   MantineProvider as BaseMantineProvider,
   type MantineBreakpointsValues,

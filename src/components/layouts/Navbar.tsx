@@ -1,3 +1,5 @@
+'use client';
+
 import { Icon } from '@iconify/react';
 import { NavLink, ScrollArea, Stack, Text } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';

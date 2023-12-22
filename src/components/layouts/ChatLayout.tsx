@@ -1,3 +1,5 @@
+'use client';
+
 import { AppShell as MantineAppShell } from '@mantine/core';
 import { Navbar } from '@/components/layouts/Navbar';
 
