@@ -1,3 +1,4 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Group, Stack, TextInput } from '@mantine/core';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
@@ -59,6 +60,7 @@ const ConvoForm = ({ chatId }: { chatId: string }) => {
     defaultValues: {
       title: '',
     },
+    resolver: zodResolver(chatSchema),
   });
 
   useEffect(() => {
