@@ -1,3 +1,5 @@
+'use client';
+
 /* eslint-disable jsx-a11y/aria-role */
 import { faker } from '@faker-js/faker';
 import { Icon } from '@iconify/react';

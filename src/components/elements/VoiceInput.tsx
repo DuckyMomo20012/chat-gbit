@@ -1,3 +1,5 @@
+'use client';
+
 /* eslint-disable jsx-a11y/media-has-caption */
 import { Icon } from '@iconify/react';
 import {

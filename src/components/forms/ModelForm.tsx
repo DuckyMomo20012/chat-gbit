@@ -1,3 +1,5 @@
+'use client';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Group, Select, Stack, Text } from '@mantine/core';
 import { useEffect } from 'react';
