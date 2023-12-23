@@ -5,8 +5,11 @@ import axios from 'axios';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { userBodySchema } from '@/pages/api/users';
-import { type GetOneUser, type UpdateUser } from '@/pages/api/users/[userId]';
+import {
+  type GetOneUser,
+  type UpdateUser,
+} from '@/app/api/users/[userId]/route';
+import { userBodySchema } from '@/app/api/users/route';
 
 export const profileSchema = userBodySchema.pick({ name: true });
 

@@ -4,9 +4,9 @@ import { useDisclosure } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { signOut, useSession } from 'next-auth/react';
+import { type GetOneUser } from '@/app/api/users/[userId]/route';
 import { ChangePasswordForm } from '@/components/forms/ChangePasswordForm';
 import { ProfileForm } from '@/components/forms/ProfileForm';
-import { type GetOneUser } from '@/pages/api/users/[userId]';
 
 const ProfileMenu = () => {
   const [

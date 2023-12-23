@@ -9,14 +9,14 @@ import {
 } from '@mantine/core';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
-import { useRouter } from 'next/router';
+import { useParams, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useCallback, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { fromZodError } from 'zod-validation-error';
-import { type GetOneChat } from '@/pages/api/users/[userId]/chat/[chatId]';
-import { promptBodySchema } from '@/pages/api/users/[userId]/chat/[chatId]/prompt';
+import { promptBodySchema } from '@/app/api/users/[userId]/chat/[chatId]/prompt/route';
+import { type GetOneChat } from '@/app/api/users/[userId]/chat/[chatId]/route';
 
 export const uploadSchema = z.object({
   hideMessages: z.boolean(),
@@ -53,8 +53,8 @@ export type TUploadData = z.output<typeof uploadSchema>;
 
 const UploadForm = () => {
   const router = useRouter();
-
-  const id = router.query.slug?.at(0);
+  const params = useParams();
+  const id = params?.slug?.at(0);
 
   const { data: session } = useSession();
   const userId = session?.user?.id;
@@ -76,7 +76,7 @@ const UploadForm = () => {
   const queryClient = useQueryClient();
 
   const { data: trainedMessages } = useQuery({
-    queryKey: ['users', userId, 'chat', router.query.slug, { type: 'upload' }],
+    queryKey: ['users', userId, 'chat', params?.slug, { type: 'upload' }],
     queryFn: async () => {
       try {
         // NOTE: Handle root path
@@ -98,17 +98,12 @@ const UploadForm = () => {
 
       return [];
     },
+    enabled: !!params?.slug,
   });
 
   const { isPending: isSubmittingPrompt, mutate: uploadTrainMessages } =
     useMutation({
-      mutationKey: [
-        'user',
-        userId,
-        'chat',
-        router.query.slug,
-        { type: 'upload' },
-      ],
+      mutationKey: ['user', userId, 'chat', params?.slug, { type: 'upload' }],
       mutationFn: async ({
         chatId,
         messages,
@@ -140,13 +135,7 @@ const UploadForm = () => {
         });
 
         queryClient.invalidateQueries({
-          queryKey: [
-            'users',
-            userId,
-            'chat',
-            router.query.slug,
-            { type: 'upload' },
-          ],
+          queryKey: ['users', userId, 'chat', params?.slug, { type: 'upload' }],
         });
       },
     });

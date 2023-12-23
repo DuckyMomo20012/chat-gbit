@@ -1,26 +1,26 @@
+'use client';
+
 import { Icon } from '@iconify/react';
 import { Alert, Button, Group, Stack, Text } from '@mantine/core';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
+import { useParams, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { type GetOneChat } from './api/users/[userId]/chat/[chatId]';
+import { type GetOneChat } from '@/app/api/users/[userId]/chat/[chatId]/route';
 import { TTypedMessageHandle } from '@/components/elements/TypedMessage';
 import { PromptForm, type TPromptForm } from '@/components/forms/PromptForm';
 import { VoiceForm } from '@/components/forms/VoiceForm';
-import { AppShell } from '@/components/layouts/AppShell';
-import { ChatLayout } from '@/components/layouts/ChatLayout';
 import { Convo } from '@/components/modules/Convo';
 import { Settings } from '@/components/modules/Settings';
 import type { RootState } from '@/store/store';
 
 const HomePage = () => {
   const router = useRouter();
-
-  const id = router.query.slug?.at(0);
+  const params = useParams();
+  const id = params?.slug?.at(0);
 
   const { data: session } = useSession();
   const userId = session?.user?.id;
@@ -56,22 +56,22 @@ const HomePage = () => {
   const queryClient = useQueryClient();
 
   const { data: chat, isFetching } = useQuery({
-    // NOTE: router.query.slug changes make the query refetch, not the "id", so
+    // NOTE: params.slug changes make the query refetch, not the "id", so
     // we have to pass all the slug to the queryKey
-    queryKey: ['users', userId, 'chat', router.query.slug],
+    queryKey: ['users', userId, 'chat', params?.slug],
     queryFn: async (): Promise<GetOneChat> => {
       const { data } = await axios.get(`/api/users/${userId}/chat/${id}`);
 
       return data;
     },
-    enabled: !!id,
+    enabled: !!params?.slug,
   });
 
   const lastMessage = chat?.messages && chat.messages.at(-1);
 
   const { isPending: isFetchingCompletions, mutate: getCompletions } =
     useMutation({
-      mutationKey: ['chat', router.query.slug, 'completions', 'user', userId],
+      mutationKey: ['chat', params?.slug, 'completions', 'user', userId],
       mutationFn: async ({
         model,
         chatId,
@@ -103,7 +103,7 @@ const HomePage = () => {
       },
       onSuccess: (data) => {
         queryClient.invalidateQueries({
-          queryKey: ['users', userId, 'chat', router.query.slug],
+          queryKey: ['users', userId, 'chat', params?.slug],
         });
 
         setTypingMsgs((prev) => [...prev, data.id]);
@@ -122,7 +122,7 @@ const HomePage = () => {
     });
 
   const { isPending: isSubmittingPrompt, mutate: submitPrompt } = useMutation({
-    mutationKey: ['chat', router.query.slug, 'prompt', 'user', userId],
+    mutationKey: ['chat', params?.slug, 'prompt', 'user', userId],
     mutationFn: async ({
       role,
       content,
@@ -152,7 +152,7 @@ const HomePage = () => {
   });
 
   const { isPending: isRegenerating, mutateAsync: regenerate } = useMutation({
-    mutationKey: ['chat', router.query.slug, 'regenerate', 'user', userId],
+    mutationKey: ['chat', params?.slug, 'regenerate', 'user', userId],
     mutationFn: async ({ chatId }: { chatId: string }) => {
       const { data } = await axios.post(
         `/api/users/${userId}/chat/${chatId}/regenerate`,
@@ -165,13 +165,13 @@ const HomePage = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['users', userId, 'chat', router.query.slug],
+        queryKey: ['users', userId, 'chat', params?.slug],
       });
     },
   });
 
   const { mutate: updateContent } = useMutation({
-    mutationKey: ['chat', router.query.slug, 'updateContent', 'user', userId],
+    mutationKey: ['chat', params?.slug, 'updateContent', 'user', userId],
     mutationFn: async ({
       content,
       messageId,
@@ -187,7 +187,7 @@ const HomePage = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['users', userId, 'chat', router.query.slug],
+        queryKey: ['users', userId, 'chat', params?.slug],
       });
     },
   });
@@ -392,15 +392,5 @@ const HomePage = () => {
     </Stack>
   );
 };
-
-HomePage.getLayout = (page: React.ReactNode) => {
-  return (
-    <AppShell withNavbar>
-      <ChatLayout>{page}</ChatLayout>
-    </AppShell>
-  );
-};
-
-HomePage.auth = true;
 
 export default HomePage;

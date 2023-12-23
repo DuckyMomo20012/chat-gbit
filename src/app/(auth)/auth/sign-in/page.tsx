@@ -1,3 +1,5 @@
+'use client';
+
 import { Card, Center, Stack, Text } from '@mantine/core';
 import Head from 'next/head';
 import Link from 'next/link';

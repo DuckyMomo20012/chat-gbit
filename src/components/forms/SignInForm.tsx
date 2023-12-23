@@ -7,11 +7,11 @@ import {
   Stack,
   TextInput,
 } from '@mantine/core';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { userBodySchema } from '@/pages/api/users';
+import { userBodySchema } from '@/app/api/users/route';
 
 export const signInSchema = userBodySchema.omit({
   name: true,

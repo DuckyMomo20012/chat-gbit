@@ -1,9 +1,16 @@
 import { bcryptVerify } from 'hash-wasm';
-import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import prisma from '@/lib/prisma';
+import {
+  type GetServerSidePropsContext,
+  type NextApiRequest,
+  type NextApiResponse,
+} from 'next';
+import { type NextAuthOptions, getServerSession } from 'next-auth';
 
-export default NextAuth({
+// You'll need to import and pass this
+// to `NextAuth` in `app/api/auth/[...nextauth]/route.ts`
+export const authOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -71,4 +78,14 @@ export default NextAuth({
       console.log(`User: ${name} signed in`);
     },
   },
-});
+} satisfies NextAuthOptions;
+
+// Use it in server contexts
+export function auth(
+  ...args:
+    | [GetServerSidePropsContext['req'], GetServerSidePropsContext['res']]
+    | [NextApiRequest, NextApiResponse]
+    | []
+) {
+  return getServerSession(...args, authOptions);
+}

@@ -21,9 +21,14 @@
     "noErrorTruncation": true,
     "strict": true,
     "incremental": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
-  "include": ["src", "tests", "next-env.d.ts"],
+  "include": ["src", "tests", "next-env.d.ts", ".next/types/**/*.ts"],
   "references": [
     {
       "path": "./tsconfig.node.json"

@@ -1,3 +1,5 @@
+'use client';
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { CodeHighlight } from '@mantine/code-highlight';
 import {
