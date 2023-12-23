@@ -49,9 +49,9 @@ const GET = async () => {
 };
 
 const POST = async (req: Request) => {
-  try {
-    const body = await req.json();
+  const body = await req.json();
 
+  try {
     const parsedBody = userBodySchema.parse(body);
 
     const hashPassword = await bcrypt({

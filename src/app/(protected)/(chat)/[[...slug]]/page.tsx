@@ -9,12 +9,12 @@ import { useParams, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { type GetOneChat } from '@/app/api/users/[userId]/chat/[chatId]/route';
 import { TTypedMessageHandle } from '@/components/elements/TypedMessage';
 import { PromptForm, type TPromptForm } from '@/components/forms/PromptForm';
 import { VoiceForm } from '@/components/forms/VoiceForm';
 import { Convo } from '@/components/modules/Convo';
 import { Settings } from '@/components/modules/Settings';
-import { type GetOneChat } from '@/pages/api/users/[userId]/chat/[chatId]';
 import type { RootState } from '@/store/store';
 
 const HomePage = () => {

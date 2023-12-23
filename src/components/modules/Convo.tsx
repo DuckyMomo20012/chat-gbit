@@ -3,11 +3,11 @@ import { faker } from '@faker-js/faker';
 import { Icon } from '@iconify/react';
 import { ActionIcon, Space, Stack } from '@mantine/core';
 import { useEffect, useRef, useState } from 'react';
+import { type GetOneChat } from '@/app/api/users/[userId]/chat/[chatId]/route';
 import {
   TTypedMessageHandle,
   TypedMessage,
 } from '@/components/elements/TypedMessage';
-import { type GetOneChat } from '@/pages/api/users/[userId]/chat/[chatId]';
 
 const Convo = ({
   chat,

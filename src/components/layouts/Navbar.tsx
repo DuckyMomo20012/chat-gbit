@@ -7,9 +7,9 @@ import axios from 'axios';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import { type GetChat } from '@/app/api/users/[userId]/chat/route';
 import { ConvoMenu } from '@/components/modules/ConvoMenu';
 import { ProfileMenu } from '@/components/modules/ProfileMenu';
-import { type GetChat } from '@/pages/api/users/[userId]/chat';
 
 const Navbar = () => {
   const params = useParams();

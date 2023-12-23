@@ -97,7 +97,7 @@ const PATCH = async (
       .partial()
       .parse(body);
 
-    const result = await updateUser(userId as string, parsedBody);
+    const result = await updateUser(userId, parsedBody);
 
     return Response.json(result, {
       status: 200,
@@ -132,7 +132,7 @@ const DELETE = async (
   const { userId } = context.params;
 
   try {
-    const result = await deleteUser(userId as string);
+    const result = await deleteUser(userId);
 
     return Response.json(result, {
       status: 200,

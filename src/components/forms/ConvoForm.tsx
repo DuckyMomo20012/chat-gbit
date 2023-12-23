@@ -9,7 +9,7 @@ import { z } from 'zod';
 import {
   type GetOneChat,
   type UpdateChat,
-} from '@/pages/api/users/[userId]/chat/[chatId]';
+} from '@/app/api/users/[userId]/chat/[chatId]/route';
 
 export const chatSchema = z.object({
   title: z.string(),
