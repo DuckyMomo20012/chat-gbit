@@ -12,11 +12,13 @@ import axios, { AxiosError } from 'axios';
 import { type OpenAI } from 'openai';
 import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
+import { useSelector } from 'react-redux';
 import {
   TVoiceInputHandle,
   VoiceInput,
 } from '@/components/elements/VoiceInput';
 import { type TPromptForm } from '@/components/forms/PromptForm';
+import { type RootState } from '@/store/store';
 
 type TVoiceForm = {
   model: string;
@@ -25,8 +27,6 @@ type TVoiceForm = {
 };
 
 const RECORD_TIMEOUT = 30000;
-
-const VOICE_MODEL = 'whisper-1';
 
 const VoiceForm = ({
   isBusy,
@@ -37,6 +37,8 @@ const VoiceForm = ({
   submitPrompt: (formData: TPromptForm) => unknown;
   allowSystemMessage?: boolean;
 }) => {
+  const currModel = useSelector((state: RootState) => state.model);
+
   const voiceRef = useRef<TVoiceInputHandle>();
   const {
     reset,
@@ -47,7 +49,7 @@ const VoiceForm = ({
   } = useForm<TVoiceForm>();
 
   register('model', {
-    value: VOICE_MODEL,
+    value: currModel.audio.name,
   });
 
   register('audio', {
@@ -60,14 +62,14 @@ const VoiceForm = ({
     // NOTE: Reset the form after the form is submitted
     if (isSubmitSuccessful) {
       reset({
-        model: VOICE_MODEL,
+        model: currModel.audio.name,
         audio: [],
         asSystemMessage: false,
       } satisfies TVoiceForm);
       // NOTE: Manually clear the audio data from the voice input
       voiceRef.current?.clear();
     }
-  }, [reset, isSubmitSuccessful]);
+  }, [reset, isSubmitSuccessful, currModel.audio.name]);
 
   const { isPending, error, mutateAsync } = useMutation({
     mutationKey: ['voice'],

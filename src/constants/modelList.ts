@@ -18,6 +18,11 @@ export const MODEL_LIST = [
   },
   {
     type: 'audio',
+    name: 'whisper-1',
+    provider: { name: 'OpenAI', baseUrl: '' },
+  },
+  {
+    type: 'audio',
     name: 'ggml-whisper-base.bin',
     provider: { name: 'Self-hosted', baseUrl: process.env.LOCAL_AI_BASE_URL },
   },
