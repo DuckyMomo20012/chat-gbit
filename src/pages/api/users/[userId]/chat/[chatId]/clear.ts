@@ -13,7 +13,7 @@ export const clearChat = async (userId: string, chatId: string) => {
 };
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { id: userId, chatId } = req.query;
+  const { userId, chatId } = req.query;
 
   if (!userId || !chatId) {
     return res.status(400).json({ error: 'Bad request' });

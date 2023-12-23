@@ -7,7 +7,7 @@ import {
   TTypedMessageHandle,
   TypedMessage,
 } from '@/components/elements/TypedMessage';
-import { type GetOneChat } from '@/pages/api/users/[id]/chat/[chatId]';
+import { type GetOneChat } from '@/pages/api/users/[userId]/chat/[chatId]';
 
 const Convo = ({
   chat,

@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { type GetOneChat } from './api/users/[id]/chat/[chatId]';
+import { type GetOneChat } from './api/users/[userId]/chat/[chatId]';
 import { TTypedMessageHandle } from '@/components/elements/TypedMessage';
 import { PromptForm, type TPromptForm } from '@/components/forms/PromptForm';
 import { VoiceForm } from '@/components/forms/VoiceForm';

@@ -15,8 +15,8 @@ import { useCallback, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { fromZodError } from 'zod-validation-error';
-import { type GetOneChat } from '@/pages/api/users/[id]/chat/[chatId]';
-import { promptBodySchema } from '@/pages/api/users/[id]/chat/[chatId]/prompt';
+import { type GetOneChat } from '@/pages/api/users/[userId]/chat/[chatId]';
+import { promptBodySchema } from '@/pages/api/users/[userId]/chat/[chatId]/prompt';
 
 export const uploadSchema = z.object({
   hideMessages: z.boolean(),

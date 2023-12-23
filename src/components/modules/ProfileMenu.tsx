@@ -6,7 +6,7 @@ import axios from 'axios';
 import { signOut, useSession } from 'next-auth/react';
 import { ChangePasswordForm } from '@/components/forms/ChangePasswordForm';
 import { ProfileForm } from '@/components/forms/ProfileForm';
-import { type GetOneUser } from '@/pages/api/users/[id]';
+import { type GetOneUser } from '@/pages/api/users/[userId]';
 
 const ProfileMenu = () => {
   const [

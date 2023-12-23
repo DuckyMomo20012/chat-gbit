@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import { bcrypt, bcryptVerify } from 'hash-wasm';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 import { z } from 'zod';
-import { updateUser } from '@/pages/api/users/[id]/index';
+import { updateUser } from '@/pages/api/users/[userId]/index';
 import { HASH_ROUNDS } from '@/pages/api/users/index';
 
 export const changePasswordBodySchema = z.object({
@@ -11,9 +11,9 @@ export const changePasswordBodySchema = z.object({
 });
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { id } = req.query;
+  const { userId } = req.query;
 
-  if (!id) {
+  if (!userId) {
     return res.status(400).json({ error: 'Bad request' });
   }
 
@@ -23,7 +23,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         const parsedBody = changePasswordBodySchema.parse(req.body);
 
         const user = await prisma?.user.findUniqueOrThrow({
-          where: { id: id as string },
+          where: { id: userId as string },
           select: { password: true },
         });
 
@@ -46,7 +46,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           costFactor: HASH_ROUNDS,
         });
 
-        const result = await updateUser(id as string, {
+        const result = await updateUser(userId as string, {
           password: newHashedPassword,
         });
 

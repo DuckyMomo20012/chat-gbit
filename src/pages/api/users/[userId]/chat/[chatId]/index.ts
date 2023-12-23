@@ -2,7 +2,7 @@ import { Prisma } from '@prisma/client';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 import { z } from 'zod';
 import prisma from '@/lib/prisma';
-import { chatBodySchema } from '@/pages/api/users/[id]/chat/index';
+import { chatBodySchema } from '@/pages/api/users/[userId]/chat/index';
 
 export const getOneChat = async (userId: string, chatId: string) => {
   return prisma.chat.findUniqueOrThrow({
@@ -39,7 +39,7 @@ export type UpdateChat = Prisma.PromiseReturnType<typeof updateChat>;
 export type DeleteChat = Prisma.PromiseReturnType<typeof deleteChat>;
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { id: userId, chatId } = req.query;
+  const { userId, chatId } = req.query;
 
   if (!userId || !chatId) {
     return res.status(400).json({ error: 'Bad request' });
