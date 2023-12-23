@@ -12,7 +12,7 @@ import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { type CreateUser, userBodySchema } from '@/pages/api/users';
+import { type CreateUser, userBodySchema } from '@/app/api/users/route';
 
 export const signUpSchema = userBodySchema
   .extend({
