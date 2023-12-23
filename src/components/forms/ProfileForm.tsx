@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { userBodySchema } from '@/pages/api/users';
-import { type GetOneUser, type UpdateUser } from '@/pages/api/users/[id]';
+import { type GetOneUser, type UpdateUser } from '@/pages/api/users/[userId]';
 
 export const profileSchema = userBodySchema.pick({ name: true });
 

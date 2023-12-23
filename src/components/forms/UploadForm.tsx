@@ -1,3 +1,4 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Alert,
   Button,
@@ -11,22 +12,44 @@ import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { useCallback, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { fromZodError } from 'zod-validation-error';
-import { type GetOneChat } from '@/pages/api/users/[id]/chat/[chatId]';
+import { type GetOneChat } from '@/pages/api/users/[userId]/chat/[chatId]';
+import { promptBodySchema } from '@/pages/api/users/[userId]/chat/[chatId]/prompt';
 
-type TUploadForm = {
-  convo: string;
-  hideMessages: boolean;
-};
+export const uploadSchema = z.object({
+  hideMessages: z.boolean(),
+  messages: z.string().transform((val, ctx) => {
+    try {
+      return z
+        .array(
+          promptBodySchema.pick({
+            role: true,
+            content: true,
+          }),
+        )
+        .parse(JSON.parse(val));
+    } catch (err) {
+      if (err instanceof SyntaxError) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Invalid JSON',
+        });
+      } else if (err instanceof z.ZodError) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: fromZodError(err).message,
+        });
+      }
 
-const convoSchema = z.array(
-  z.object({
-    role: z.enum(['system', 'user', 'assistant']),
-    content: z.string(),
+      return [];
+    }
   }),
-);
+});
+
+export type TUploadForm = z.input<typeof uploadSchema>;
+export type TUploadData = z.output<typeof uploadSchema>;
 
 const UploadForm = () => {
   const router = useRouter();
@@ -89,17 +112,10 @@ const UploadForm = () => {
       mutationFn: async ({
         chatId,
         messages,
-        isHidden,
-        isTrained,
+        hideMessages,
       }: {
         chatId: string;
-        messages: {
-          role: 'user' | 'system' | 'assistant';
-          content: string;
-        }[];
-        isHidden?: boolean;
-        isTrained?: boolean;
-      }) => {
+      } & TUploadData) => {
         // NOTE: Clear all the prompt before uploading
         await axios.post(`/api/users/${userId}/chat/${chatId}/clear`);
 
@@ -108,8 +124,8 @@ const UploadForm = () => {
             return axios.post(`/api/users/${userId}/chat/${chatId}/prompt`, {
               role: m.role,
               content: m.content,
-              isHidden,
-              isTrained,
+              isHidden: hideMessages,
+              isTrained: true,
             });
           }),
         );
@@ -136,7 +152,7 @@ const UploadForm = () => {
     });
 
   const {
-    setValue,
+    control,
     register,
     setError,
     handleSubmit,
@@ -145,9 +161,10 @@ const UploadForm = () => {
   } = useForm<TUploadForm>({
     mode: 'onChange',
     defaultValues: {
-      convo: '',
+      messages: '',
       hideMessages: false,
     },
+    resolver: zodResolver(uploadSchema),
   });
 
   useEffect(() => {
@@ -158,43 +175,27 @@ const UploadForm = () => {
         ? JSON.stringify(trainedMessages, null, 2)
         : '';
     reset({
-      convo: formattedConvo,
+      messages: formattedConvo,
       hideMessages: false,
     } satisfies TUploadForm);
   }, [trainedMessages, reset]);
 
-  const onSubmit = async (formData: TUploadForm) => {
+  const onSubmit = async (data: unknown) => {
+    const formData = data as TUploadData;
+
     try {
-      if (formData.convo === '') {
-        return;
-      }
-
-      const parsed = JSON.parse(formData.convo);
-      const convo = convoSchema.parse(parsed);
-
       // NOTE: We purge the convo even if the data is an empty array
-      if (convo.length >= 0) {
+      if (formData.messages.length >= 0) {
         const chatId = await getChatId();
 
         uploadTrainMessages({
           chatId,
-          messages: convo,
-          isHidden: formData.hideMessages,
-          isTrained: true,
+          messages: formData.messages,
+          hideMessages: formData.hideMessages,
         });
       }
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        const validationError = fromZodError(error);
-
-        setError('convo', {
-          type: 'custom',
-          message: validationError.message,
-        });
-        return;
-      }
-
-      setError('convo', {
+      setError('messages', {
         type: 'custom',
         message: 'Invalid JSON',
       });
@@ -208,44 +209,33 @@ const UploadForm = () => {
           Update training chat will delete <b>all the chat history</b>.
         </Alert>
 
-        <JsonInput
-          autosize
-          label="Training chat"
-          maxRows={10}
-          minRows={10}
-          placeholder={JSON.stringify(
-            JSON.parse(
-              '[{"role": "user", "content": "Hello world!"},{"role": "assistant", "content": "Hi there!"}]',
-            ),
-            null,
-            '  ',
+        <Controller
+          control={control}
+          name="messages"
+          render={({ field }) => (
+            <JsonInput
+              autosize
+              error={errors.messages?.message}
+              label="Training chat"
+              maxRows={10}
+              minRows={10}
+              placeholder={JSON.stringify(
+                [
+                  {
+                    role: 'user',
+                    content: 'Hello world!',
+                  },
+                  {
+                    role: 'assistant',
+                    content: 'Hi there!',
+                  },
+                ],
+                null,
+                '  ',
+              )}
+              {...field}
+            />
           )}
-          {...register('convo', {
-            validate: (value) => {
-              try {
-                if (value === '') {
-                  return true;
-                }
-
-                convoSchema.parse(JSON.parse(value));
-                return true;
-              } catch (error) {
-                if (error instanceof z.ZodError) {
-                  const validationError = fromZodError(error);
-
-                  return false || validationError.message;
-                }
-                return false || 'Invalid JSON';
-              }
-            },
-          })}
-          error={errors.convo?.message}
-          onChange={(value) => {
-            setValue('convo', value, {
-              shouldValidate: true,
-              shouldDirty: true,
-            });
-          }}
         />
         <Checkbox
           label="Hide training messages"

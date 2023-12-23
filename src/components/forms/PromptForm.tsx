@@ -1,8 +1,16 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Icon } from '@iconify/react';
 import { ActionIcon, Checkbox, Group, Stack, TextInput } from '@mantine/core';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import type { TPromptForm } from '@/pages/[[...slug]]';
+import { z } from 'zod';
+
+export const promptSchema = z.object({
+  prompt: z.string().min(1),
+  asSystemMessage: z.boolean().optional(),
+});
+
+export type TPromptForm = z.infer<typeof promptSchema>;
 
 const PromptForm = ({
   isBusy,
@@ -14,7 +22,13 @@ const PromptForm = ({
   allowSystemMessage?: boolean;
 }) => {
   const { register, reset, handleSubmit, setFocus, formState } =
-    useForm<TPromptForm>();
+    useForm<TPromptForm>({
+      defaultValues: {
+        prompt: '',
+        asSystemMessage: false,
+      },
+      resolver: zodResolver(promptSchema),
+    });
 
   useEffect(() => {
     setFocus('prompt');

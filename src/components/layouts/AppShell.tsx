@@ -17,7 +17,7 @@ const AppShell = ({
       footer={{ height: 20 }}
       header={{ height: 60 }}
       navbar={{
-        width: withNavbar ? 300 : 0,
+        width: withNavbar ? '300px' : '0px',
         breakpoint: 'sm',
         collapsed: { mobile: !opened },
       }}

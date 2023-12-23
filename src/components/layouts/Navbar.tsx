@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { ConvoMenu } from '@/components/modules/ConvoMenu';
 import { ProfileMenu } from '@/components/modules/ProfileMenu';
-import { type GetChat } from '@/pages/api/users/[id]/chat';
+import { type GetChat } from '@/pages/api/users/[userId]/chat';
 
 const Navbar = () => {
   const router = useRouter();

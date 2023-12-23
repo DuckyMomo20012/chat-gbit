@@ -7,20 +7,15 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { type GetOneChat } from './api/users/[id]/chat/[chatId]';
+import { type GetOneChat } from './api/users/[userId]/chat/[chatId]';
 import { TTypedMessageHandle } from '@/components/elements/TypedMessage';
-import { PromptForm } from '@/components/forms/PromptForm';
+import { PromptForm, type TPromptForm } from '@/components/forms/PromptForm';
 import { VoiceForm } from '@/components/forms/VoiceForm';
 import { AppShell } from '@/components/layouts/AppShell';
 import { ChatLayout } from '@/components/layouts/ChatLayout';
 import { Convo } from '@/components/modules/Convo';
 import { Settings } from '@/components/modules/Settings';
 import type { RootState } from '@/store/store';
-
-export type TPromptForm = {
-  prompt: string;
-  asSystemMessage: boolean;
-};
 
 const HomePage = () => {
   const router = useRouter();

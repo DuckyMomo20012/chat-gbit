@@ -31,16 +31,16 @@ export type GetChat = Prisma.PromiseReturnType<typeof getChat>;
 export type CreateChat = Prisma.PromiseReturnType<typeof createChat>;
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { id } = req.query;
+  const { userId } = req.query;
 
-  if (!id) {
+  if (!userId) {
     return res.status(400).json({ error: 'Bad request' });
   }
 
   switch (req.method) {
     case 'GET': {
       try {
-        const result = await getChat(id as string);
+        const result = await getChat(userId as string);
 
         return res.status(200).json(result);
       } catch (err) {
@@ -56,7 +56,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       try {
         const parsedBody = chatBodySchema.parse(req.body);
 
-        const result = await createChat(id as string, parsedBody);
+        const result = await createChat(userId as string, parsedBody);
 
         return res.status(200).json(result);
       } catch (err) {

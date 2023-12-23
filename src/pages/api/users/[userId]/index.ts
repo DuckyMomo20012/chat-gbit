@@ -4,9 +4,9 @@ import { z } from 'zod';
 import prisma from '@/lib/prisma';
 import { userBodySchema } from '@/pages/api/users/index';
 
-export const getOneUser = async (id: string) => {
+export const getOneUser = async (userId: string) => {
   return prisma.user.findUniqueOrThrow({
-    where: { id },
+    where: { id: userId },
     select: {
       id: true,
       email: true,
@@ -17,9 +17,12 @@ export const getOneUser = async (id: string) => {
   });
 };
 
-export const updateUser = async (id: string, data: Prisma.UserUpdateInput) => {
+export const updateUser = async (
+  userId: string,
+  data: Prisma.UserUpdateInput,
+) => {
   return prisma.user.update({
-    where: { id },
+    where: { id: userId },
     data,
     select: {
       id: true,
@@ -31,9 +34,9 @@ export const updateUser = async (id: string, data: Prisma.UserUpdateInput) => {
   });
 };
 
-export const deleteUser = async (id: string) => {
+export const deleteUser = async (userId: string) => {
   return prisma.user.delete({
-    where: { id },
+    where: { id: userId },
     select: {
       id: true,
       email: true,
@@ -49,16 +52,16 @@ export type UpdateUser = Prisma.PromiseReturnType<typeof updateUser>;
 export type DeleteUser = Prisma.PromiseReturnType<typeof deleteUser>;
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { id } = req.query;
+  const { userId } = req.query;
 
-  if (!id) {
+  if (!userId) {
     return res.status(400).json({ error: 'Bad request' });
   }
 
   switch (req.method) {
     case 'GET': {
       try {
-        const result = await getOneUser(id as string);
+        const result = await getOneUser(userId as string);
 
         return res.status(200).json(result);
       } catch (err) {
@@ -76,7 +79,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           .partial()
           .parse(req.body);
 
-        const result = await updateUser(id as string, parsedBody);
+        const result = await updateUser(userId as string, parsedBody);
 
         return res.status(200).json(result);
       } catch (err) {
@@ -90,7 +93,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     case 'DELETE': {
       try {
-        const result = await deleteUser(id as string);
+        const result = await deleteUser(userId as string);
 
         return res.status(200).json(result);
       } catch (err) {
