@@ -11,7 +11,7 @@ import {
 } from '@mantine/core';
 import Head from 'next/head';
 
-function ServerError() {
+function Error() {
   return (
     <Center className="h-full w-full flex-1 @container">
       <Head>
@@ -52,4 +52,4 @@ function ServerError() {
   );
 }
 
-export default ServerError;
+export default Error;

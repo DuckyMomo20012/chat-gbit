@@ -1,5 +1,5 @@
 'use client';
 
-import ServerError from '@/app/error';
+import Error from '@/app/error';
 
-export default ServerError;
+export default Error;
