@@ -161,12 +161,12 @@ const UploadForm = () => {
   useEffect(() => {
     if (!trainedMessages) return;
 
-    const formattedConvo =
+    const formattedChat =
       trainedMessages?.length > 0
         ? JSON.stringify(trainedMessages, null, 2)
         : '';
     reset({
-      messages: formattedConvo,
+      messages: formattedChat,
       hideMessages: false,
     } satisfies TUploadForm);
   }, [trainedMessages, reset]);
@@ -175,7 +175,7 @@ const UploadForm = () => {
     const formData = data as TUploadData;
 
     try {
-      // NOTE: We purge the convo even if the data is an empty array
+      // NOTE: We purge the chat even if the data is an empty array
       if (formData.messages.length >= 0) {
         const chatId = await getChatId();
 

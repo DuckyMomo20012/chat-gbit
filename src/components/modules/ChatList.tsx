@@ -11,7 +11,7 @@ import {
   TypedMessage,
 } from '@/components/elements/TypedMessage';
 
-const Convo = ({
+const ChatList = ({
   chat,
   typingRefs,
   typingMsgs,
@@ -173,4 +173,4 @@ const Convo = ({
   );
 };
 
-export { Convo };
+export { ChatList };

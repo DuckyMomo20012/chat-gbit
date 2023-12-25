@@ -13,7 +13,7 @@ import { type GetOneChat } from '@/app/api/users/[userId]/chat/[chatId]/route';
 import { TTypedMessageHandle } from '@/components/elements/TypedMessage';
 import { PromptForm, type TPromptForm } from '@/components/forms/PromptForm';
 import { VoiceForm } from '@/components/forms/VoiceForm';
-import { Convo } from '@/components/modules/Convo';
+import { ChatList } from '@/components/modules/ChatList';
 import { Settings } from '@/components/modules/Settings';
 import type { RootState } from '@/store/store';
 
@@ -240,7 +240,7 @@ const HomePage = () => {
         <meta content="Create new Chat GBiT" name="description"></meta>
       </Head>
 
-      <Convo
+      <ChatList
         chat={chat?.messages}
         setTypingMsgs={setTypingMsgs}
         typingMsgs={typingMsgs}

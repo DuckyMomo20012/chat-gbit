@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { type GetChat } from '@/app/api/users/[userId]/chat/route';
-import { ConvoMenu } from '@/components/modules/ConvoMenu';
+import { ChatMenu } from '@/components/modules/ChatMenu';
 import { ProfileMenu } from '@/components/modules/ProfileMenu';
 
 const Navbar = () => {
@@ -56,7 +56,7 @@ const Navbar = () => {
           })
           ?.map((c: { id: string; title: string }) => {
             return (
-              <ConvoMenu
+              <ChatMenu
                 active={c.id === id}
                 id={c.id}
                 key={c.id}

@@ -8,9 +8,9 @@ import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { ConvoForm } from '../forms/ConvoForm';
+import { ChatForm } from '@/components/forms/ChatForm';
 
-const ConvoMenu = ({
+const ChatMenu = ({
   id,
   label,
   active,
@@ -52,7 +52,7 @@ const ConvoMenu = ({
   return (
     <>
       <Modal onClose={closeForm} opened={isFormOpened} title="Edit chat">
-        <ConvoForm chatId={id} />
+        <ChatForm chatId={id} />
       </Modal>
 
       <NavLink
@@ -124,4 +124,4 @@ const ConvoMenu = ({
   );
 };
 
-export { ConvoMenu };
+export { ChatMenu };
