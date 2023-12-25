@@ -1,3 +1,5 @@
+'use client';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Icon } from '@iconify/react';
 import { ActionIcon, Checkbox, Group, Stack, TextInput } from '@mantine/core';

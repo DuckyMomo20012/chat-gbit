@@ -1,3 +1,5 @@
+'use client';
+
 import { Icon } from '@iconify/react';
 import { Menu, Modal, NavLink } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';

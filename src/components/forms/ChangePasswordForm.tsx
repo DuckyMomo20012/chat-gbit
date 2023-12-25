@@ -1,3 +1,5 @@
+'use client';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Group, PasswordInput, Space, Stack } from '@mantine/core';
 import { useMutation, useQueryClient } from '@tanstack/react-query';

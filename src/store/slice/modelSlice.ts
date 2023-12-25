@@ -20,7 +20,7 @@ export type TModelSlice = {
 
 const initialState = {
   chat: MODEL_LIST[0],
-  audio: MODEL_LIST[3],
+  audio: MODEL_LIST[4],
 } satisfies TModelSlice;
 
 const modelSlice = createSlice({
