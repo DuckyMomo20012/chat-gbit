@@ -1,19 +1,19 @@
 'use client';
 
 import { Card, Center, Stack, Text } from '@mantine/core';
-import Head from 'next/head';
+import { type Metadata } from 'next';
 import Link from 'next/link';
 import { SignUpForm } from '@/components/forms/SignUpForm';
 import { AppShell } from '@/components/layouts/AppShell';
 
+export const metadata: Metadata = {
+  title: 'Sign up',
+  description: 'Sign up page',
+};
+
 const SignUp = () => {
   return (
     <>
-      <Head>
-        <title>Sign up</title>
-        <meta content="Sign up page" name="description"></meta>
-      </Head>
-
       <Center className="h-full w-full flex-1">
         <Card className="w-full max-w-md" withBorder>
           <Stack gap="lg">

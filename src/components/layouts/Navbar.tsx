@@ -8,12 +8,12 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { type GetChat } from '@/app/api/users/[userId]/chat/route';
-import { ConvoMenu } from '@/components/modules/ConvoMenu';
+import { ChatMenu } from '@/components/modules/ChatMenu';
 import { ProfileMenu } from '@/components/modules/ProfileMenu';
 
 const Navbar = () => {
   const params = useParams();
-  const id = params?.slug?.at(0);
+  const chatId = params?.chatId;
 
   const { data: session } = useSession();
   const userId = session?.user?.id;
@@ -54,10 +54,10 @@ const Navbar = () => {
               new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
             );
           })
-          ?.map((c: { id: string; title: string }) => {
+          ?.map((c) => {
             return (
-              <ConvoMenu
-                active={c.id === id}
+              <ChatMenu
+                active={c.id === chatId}
                 id={c.id}
                 key={c.id}
                 label={c.title}

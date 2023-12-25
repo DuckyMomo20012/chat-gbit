@@ -19,7 +19,7 @@ export const chatSchema = z.object({
 
 export type TChatForm = z.infer<typeof chatSchema>;
 
-const ConvoForm = ({ chatId }: { chatId: string }) => {
+const ChatForm = ({ chatId }: { chatId: string }) => {
   const { data: session } = useSession();
   const userId = session?.user?.id;
 
@@ -97,4 +97,4 @@ const ConvoForm = ({ chatId }: { chatId: string }) => {
   );
 };
 
-export { ConvoForm };
+export { ChatForm };

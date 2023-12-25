@@ -6,7 +6,13 @@ import { useDisclosure } from '@mantine/hooks';
 import { ModelForm } from '@/components/forms/ModelForm';
 import { UploadForm } from '@/components/forms/UploadForm';
 
-const Settings = () => {
+const Settings = ({
+  userId,
+  chatId,
+}: {
+  userId: string;
+  chatId: string | null;
+}) => {
   const [isSettingOpen, { open: openSetting, close: closeSetting }] =
     useDisclosure(false);
 
@@ -37,7 +43,7 @@ const Settings = () => {
 
               <Text c="gray">(Current chat only)</Text>
             </Stack>
-            <UploadForm />
+            <UploadForm chatId={chatId} userId={userId} />
           </Stack>
         </Stack>
       </Modal>

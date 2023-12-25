@@ -11,14 +11,13 @@ import {
 } from '@mantine/core';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
-import { useParams, useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { fromZodError } from 'zod-validation-error';
 import { promptBodySchema } from '@/app/api/users/[userId]/chat/[chatId]/prompt/route';
 import { type GetOneChat } from '@/app/api/users/[userId]/chat/[chatId]/route';
+import { useChatId } from '@/hooks/useChatId';
 
 export const uploadSchema = z.object({
   hideMessages: z.boolean(),
@@ -53,38 +52,25 @@ export const uploadSchema = z.object({
 export type TUploadForm = z.input<typeof uploadSchema>;
 export type TUploadData = z.output<typeof uploadSchema>;
 
-const UploadForm = () => {
-  const router = useRouter();
-  const params = useParams();
-  const id = params?.slug?.at(0);
-
-  const { data: session } = useSession();
-  const userId = session?.user?.id;
-
-  const getChatId = useCallback(async () => {
-    if (!id) {
-      const { data } = await axios.post(`/api/users/${userId}/chat`, {
-        title: 'Untitled',
-      });
-
-      await router.push(`/${data.id}`);
-
-      return data.id;
-    }
-
-    return id;
-  }, [id, userId, router]);
+const UploadForm = ({
+  userId,
+  chatId,
+}: {
+  userId: string;
+  chatId: string | null;
+}) => {
+  const { getId: getChatId } = useChatId();
 
   const queryClient = useQueryClient();
 
   const { data: trainedMessages } = useQuery({
-    queryKey: ['users', userId, 'chat', params?.slug, { type: 'upload' }],
+    queryKey: ['users', userId, 'chat', chatId, { type: 'upload' }],
     queryFn: async () => {
       try {
         // NOTE: Handle root path
-        if (!id) return [];
+        if (!chatId) return [];
 
-        const { data } = await axios.get(`/api/users/${userId}/chat/${id}`);
+        const { data } = await axios.get(`/api/users/${userId}/chat/${chatId}`);
 
         return (data.messages as GetOneChat['messages'])
           .filter((m) => m.isTrained)
@@ -100,25 +86,25 @@ const UploadForm = () => {
 
       return [];
     },
-    enabled: !!params?.slug,
+    enabled: !!chatId,
   });
 
   const { isPending: isSubmittingPrompt, mutate: uploadTrainMessages } =
     useMutation({
-      mutationKey: ['user', userId, 'chat', params?.slug, { type: 'upload' }],
+      mutationKey: ['user', userId, 'chat', chatId, { type: 'upload' }],
       mutationFn: async ({
-        chatId,
+        chatId: id,
         messages,
         hideMessages,
       }: {
         chatId: string;
       } & TUploadData) => {
         // NOTE: Clear all the prompt before uploading
-        await axios.post(`/api/users/${userId}/chat/${chatId}/clear`);
+        await axios.post(`/api/users/${userId}/chat/${id}/clear`);
 
         const result = await Promise.all(
           messages.map((m) => {
-            return axios.post(`/api/users/${userId}/chat/${chatId}/prompt`, {
+            return axios.post(`/api/users/${userId}/chat/${id}/prompt`, {
               role: m.role,
               content: m.content,
               isHidden: hideMessages,
@@ -137,7 +123,7 @@ const UploadForm = () => {
         });
 
         queryClient.invalidateQueries({
-          queryKey: ['users', userId, 'chat', params?.slug, { type: 'upload' }],
+          queryKey: ['users', userId, 'chat', chatId, { type: 'upload' }],
         });
       },
     });
@@ -161,12 +147,12 @@ const UploadForm = () => {
   useEffect(() => {
     if (!trainedMessages) return;
 
-    const formattedConvo =
+    const formattedChat =
       trainedMessages?.length > 0
         ? JSON.stringify(trainedMessages, null, 2)
         : '';
     reset({
-      messages: formattedConvo,
+      messages: formattedChat,
       hideMessages: false,
     } satisfies TUploadForm);
   }, [trainedMessages, reset]);
@@ -175,12 +161,12 @@ const UploadForm = () => {
     const formData = data as TUploadData;
 
     try {
-      // NOTE: We purge the convo even if the data is an empty array
+      // NOTE: We purge the chat even if the data is an empty array
       if (formData.messages.length >= 0) {
-        const chatId = await getChatId();
+        const currChatId = await getChatId();
 
         uploadTrainMessages({
-          chatId,
+          chatId: currChatId,
           messages: formData.messages,
           hideMessages: formData.hideMessages,
         });
