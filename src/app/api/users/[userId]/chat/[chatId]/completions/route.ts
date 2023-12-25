@@ -1,17 +1,7 @@
 import { z } from 'zod';
 import { getOneChat } from '@/app/api/users/[userId]/chat/[chatId]/route';
-import { getCompletions } from '@/lib/openai';
+import { chatCompletionBodySchema, getCompletions } from '@/lib/openai';
 import prisma from '@/lib/prisma';
-
-export const completionBodySchema = z.object({
-  model: z.string(),
-  messages: z.array(
-    z.object({
-      role: z.enum(['user', 'assistant', 'system']),
-      content: z.string(),
-    }),
-  ),
-});
 
 const POST = async (
   req: Request,
@@ -29,7 +19,7 @@ const POST = async (
   try {
     await getOneChat(userId, chatId);
 
-    const parsedBody = completionBodySchema.parse(body);
+    const parsedBody = chatCompletionBodySchema.parse(body);
 
     const completion = await getCompletions({
       model: parsedBody.model,

@@ -1,10 +1,5 @@
 import { z } from 'zod';
-import { getTranscriptions } from '@/lib/openai';
-
-export const transcriptionBodySchema = z.object({
-  model: z.string(),
-  audio: z.unknown(),
-});
+import { getTranscriptions, transcriptionBodySchema } from '@/lib/openai';
 
 const POST = async (req: Request) => {
   const formData = await req.formData();

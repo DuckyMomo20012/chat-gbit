@@ -1,7 +1,6 @@
 import { z } from 'zod';
-import { completionBodySchema } from '@/app/api/users/[userId]/chat/[chatId]/completions/route';
 import { getOneChat } from '@/app/api/users/[userId]/chat/[chatId]/route';
-import { getCompletions } from '@/lib/openai';
+import { chatCompletionBodySchema, getCompletions } from '@/lib/openai';
 import prisma from '@/lib/prisma';
 
 const POST = async (
@@ -18,7 +17,7 @@ const POST = async (
   const body = await req.json();
 
   try {
-    const parsedBody = completionBodySchema
+    const parsedBody = chatCompletionBodySchema
       .pick({
         model: true,
       })
