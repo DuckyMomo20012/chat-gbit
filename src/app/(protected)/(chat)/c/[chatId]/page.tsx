@@ -1,4 +1,3 @@
-import { Stack } from '@mantine/core';
 import { type Metadata } from 'next';
 import { getOneChat } from '@/app/api/users/[userId]/chat/[chatId]/route';
 import { ChatController } from '@/components/modules/ChatController';
@@ -31,11 +30,7 @@ const ChatPage = async ({ params }: { params: { chatId: string } }) => {
   const session = await auth();
   const userId = session?.user?.id;
 
-  return (
-    <Stack className="relative h-[calc(100dvh_-_var(--app-shell-header-offset)_-_var(--app-shell-footer-offset)_-_var(--app-shell-padding)_*_2)]">
-      <ChatController chatId={params.chatId} userId={userId as string} />
-    </Stack>
-  );
+  return <ChatController chatId={params.chatId} userId={userId as string} />;
 };
 
 export default ChatPage;
