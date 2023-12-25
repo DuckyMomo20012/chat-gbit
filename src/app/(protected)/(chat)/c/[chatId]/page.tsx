@@ -7,14 +7,13 @@ import { auth } from '@/lib/auth';
 export const generateMetadata = async ({
   params,
 }: {
-  params: { slug: string[] };
+  params: { chatId: string };
 }): Promise<Metadata> => {
   const session = await auth();
   const userId = session?.user?.id;
-  const chatId = params?.slug?.at(0);
 
   try {
-    const chat = await getOneChat(userId as string, chatId as string);
+    const chat = await getOneChat(userId as string, params.chatId);
 
     return {
       title: chat.title,
@@ -28,12 +27,15 @@ export const generateMetadata = async ({
   }
 };
 
-const HomePage = () => {
+const ChatPage = async ({ params }: { params: { chatId: string } }) => {
+  const session = await auth();
+  const userId = session?.user?.id;
+
   return (
     <Stack className="relative h-[calc(100dvh_-_var(--app-shell-header-offset)_-_var(--app-shell-footer-offset)_-_var(--app-shell-padding)_*_2)]">
-      <ChatController />
+      <ChatController chatId={params.chatId} userId={userId as string} />
     </Stack>
   );
 };
 
-export default HomePage;
+export default ChatPage;

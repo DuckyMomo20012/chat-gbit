@@ -13,7 +13,7 @@ import { ProfileMenu } from '@/components/modules/ProfileMenu';
 
 const Navbar = () => {
   const params = useParams();
-  const id = params?.slug?.at(0);
+  const chatId = params?.chatId;
 
   const { data: session } = useSession();
   const userId = session?.user?.id;
@@ -54,10 +54,10 @@ const Navbar = () => {
               new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
             );
           })
-          ?.map((c: { id: string; title: string }) => {
+          ?.map((c) => {
             return (
               <ChatMenu
-                active={c.id === id}
+                active={c.id === chatId}
                 id={c.id}
                 key={c.id}
                 label={c.title}
