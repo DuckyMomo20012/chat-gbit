@@ -11,13 +11,13 @@ import {
 } from '@mantine/core';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
-import { useRouter } from 'next/navigation';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { fromZodError } from 'zod-validation-error';
 import { promptBodySchema } from '@/app/api/users/[userId]/chat/[chatId]/prompt/route';
 import { type GetOneChat } from '@/app/api/users/[userId]/chat/[chatId]/route';
+import { useChatId } from '@/hooks/useChatId';
 
 export const uploadSchema = z.object({
   hideMessages: z.boolean(),
@@ -59,21 +59,7 @@ const UploadForm = ({
   userId: string;
   chatId: string | null;
 }) => {
-  const router = useRouter();
-
-  const getChatId = useCallback(async () => {
-    if (!chatId) {
-      const { data } = await axios.post(`/api/users/${userId}/chat`, {
-        title: 'Untitled',
-      });
-
-      router.push(`/c/${data.id}`);
-
-      return data.id;
-    }
-
-    return chatId;
-  }, [chatId, userId, router]);
+  const { getId: getChatId } = useChatId();
 
   const queryClient = useQueryClient();
 

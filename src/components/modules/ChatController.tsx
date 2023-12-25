@@ -4,8 +4,7 @@ import { Icon } from '@iconify/react';
 import { Alert, Button, Group, Stack, Text } from '@mantine/core';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { type GetOneChat } from '@/app/api/users/[userId]/chat/[chatId]/route';
 import { TTypedMessageHandle } from '@/components/elements/TypedMessage';
@@ -13,6 +12,7 @@ import { PromptForm, type TPromptForm } from '@/components/forms/PromptForm';
 import { VoiceForm } from '@/components/forms/VoiceForm';
 import { ChatList } from '@/components/modules/ChatList';
 import { Settings } from '@/components/modules/Settings';
+import { useChatId } from '@/hooks/useChatId';
 import type { RootState } from '@/store/store';
 
 const ChatController = ({
@@ -22,27 +22,13 @@ const ChatController = ({
   userId: string;
   chatId: string | null;
 }) => {
-  const router = useRouter();
-
   const currModel = useSelector((state: RootState) => state.model);
 
   const [inputMode, setInputMode] = useState<'voice' | 'text'>('text');
 
   const [isError, setIsError] = useState(false);
 
-  const getChatId = useCallback(async () => {
-    if (!chatId) {
-      const { data } = await axios.post(`/api/users/${userId}/chat`, {
-        title: 'Untitled',
-      });
-
-      router.push(`/c/${data.id}`);
-
-      return data.id;
-    }
-
-    return chatId;
-  }, [chatId, userId, router]);
+  const { getId: getChatId } = useChatId();
 
   const [typingMsgs, setTypingMsgs] = useState<string[]>([]);
   const typingRefs = useRef<
