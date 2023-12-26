@@ -1,3 +1,4 @@
+import { auth } from '@/lib/auth';
 import { clearChat } from 'src/app/api/users/[userId]/chat/service';
 
 const POST = async (
@@ -10,6 +11,17 @@ const POST = async (
   },
 ) => {
   const { userId, chatId } = context.params;
+
+  const session = await auth();
+
+  if (!session || session.user.id !== userId) {
+    return Response.json(
+      { error: 'Unauthorized' },
+      {
+        status: 401,
+      },
+    );
+  }
 
   try {
     const result = await clearChat(userId, chatId);

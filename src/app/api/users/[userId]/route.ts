@@ -5,6 +5,7 @@ import {
   updateUser,
   userBodySchema,
 } from '@/app/api/users/service';
+import { auth } from '@/lib/auth';
 
 const GET = async (
   req: Request,
@@ -15,6 +16,17 @@ const GET = async (
   },
 ) => {
   const { userId } = context.params;
+
+  const session = await auth();
+
+  if (!session || session.user.id !== userId) {
+    return Response.json(
+      { error: 'Unauthorized' },
+      {
+        status: 401,
+      },
+    );
+  }
 
   try {
     const result = await getOneUser(userId);
@@ -41,6 +53,17 @@ const PATCH = async (
   },
 ) => {
   const { userId } = context.params;
+
+  const session = await auth();
+
+  if (!session || session.user.id !== userId) {
+    return Response.json(
+      { error: 'Unauthorized' },
+      {
+        status: 401,
+      },
+    );
+  }
 
   const body = await req.json();
 
@@ -86,6 +109,17 @@ const DELETE = async (
   },
 ) => {
   const { userId } = context.params;
+
+  const session = await auth();
+
+  if (!session || session.user.id !== userId) {
+    return Response.json(
+      { error: 'Unauthorized' },
+      {
+        status: 401,
+      },
+    );
+  }
 
   try {
     const result = await deleteUser(userId);

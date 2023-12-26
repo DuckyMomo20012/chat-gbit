@@ -4,6 +4,7 @@ import {
   createChat,
   getChat,
 } from '@/app/api/users/[userId]/chat/service';
+import { auth } from '@/lib/auth';
 
 const GET = async (
   req: Request,
@@ -14,6 +15,17 @@ const GET = async (
   },
 ) => {
   const { userId } = context.params;
+
+  const session = await auth();
+
+  if (!session || session.user.id !== userId) {
+    return Response.json(
+      { error: 'Unauthorized' },
+      {
+        status: 401,
+      },
+    );
+  }
 
   try {
     const result = await getChat(userId);
@@ -49,6 +61,17 @@ const POST = async (
   },
 ) => {
   const { userId } = context.params;
+
+  const session = await auth();
+
+  if (!session || session.user.id !== userId) {
+    return Response.json(
+      { error: 'Unauthorized' },
+      {
+        status: 401,
+      },
+    );
+  }
 
   const body = await req.json();
 

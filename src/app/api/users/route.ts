@@ -9,6 +9,7 @@ import {
   userBodySchema,
 } from '@/app/api/users/service';
 
+// NOTE: This should be deprecated, due to security concerns.
 const GET = async () => {
   const result = await getAllUsers();
 
