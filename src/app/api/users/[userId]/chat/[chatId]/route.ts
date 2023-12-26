@@ -1,41 +1,10 @@
-import { Prisma } from '@prisma/client';
 import { z } from 'zod';
-import { chatBodySchema } from '@/app/api/users/[userId]/chat/route';
-import prisma from '@/lib/prisma';
-
-export const getOneChat = async (userId: string, chatId: string) => {
-  return prisma.chat.findUniqueOrThrow({
-    where: { id: chatId, userId },
-    include: {
-      messages: {
-        orderBy: {
-          createdAt: 'asc',
-        },
-      },
-    },
-  });
-};
-
-export const updateChat = async (
-  userId: string,
-  chatId: string,
-  data: Prisma.ChatUncheckedUpdateManyWithoutUserInput,
-) => {
-  return prisma.chat.update({
-    where: { id: chatId, userId },
-    data,
-  });
-};
-
-export const deleteChat = async (userId: string, chatId: string) => {
-  return prisma.chat.delete({
-    where: { id: chatId, userId },
-  });
-};
-
-export type GetOneChat = Prisma.PromiseReturnType<typeof getOneChat>;
-export type UpdateChat = Prisma.PromiseReturnType<typeof updateChat>;
-export type DeleteChat = Prisma.PromiseReturnType<typeof deleteChat>;
+import {
+  chatBodySchema,
+  deleteChat,
+  getOneChat,
+  updateChat,
+} from '@/app/api/users/[userId]/chat/service';
 
 const GET = async (
   req: Request,

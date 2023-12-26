@@ -11,7 +11,7 @@ import { z } from 'zod';
 import {
   type GetOneChat,
   type UpdateChat,
-} from '@/app/api/users/[userId]/chat/[chatId]/route';
+} from '@/app/api/users/[userId]/chat/service';
 
 export const chatSchema = z.object({
   title: z.string(),

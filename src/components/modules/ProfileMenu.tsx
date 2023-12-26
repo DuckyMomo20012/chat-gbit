@@ -6,7 +6,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { signOut, useSession } from 'next-auth/react';
-import { type GetOneUser } from '@/app/api/users/[userId]/route';
+import { type GetOneUser } from '@/app/api/users/service';
 import { ChangePasswordForm } from '@/components/forms/ChangePasswordForm';
 import { ProfileForm } from '@/components/forms/ProfileForm';
 

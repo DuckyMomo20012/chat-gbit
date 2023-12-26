@@ -1,13 +1,9 @@
 import { z } from 'zod';
-import { getOneChat } from '@/app/api/users/[userId]/chat/[chatId]/route';
+import {
+  getOneChat,
+  promptBodySchema,
+} from '@/app/api/users/[userId]/chat/service';
 import prisma from '@/lib/prisma';
-
-export const promptBodySchema = z.object({
-  content: z.string().max(191),
-  role: z.enum(['system', 'user', 'assistant']),
-  isHidden: z.boolean().optional(),
-  isTrained: z.boolean().optional(),
-});
 
 const POST = async (
   req: Request,

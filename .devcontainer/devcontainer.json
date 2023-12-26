@@ -18,15 +18,20 @@
       // Add the IDs of extensions you want installed when the container is created.
       "extensions": [
         "formulahendry.auto-rename-tag",
-        "esbenp.prettier-vscode",
-        "stkb.rewrap",
-        "voorjaar.windicss-intellisense",
-        "eamodio.gitlens",
-        "dbaeumer.vscode-eslint",
-        "usernamehw.errorlens",
-        "mikestead.dotenv",
+        "streetsidesoftware.code-spell-checker",
         "naumovs.color-highlight",
-        "streetsidesoftware.code-spell-checker"
+        "mikestead.dotenv",
+        "EditorConfig.EditorConfig",
+        "usernamehw.errorlens",
+        "dbaeumer.vscode-eslint",
+        "eamodio.gitlens",
+        "esbenp.prettier-vscode",
+        "Prisma.prisma",
+        "stkb.rewrap",
+        "albert.TabOut",
+        "bradlc.vscode-tailwindcss",
+        "stkb.rewrap",
+        "dbaeumer.vscode-eslint"
       ]
     }
   }

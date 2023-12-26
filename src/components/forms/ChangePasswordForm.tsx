@@ -7,8 +7,8 @@ import axios, { AxiosError } from 'axios';
 import { signOut } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { changePasswordBodySchema } from '@/app/api/users/[userId]/change-password/route';
-import { type UpdateUser } from '@/app/api/users/[userId]/route';
+import { changePasswordBodySchema } from '@/app/api/users/service';
+import { type UpdateUser } from '@/app/api/users/service';
 
 export const changePasswordSchema = changePasswordBodySchema
   .extend({

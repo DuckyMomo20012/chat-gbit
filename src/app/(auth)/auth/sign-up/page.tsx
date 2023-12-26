@@ -1,5 +1,3 @@
-'use client';
-
 import { Card, Center, Stack, Text } from '@mantine/core';
 import { type Metadata } from 'next';
 import Link from 'next/link';

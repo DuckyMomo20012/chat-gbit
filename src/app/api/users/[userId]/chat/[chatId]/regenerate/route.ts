@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { getOneChat } from '@/app/api/users/[userId]/chat/[chatId]/route';
+import { getOneChat } from '@/app/api/users/[userId]/chat/service';
 import { chatCompletionBodySchema, getCompletions } from '@/lib/openai';
 import prisma from '@/lib/prisma';
 

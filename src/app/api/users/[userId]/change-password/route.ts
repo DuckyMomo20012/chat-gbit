@@ -1,13 +1,11 @@
 import crypto from 'crypto';
 import { bcrypt, bcryptVerify } from 'hash-wasm';
 import { z } from 'zod';
-import { updateUser } from '@/app/api/users/[userId]/route';
-import { HASH_ROUNDS } from '@/app/api/users/route';
-
-export const changePasswordBodySchema = z.object({
-  oldPassword: z.string().min(8),
-  newPassword: z.string().min(8),
-});
+import {
+  HASH_ROUNDS,
+  changePasswordBodySchema,
+  updateUser,
+} from '@/app/api/users/service';
 
 const PATCH = async (
   req: Request,

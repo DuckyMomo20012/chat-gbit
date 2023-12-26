@@ -5,7 +5,7 @@ import { faker } from '@faker-js/faker';
 import { Icon } from '@iconify/react';
 import { ActionIcon, Space, Stack } from '@mantine/core';
 import { useEffect, useRef, useState } from 'react';
-import { type GetOneChat } from '@/app/api/users/[userId]/chat/[chatId]/route';
+import { type GetOneChat } from '@/app/api/users/[userId]/chat/service';
 import {
   TTypedMessageHandle,
   TypedMessage,

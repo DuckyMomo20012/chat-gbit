@@ -1,33 +1,9 @@
-import { Prisma } from '@prisma/client';
 import { z } from 'zod';
-import prisma from '@/lib/prisma';
-
-export const chatBodySchema = z.object({
-  title: z.string().min(1).max(191),
-});
-
-export const getChat = async (userId: string) => {
-  return prisma.chat.findMany({
-    where: { userId },
-  });
-};
-
-export const createChat = async (
-  userId: string,
-  data: Prisma.ChatUncheckedCreateWithoutUserInput,
-) => {
-  return prisma.chat.create({
-    data: {
-      ...data,
-      user: {
-        connect: { id: userId },
-      },
-    },
-  });
-};
-
-export type GetChat = Prisma.PromiseReturnType<typeof getChat>;
-export type CreateChat = Prisma.PromiseReturnType<typeof createChat>;
+import {
+  chatBodySchema,
+  createChat,
+  getChat,
+} from '@/app/api/users/[userId]/chat/service';
 
 const GET = async (
   req: Request,
