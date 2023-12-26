@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { getOneChat } from '@/app/api/users/[userId]/chat/service';
+import { auth } from '@/lib/auth';
 import { chatCompletionBodySchema, getCompletions } from '@/lib/openai';
 import prisma from '@/lib/prisma';
 
@@ -13,6 +14,17 @@ const POST = async (
   },
 ) => {
   const { userId, chatId } = context.params;
+
+  const session = await auth();
+
+  if (!session || session.user.id !== userId) {
+    return Response.json(
+      { error: 'Unauthorized' },
+      {
+        status: 401,
+      },
+    );
+  }
 
   const body = await req.json();
 

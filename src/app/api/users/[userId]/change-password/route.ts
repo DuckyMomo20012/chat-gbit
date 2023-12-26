@@ -6,6 +6,7 @@ import {
   changePasswordBodySchema,
   updateUser,
 } from '@/app/api/users/service';
+import { auth } from '@/lib/auth';
 
 const PATCH = async (
   req: Request,
@@ -16,6 +17,17 @@ const PATCH = async (
   },
 ) => {
   const { userId } = context.params;
+
+  const session = await auth();
+
+  if (!session || session.user.id !== userId) {
+    return Response.json(
+      { error: 'Unauthorized' },
+      {
+        status: 401,
+      },
+    );
+  }
 
   const body = await req.json();
 

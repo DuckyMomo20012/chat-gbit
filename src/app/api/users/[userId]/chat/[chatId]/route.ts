@@ -5,6 +5,7 @@ import {
   getOneChat,
   updateChat,
 } from '@/app/api/users/[userId]/chat/service';
+import { auth } from '@/lib/auth';
 
 const GET = async (
   req: Request,
@@ -16,6 +17,17 @@ const GET = async (
   },
 ) => {
   const { userId, chatId } = context.params;
+
+  const session = await auth();
+
+  if (!session || session.user.id !== userId) {
+    return Response.json(
+      { error: 'Unauthorized' },
+      {
+        status: 401,
+      },
+    );
+  }
 
   try {
     const result = await getOneChat(userId, chatId);
@@ -52,6 +64,17 @@ const PATCH = async (
   },
 ) => {
   const { userId, chatId } = context.params;
+
+  const session = await auth();
+
+  if (!session || session.user.id !== userId) {
+    return Response.json(
+      { error: 'Unauthorized' },
+      {
+        status: 401,
+      },
+    );
+  }
 
   const body = await req.json();
 
@@ -96,6 +119,17 @@ const DELETE = async (
   },
 ) => {
   const { userId, chatId } = context.params;
+
+  const session = await auth();
+
+  if (!session || session.user.id !== userId) {
+    return Response.json(
+      { error: 'Unauthorized' },
+      {
+        status: 401,
+      },
+    );
+  }
 
   try {
     const result = await deleteChat(userId, chatId);
