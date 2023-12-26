@@ -1,15 +1,23 @@
 import { Card, Center, Stack, Text } from '@mantine/core';
 import { type Metadata } from 'next';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { SignInForm } from '@/components/forms/SignInForm';
 import { AppShell } from '@/components/layouts/AppShell';
+import { auth } from '@/lib/auth';
 
 export const metadata: Metadata = {
   title: 'Sign in',
   description: 'Sign in page',
 };
 
-const SignIn = () => {
+const SignIn = async () => {
+  const session = await auth();
+
+  if (session) {
+    redirect('/');
+  }
+
   return (
     <>
       <Center className="h-full w-full flex-1">
