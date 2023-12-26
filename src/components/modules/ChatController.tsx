@@ -6,7 +6,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { type GetOneChat } from '@/app/api/users/[userId]/chat/[chatId]/route';
+import { type GetOneChat } from '@/app/api/users/[userId]/chat/service';
 import { TTypedMessageHandle } from '@/components/elements/TypedMessage';
 import { PromptForm, type TPromptForm } from '@/components/forms/PromptForm';
 import { VoiceForm } from '@/components/forms/VoiceForm';

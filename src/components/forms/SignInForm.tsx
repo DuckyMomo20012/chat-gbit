@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { userBodySchema } from '@/app/api/users/route';
+import { userBodySchema } from '@/app/api/users/service';
 
 export const signInSchema = userBodySchema.omit({
   name: true,

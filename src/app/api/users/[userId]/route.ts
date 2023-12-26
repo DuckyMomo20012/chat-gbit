@@ -1,54 +1,10 @@
-import { Prisma } from '@prisma/client';
 import { z } from 'zod';
-import { userBodySchema } from '@/app/api/users/route';
-import prisma from '@/lib/prisma';
-
-export const getOneUser = async (userId: string) => {
-  return prisma.user.findUniqueOrThrow({
-    where: { id: userId },
-    select: {
-      id: true,
-      email: true,
-      name: true,
-      createdAt: true,
-      updatedAt: true,
-    },
-  });
-};
-
-export const updateUser = async (
-  userId: string,
-  data: Prisma.UserUpdateInput,
-) => {
-  return prisma.user.update({
-    where: { id: userId },
-    data,
-    select: {
-      id: true,
-      email: true,
-      name: true,
-      createdAt: true,
-      updatedAt: true,
-    },
-  });
-};
-
-export const deleteUser = async (userId: string) => {
-  return prisma.user.delete({
-    where: { id: userId },
-    select: {
-      id: true,
-      email: true,
-      name: true,
-      createdAt: true,
-      updatedAt: true,
-    },
-  });
-};
-
-export type GetOneUser = Prisma.PromiseReturnType<typeof getOneUser>;
-export type UpdateUser = Prisma.PromiseReturnType<typeof updateUser>;
-export type DeleteUser = Prisma.PromiseReturnType<typeof deleteUser>;
+import {
+  deleteUser,
+  getOneUser,
+  updateUser,
+  userBodySchema,
+} from '@/app/api/users/service';
 
 const GET = async (
   req: Request,

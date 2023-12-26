@@ -1,15 +1,4 @@
-import prisma from '@/lib/prisma';
-
-export const clearChat = async (userId: string, chatId: string) => {
-  return prisma.chat.update({
-    where: { id: chatId as string, userId: userId as string },
-    data: {
-      messages: {
-        deleteMany: {},
-      },
-    },
-  });
-};
+import { clearChat } from 'src/app/api/users/[userId]/chat/service';
 
 const POST = async (
   req: Request,

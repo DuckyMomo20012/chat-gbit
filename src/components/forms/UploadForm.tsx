@@ -15,8 +15,8 @@ import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { fromZodError } from 'zod-validation-error';
-import { promptBodySchema } from '@/app/api/users/[userId]/chat/[chatId]/prompt/route';
-import { type GetOneChat } from '@/app/api/users/[userId]/chat/[chatId]/route';
+import { promptBodySchema } from '@/app/api/users/[userId]/chat/service';
+import { type GetOneChat } from '@/app/api/users/[userId]/chat/service';
 import { useChatId } from '@/hooks/useChatId';
 
 export const uploadSchema = z.object({

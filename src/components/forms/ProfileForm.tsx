@@ -10,8 +10,8 @@ import { z } from 'zod';
 import {
   type GetOneUser,
   type UpdateUser,
-} from '@/app/api/users/[userId]/route';
-import { userBodySchema } from '@/app/api/users/route';
+  userBodySchema,
+} from '@/app/api/users/service';
 
 export const profileSchema = userBodySchema.pick({ name: true });
 

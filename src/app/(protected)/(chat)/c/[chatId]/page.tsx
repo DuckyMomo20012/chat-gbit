@@ -1,5 +1,5 @@
 import { type Metadata } from 'next';
-import { getOneChat } from '@/app/api/users/[userId]/chat/[chatId]/route';
+import { getOneChat } from '@/app/api/users/[userId]/chat/service';
 import { ChatController } from '@/components/modules/ChatController';
 import { auth } from '@/lib/auth';
 
