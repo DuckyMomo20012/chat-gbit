@@ -3,7 +3,6 @@ import { type Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { SignInForm } from '@/components/forms/SignInForm';
-import { AppShell } from '@/components/layouts/AppShell';
 import { auth } from '@/lib/auth';
 
 export const metadata: Metadata = {
@@ -43,10 +42,6 @@ const SignIn = async () => {
       </Center>
     </>
   );
-};
-
-SignIn.getLayout = (page: React.ReactNode) => {
-  return <AppShell withNavbar={false}>{page}</AppShell>;
 };
 
 export default SignIn;
