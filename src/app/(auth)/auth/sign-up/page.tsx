@@ -2,7 +2,6 @@ import { Card, Center, Stack, Text } from '@mantine/core';
 import { type Metadata } from 'next';
 import Link from 'next/link';
 import { SignUpForm } from '@/components/forms/SignUpForm';
-import { AppShell } from '@/components/layouts/AppShell';
 
 export const metadata: Metadata = {
   title: 'Sign up',
@@ -35,10 +34,6 @@ const SignUp = () => {
       </Center>
     </>
   );
-};
-
-SignUp.getLayout = (page: React.ReactNode) => {
-  return <AppShell withNavbar={false}>{page}</AppShell>;
 };
 
 export default SignUp;

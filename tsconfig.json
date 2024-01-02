@@ -1,27 +1,16 @@
 {
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "target": "ESNext",
-    "useDefineForClassFields": true,
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
+    /* If NOT transpiling with TypeScript: */
+    "moduleResolution": "Bundler",
     "module": "ESNext",
-    "moduleResolution": "Node",
-    "resolveJsonModule": true,
     "noEmit": true,
+    /* If your code runs in the DOM: */
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    /* React */
     "jsx": "preserve",
-    "outDir": "./dist/out-tsc",
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    },
-    "noErrorTruncation": true,
-    "strict": true,
+    /* NextJS */
     "incremental": true,
-    "isolatedModules": true,
     "plugins": [
       {
         "name": "next"
@@ -33,6 +22,5 @@
     {
       "path": "./tsconfig.node.json"
     }
-  ],
-  "exclude": ["node_modules"]
+  ]
 }

@@ -1,9 +1,10 @@
 {
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
+    /* If transpiling with TypeScript: */
     "composite": true,
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "allowSyntheticDefaultImports": true
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext"
   },
   "include": ["tailwind.config.ts"]
 }

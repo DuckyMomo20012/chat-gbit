@@ -40,7 +40,7 @@ const POST = async (
 
     const result = await prisma.message.create({
       data: {
-        content: completion.choices[0].message.content || '',
+        content: completion.choices.at(0)?.message.content || '',
         role: 'assistant',
         chatId,
       },
