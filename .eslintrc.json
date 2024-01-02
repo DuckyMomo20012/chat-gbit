@@ -13,7 +13,8 @@
     "plugin:prettier/recommended",
     "plugin:react-hooks/recommended",
     "plugin:react/jsx-runtime",
-    "plugin:@typescript-eslint/recommended"
+    "plugin:@typescript-eslint/recommended",
+    "next"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -25,17 +26,7 @@
   },
   "plugins": ["react", "import", "prettier"],
   "rules": {
-    "eqeqeq": "warn",
-    "import/extensions": [
-      "warn",
-      "ignorePackages",
-      {
-        "js": "never",
-        "jsx": "never",
-        "ts": "never",
-        "tsx": "never"
-      }
-    ],
+    "import/extensions": "off",
     "import/no-extraneous-dependencies": [
       "warn",
       {
