@@ -54,8 +54,10 @@ const mapModelToSelect = (
       (acc, m) => {
         const provider = m.provider.name;
 
-        acc[provider] = acc[provider] || [];
-        acc[provider] = [...acc[provider], { label: m.name, value: m.name }];
+        acc[provider] = [
+          ...(acc[provider] || []),
+          { label: m.name, value: m.name },
+        ];
         return acc;
       },
       {} as Record<string, { label: string; value: string }[]>,
