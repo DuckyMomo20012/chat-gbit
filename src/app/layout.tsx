@@ -1,4 +1,3 @@
-import '@mantine/core/styles.css';
 import { ColorSchemeScript } from '@mantine/core';
 import Providers from '@/app/providers';
 

@@ -1,12 +1,12 @@
 import { bcryptVerify } from 'hash-wasm';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import prisma from '@/lib/prisma';
 import {
   type GetServerSidePropsContext,
   type NextApiRequest,
   type NextApiResponse,
 } from 'next';
 import { type NextAuthOptions, getServerSession } from 'next-auth';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import prisma from '@/lib/prisma';
 
 // You'll need to import and pass this
 // to `NextAuth` in `app/api/auth/[...nextauth]/route.ts`
